@@ -1,0 +1,26 @@
+﻿@* !!! THIS IS CURRENTLY EXACTLY THE SAME AS _ProviderLayout BUT WILL NEED TO BE UPDATED !!! *@
+
+@{
+    // ReSharper disable once Razor.LayoutNotResolved From shared provider library
+    Layout = "_Layout";
+}
+
+@RenderBody()
+
+@section Styles
+    {
+    @RenderSection("Styles", required: false)
+    <link href="/css/app.css" rel="stylesheet" no-cdn />
+}
+
+@section breadcrumb
+    {
+    @RenderSection("breadcrumb", required: false)
+}
+
+@section Scripts
+    {
+    @RenderSection("Scripts", required: false)
+    <script src="libs/accessible-autocomplete/accessible-autocomplete.min.js"></script>
+    <script src="/js/app.js" no-cdn></script>
+}

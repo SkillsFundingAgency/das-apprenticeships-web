@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Web", "SFA.DAS.Apprenticeships.Web\SFA.DAS.Apprenticeships.Web.csproj", "{6B78D3E3-E075-48F2-A2ED-EC6EB9ABE6E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Web.UnitTests", "SFA.DAS.Apprenticeships.Web.UnitTests\SFA.DAS.Apprenticeships.Web.UnitTests.csproj", "{87AE0AE0-7AFA-4501-8169-51A49461AE8A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B78D3E3-E075-48F2-A2ED-EC6EB9ABE6E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B78D3E3-E075-48F2-A2ED-EC6EB9ABE6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B78D3E3-E075-48F2-A2ED-EC6EB9ABE6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B78D3E3-E075-48F2-A2ED-EC6EB9ABE6E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87AE0AE0-7AFA-4501-8169-51A49461AE8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87AE0AE0-7AFA-4501-8169-51A49461AE8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87AE0AE0-7AFA-4501-8169-51A49461AE8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87AE0AE0-7AFA-4501-8169-51A49461AE8A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ACC753ED-1A0C-48B6-ACD3-73C5D70D947D}
+	EndGlobalSection
+EndGlobal
