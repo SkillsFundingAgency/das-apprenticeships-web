@@ -10,16 +10,6 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
     [TestFixture]
     public class ErrorControllerTests
     {
-        private ErrorController _sut;
-        private Mock<IConfiguration> _mockConfiguration;
-
-        [SetUp]
-        public void SetUp()
-        {
-            _mockConfiguration = new Mock<IConfiguration>();
-            _sut = new ErrorController(_mockConfiguration.Object);
-        }
-
         [Test]
         [TestCase("test", "https://test-services.signin.education.gov.uk/approvals/select-organisation?action=request-service", true)]
         [TestCase("pp", "https://test-services.signin.education.gov.uk/approvals/select-organisation?action=request-service", true)]
@@ -27,12 +17,13 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         [TestCase("prd", "https://services.signin.education.gov.uk/approvals/select-organisation?action=request-service", false)]
         public void WhenStatusCodeIs403Then403ViewIsReturned(string env, string helpLink, bool useDfESignIn)
         {
-            //arrange
-            _mockConfiguration.Setup(x => x["ResourceEnvironmentName"]).Returns(env);
-            _mockConfiguration.Setup(x => x["UseDfESignIn"]).Returns(Convert.ToString(useDfESignIn));
+            // Arrange
+            var sut = CreateControllerWithCustomConfig(env, useDfESignIn);
 
-            var result = (ViewResult)_sut.Error(403);
+            // Act
+            var result = (ViewResult)sut.Error(403);
 
+            // Assert
             Assert.That(result, Is.Not.Null);
             var actualModel = result?.Model as Error403ViewModel;
             Assert.That(actualModel?.HelpPageLink, Is.EqualTo(helpLink));
@@ -42,7 +33,13 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         [Test]
         public void WhenStatusCodeIs404Then404ViewIsReturned()
         {
-            var result = (ViewResult)_sut.Error(404);
+            // Arrange
+            var sut = CreateController();
+
+            // Act
+            var result = (ViewResult)sut.Error(404);
+            
+            // Assert
             result.ViewName.Should().Be("404");
         }
         
@@ -52,8 +49,28 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         [TestCase(405)]
         public void WhenStatusCodeIsNotHandledThenGenericErrorViewIsReturned(int? errorCode)
         {
-            var result = (ViewResult)_sut.Error(errorCode);
+            // Arrange
+            var sut = CreateController();
+            
+            // Act
+            var result = (ViewResult)sut.Error(errorCode);
+            
+            // Assert
             result.ViewName.Should().BeNull();
+        }
+
+        private static ErrorController CreateController()
+        {
+            var mockConfiguration = new Mock<IConfiguration>();
+            return new ErrorController(mockConfiguration.Object);
+        }
+
+        private static ErrorController CreateControllerWithCustomConfig(string env, bool useDfESignIn)
+        {
+            var mockConfiguration = new Mock<IConfiguration>();
+            mockConfiguration.Setup(x => x["ResourceEnvironmentName"]).Returns(env);
+            mockConfiguration.Setup(x => x["UseDfESignIn"]).Returns(Convert.ToString(useDfESignIn));
+            return new ErrorController(mockConfiguration.Object);
         }
     }
 }
