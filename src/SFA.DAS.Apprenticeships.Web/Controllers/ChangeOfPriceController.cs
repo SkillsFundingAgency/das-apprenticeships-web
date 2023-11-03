@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.Apprenticeships.Web.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -17,7 +18,31 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("", Name = RouteNames.CreatePriceChangeRequest, Order = 0)]
         public IActionResult CreatePriceChangeRequest()
         {
-            return View();
+            var model = TempPopulateModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("")]
+        public IActionResult CreatePriceChangeRequest(CreateChangeOfPriceModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            //  Actions here to be completed in later User Story
+            return View(model);
+        }
+
+        private CreateChangeOfPriceModel TempPopulateModel()
+        {
+            return new CreateChangeOfPriceModel
+            {
+                FundingBandMaximum = 9000,
+                ApprenticeshipTrainingPrice = 6000,
+                ApprenticeshipEndPointAssessmentPrice = 2000,
+            };
         }
     }
 }
