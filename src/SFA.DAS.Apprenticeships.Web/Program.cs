@@ -3,7 +3,7 @@ using SFA.DAS.Provider.Shared.UI.Startup;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Provider.Shared.UI.Models;
-using SFA.DAS.Provider.Shared.UI;
+using SFA.DAS.Apprenticeships.Web.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -13,28 +13,52 @@ namespace SFA.DAS.Apprenticeships.Web
         public static void Main(string[] args)
         {
             //TODO refactor this file!
+            //TODO UPDATE NUGET PACKAGES
+            //TODO ADD README
 
+            // Logging and initial config
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            // Logging
             builder.Services.AddApplicationInsightsTelemetry(config["APPINSIGHTS_INSTRUMENTATIONKEY"]);
-
-            // Config
             builder.ConfigureAzureTableStorage(config);
-            builder.AddConfigurationOptions(config);
 
-            // Auth
-            //TODO: Authentication handling (stub auth, dfe sign in and gov login - IDAMS set up no longer required)
-            //TODO: Authorization - register different auth handlers & add policies etc
+            //Authentication & Authorization
+            //TODO: Establish if provider or employer...?
+            var serviceParameters = new ServiceParameters
+            {
+                AuthenticationType = AuthenticationType.Provider
+            };
+            builder.AddConfigurationOptions(config, serviceParameters.AuthenticationType);
 
-            // Configure services and MVC
-            builder.Services.AddCustomServiceRegistration(config);
+            if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
+            {
+                builder.Services.SetUpEmployerAuthorizationServices();
+                builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
+            }
+            else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
+            {
+                builder.Services.AddProviderUiServiceRegistration(config);
+                builder.Services.SetUpProviderAuthorizationServices();
+                builder.Services.SetUpProviderAuthentication(config);
+            }
+            else
+            {
+                //????
+            }
+            builder.Services.AddSharedAuthenticationServices();
+
+            // Configuration of other services and MVC
+            builder.Services.AddCustomServiceRegistration(serviceParameters);
             builder.Services
                 .Configure<CookiePolicyOptions>(options =>
                 {
                     options.CheckConsentNeeded = context => true;
                     options.MinimumSameSitePolicy = SameSiteMode.None;
+                })
+                .Configure<IISServerOptions>(options => 
+                { 
+                    options.AutomaticAuthentication = false; 
                 })
                 .Configure<RouteOptions>(options => { options.LowercaseUrls = true; })
                 .AddSession(options =>
@@ -44,9 +68,9 @@ namespace SFA.DAS.Apprenticeships.Web
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.Cookie.IsEssential = true;
                 })
-                .AddMvc(options => 
+                .AddMvc(options =>
                 {
-                    if (!config.IsLocal())
+                    if (!config.IsEnvironmentLocal())
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
@@ -58,7 +82,7 @@ namespace SFA.DAS.Apprenticeships.Web
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
                 //TODO: Figure out if/how zen desk config required for employer
 
-            if (!config.IsLocal())
+            if (!config.IsEnvironmentLocal())
             {
                 builder.Services.AddHealthChecks();
             }
