@@ -5,7 +5,5 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
         public const string EmployerAccountId = "employerAccountId";
 
         public const string Ukprn = "ukprn";
-
-
     }
 }
