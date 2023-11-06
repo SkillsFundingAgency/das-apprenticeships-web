@@ -21,6 +21,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         {
             var claims = new[]
             {
+                new Claim(UserClaims.AuthenticationType, AuthenticationType.Employer.ToString()),
                 new Claim(ClaimsIdentity.DefaultNameClaimType, "10000001"),
                 new Claim(ProviderClaims.DisplayName, "AED User"),
                 new Claim(ProviderClaims.Service, "DAA"),

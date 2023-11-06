@@ -6,6 +6,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
     {
         bool IsProviderAuthorised(AuthorizationHandlerContext context);
     }
+    //TODO CHECK DETAILS
     public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>, IProviderAccountAuthorisationHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

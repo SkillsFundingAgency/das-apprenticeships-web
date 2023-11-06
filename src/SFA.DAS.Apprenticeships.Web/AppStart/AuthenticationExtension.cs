@@ -14,7 +14,11 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     {
         public static void SetUpProviderAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
-            if (config.UseDfeSignIn())
+            if (config.UseLocalStubAuth())
+            {
+                services.AddProviderStubAuthentication();
+            }
+            else if (config.UseDfeSignIn())
             {
                 // Use DfESignIn OpenIdConnect
                 services.AddAndConfigureDfESignInAuthentication(
@@ -24,42 +28,28 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                     ClientName.ProviderRoatp,
                     "/signout",
                     "");
-                return;
-            }
-            else if (config.UseLocalStubAuth())
-            {
-                services.AddProviderStubAuthentication();
-            }
-            else
-            {
-                //???
             }
         }
 
         public static void SetUpEmployerAuthentication(this IServiceCollection services, ConfigurationManager config, ServiceParameters serviceParameters)
         {
-            if (config.UseGovSignIn())
+            if (config.UseLocalStubAuth())
             {
-                // Use GovSignIn OpenIdConnect
-                services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
-                services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, config["ResourceEnvironmentName"]);
-            }
-            else
-            {
-                if (config.UseLocalStubAuth())
-                {
-                    services.AddEmployerStubAuthentication();    
-                }
-                else
-                {
-                    //???
-                }
+                services.AddEmployerStubAuthentication();    
                 services.AddAuthenticationCookie(serviceParameters.AuthenticationType);
                 services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, identityClientId: "no-auth-id", config["ResourceEnvironmentName"]);
             }
-            services.AddSingleton(new ProviderSharedUIConfiguration());
+            else if (config.UseGovSignIn())
+            {
+                // Use GovSignIn OpenIdConnect
+                services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
+                //TODO NEEDED?
+                services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, config["ResourceEnvironmentName"]);
+            }
+            //TODO NEEDED?
+            services.AddSingleton(new ProviderSharedUIConfiguration()); 
         }
-        public static void AddAuthenticationCookie(this IServiceCollection services,
+        private static void AddAuthenticationCookie(this IServiceCollection services,
             AuthenticationType? serviceParametersAuthenticationType)
         {
             services.AddAuthentication().AddCookie(options =>

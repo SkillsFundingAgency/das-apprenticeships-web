@@ -13,7 +13,6 @@ namespace SFA.DAS.Apprenticeships.Web
         public static void Main(string[] args)
         {
             //TODO refactor this file!
-            //TODO UPDATE NUGET PACKAGES
             //TODO ADD README
 
             // Logging and initial config
@@ -24,11 +23,16 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.ConfigureAzureTableStorage(config);
 
             //Authentication & Authorization
-            //TODO: Establish if provider or employer...?
-            var serviceParameters = new ServiceParameters
+            var serviceParameters = new ServiceParameters();
+            //TODO Store the below info as a claim for use elsewhere in app
+            if (config["AuthType"].Equals("Employer", StringComparison.CurrentCultureIgnoreCase))
             {
-                AuthenticationType = AuthenticationType.Provider
-            };
+                serviceParameters.AuthenticationType = AuthenticationType.Employer;
+            }
+            else if (config["AuthType"].Equals("Provider", StringComparison.CurrentCultureIgnoreCase))
+            {
+                serviceParameters.AuthenticationType = AuthenticationType.Provider;
+            }
             builder.AddConfigurationOptions(config, serviceParameters.AuthenticationType);
 
             if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
@@ -41,10 +45,6 @@ namespace SFA.DAS.Apprenticeships.Web
                 builder.Services.AddProviderUiServiceRegistration(config);
                 builder.Services.SetUpProviderAuthorizationServices();
                 builder.Services.SetUpProviderAuthentication(config);
-            }
-            else
-            {
-                //????
             }
             builder.Services.AddSharedAuthenticationServices();
 

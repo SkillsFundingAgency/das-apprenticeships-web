@@ -25,6 +25,11 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
     }
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext ctx)
     {
+        var claims = new List<Claim>()
+        {
+            new(UserClaims.AuthenticationType, AuthenticationType.Employer.ToString())
+        };
+
         if (_configuration.UseLocalStubAuth())
         {
             var accountClaims = new Dictionary<string, EmployerUserAccountItem>();
@@ -34,11 +39,8 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
                 AccountId = "ABC123",
                 EmployerName = "Stub Employer"
             });
-            var claims = new[]
-            {
-                new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonConvert.SerializeObject(accountClaims)),
-                new Claim(EmployerClaims.EmployerEmailClaimsTypeIdentifier, _configuration["NoAuthEmail"])
-            };
+            claims.Add(new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonConvert.SerializeObject(accountClaims)));
+            claims.Add(new Claim(EmployerClaims.EmployerEmailClaimsTypeIdentifier, _configuration["NoAuthEmail"]));
 
             return claims.ToList();
         }

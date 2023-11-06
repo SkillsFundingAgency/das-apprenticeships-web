@@ -14,6 +14,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
         bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles);
     }
 
+    //TODO CHECK DETAILS
     public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>, IEmployerAccountAuthorisationHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
