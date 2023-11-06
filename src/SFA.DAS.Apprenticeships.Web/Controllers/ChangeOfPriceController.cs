@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 
@@ -9,40 +10,35 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
     public class ChangeOfPriceController : Controller
     {
         private readonly ILogger<ChangeOfPriceController> _logger;
+        private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly IMapper<CreateChangeOfPriceModel> _mapper;
+        public const string ChangeOfPriceRequestViewName = "CreatePriceChangeRequest";
 
-        public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger)
+        public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger, IApprenticeshipService apprenticeshipService, IMapper<CreateChangeOfPriceModel> mapper)
         {
             _logger = logger;
+            _apprenticeshipService = apprenticeshipService;
+            _mapper = mapper;
         }
 
-        [Route("", Name = RouteNames.CreatePriceChangeRequest, Order = 0)]
-        public IActionResult CreatePriceChangeRequest()
+        [Route("ChangeOfPrice/{apprenticeshipId}", Name = RouteNames.CreatePriceChangeRequest, Order = 0)]
+        public async Task<IActionResult> GetPage(string apprenticeshipId)
         {
-            var model = TempPopulateModel();
-            return View(model);
+            var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipId);
+            var model = _mapper.Map(apprenticeshipPrice);
+            return View(ChangeOfPriceRequestViewName, model);
         }
 
         [HttpPost]
-        [Route("")]
+        [Route("ChangeOfPrice/{apprenticeshipId}")]
         public IActionResult CreatePriceChangeRequest(CreateChangeOfPriceModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(ChangeOfPriceRequestViewName, model);
             }
 
-            //  Actions here to be completed in later User Story
-            return View(model);
-        }
-
-        private CreateChangeOfPriceModel TempPopulateModel()
-        {
-            return new CreateChangeOfPriceModel
-            {
-                FundingBandMaximum = 9000,
-                ApprenticeshipTrainingPrice = 6000,
-                ApprenticeshipEndPointAssessmentPrice = 2000,
-            };
+            throw new NotImplementedException("Actions here to be completed in later User Story");
         }
     }
 }
