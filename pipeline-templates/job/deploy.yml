@@ -57,31 +57,11 @@ jobs:
             TableName: Configuration
             ConfigurationSecrets: 
               ApprenticeshipsApimSubscriptionKey: $(ApprenticeshipsApimSubscriptionKey)
-
-- deployment: DeployEmployersWebApp
-  dependsOn: DeployResources
-  pool:
-    name: DAS - Continuous Deployment Agents
-  environment: ${{ parameters.Environment }}
-  strategy:
-    runOnce:
-      deploy:
-        steps:
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             AppServiceName: $(EmployersAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.zip
-
-- deployment: DeployProvidersWebApp
-  dependsOn: DeployResources
-  pool:
-    name: DAS - Continuous Deployment Agents
-  environment: ${{ parameters.Environment }}
-  strategy:
-    runOnce:
-      deploy:
-        steps:
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
