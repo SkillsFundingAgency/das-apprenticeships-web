@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -28,7 +29,7 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.ConfigureAzureTableStorage(config);
             builder.AddDistributedCache(config);
 
-            //Authentication & Authorization
+            // Authentication & Authorization
             var serviceParameters = new ServiceParameters();
             //TODO Store the below info as a claim for use elsewhere in app
             if (config.IsConfigValue("AuthType", "Employer"))
@@ -88,6 +89,8 @@ namespace SFA.DAS.Apprenticeships.Web
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
                 .SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices)
                 //.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome)
+                
+                .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
                 .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
@@ -145,6 +148,18 @@ namespace SFA.DAS.Apprenticeships.Web
         {
             context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
             await next();
+        }
+
+        private static IMvcBuilder ConfigureNavigationSection(this IMvcBuilder builder, ServiceParameters serviceParameters)
+        {
+            if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
+            {
+                builder.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome);
+            }
+            else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
+            {
+                builder.SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices);
+            }
         }
     }
 }
