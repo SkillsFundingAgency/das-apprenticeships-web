@@ -3,20 +3,20 @@ using Microsoft.AspNetCore.Authorization;
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
     /// <summary>
-    /// Authorisation handler that ensures that the UkPrn value of the authenticated Provider matches that of incoming requests.
+    /// Authorization handler that ensures that the UkPrn value of the authenticated Provider matches that of incoming requests.
     /// </summary>
-    public class ProviderAccountAuthorisationHandler : AuthorizationHandler<ProviderAccountRequirement>
+    public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProviderAccountAuthorisationHandler (IHttpContextAccessor httpContextAccessor)
+        public ProviderAccountAuthorizationHandler (IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
         
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ProviderAccountRequirement requirement)
         {
-            if (!IsProviderAuthorised(context)) 
+            if (!IsProviderAuthorized(context)) 
             {
                 context.Fail();
                 return Task.CompletedTask;
@@ -27,7 +27,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return Task.CompletedTask;
         }
         
-        public bool IsProviderAuthorised(AuthorizationHandlerContext context)
+        public bool IsProviderAuthorized(AuthorizationHandlerContext context)
         {
             if (!context.User.HasClaim(c => c.Type.Equals(ProviderClaims.ProviderUkprn)))
             {

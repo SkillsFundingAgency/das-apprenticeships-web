@@ -13,7 +13,6 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             ConfigurationManager config,
             AuthenticationType? authenticationType)
         {
-            //TODO establish if authenticationType-specific config is necessary?
             builder.Services.Configure<ApprenticeshipsWeb>(config.GetSection(nameof(ApprenticeshipsWeb)));
             builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsWeb>>().Value);
             builder.Services.Configure<ApprenticeshipsOuterApi>(config.GetSection(nameof(ApprenticeshipsOuterApi)));

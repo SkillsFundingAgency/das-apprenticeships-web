@@ -14,7 +14,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
         public static void SetUpProviderAuthorizationServices(this IServiceCollection services)
         {
-            services.AddSingleton<IAuthorizationHandler, ProviderAccountAuthorisationHandler>();
+            services.AddSingleton<IAuthorizationHandler, ProviderAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, TrainingProviderAllRolesAuthorizationHandler>();
             services.AddSingleton<ITrainingProviderAuthorizationHandler, TrainingProviderAuthorizationHandler>();
         }
@@ -28,7 +28,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         {
             //TODO Check with Dan - needed?
             //services.AddTransient<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
-            //services.AddTransient<IAuthorizationHandler, ProviderAccountAuthorisationHandler>();
+            //services.AddTransient<IAuthorizationHandler, ProviderAccountAuthorizationHandler>();
             //services.AddSingleton<ITrainingProviderAuthorizationHandler, TrainingProviderAuthorizationHandler>();
             //services.AddSingleton<IAuthorizationHandler, TrainingProviderAllRolesAuthorizationHandler>();
         }
