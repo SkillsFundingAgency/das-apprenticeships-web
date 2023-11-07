@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Apprenticeships.Application.Services;
 using SFA.DAS.GovUK.Auth.Services;
+using SFA.DAS.Apprenticeships.Application.Employer.Services;
+using SFA.DAS.Apprenticeships.Application.Provider.Services;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
@@ -19,6 +20,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddHttpClient<IApiClient, ApiClient>();
             services.AddTransient<IEmployerAccountService, EmployerAccountService>();
+            services.AddTransient<ITrainingProviderService, TrainingProviderService>();
             services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
         }
     }

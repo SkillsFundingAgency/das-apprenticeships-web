@@ -2,23 +2,21 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
-    public interface IProviderAccountAuthorisationHandler
-    {
-        bool IsProviderAuthorised(AuthorizationHandlerContext context);
-    }
-    //TODO CHECK DETAILS
-    public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>, IProviderAccountAuthorisationHandler
+    /// <summary>
+    /// Authorisation handler that ensures that the UkPrn value of the authenticated Provider matches that of incoming requests.
+    /// </summary>
+    public class ProviderAccountAuthorisationHandler : AuthorizationHandler<ProviderAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProviderAccountAuthorizationHandler (IHttpContextAccessor httpContextAccessor)
+        public ProviderAccountAuthorisationHandler (IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
         
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ProviderAccountRequirement requirement)
         {
-            if (!IsProviderAuthorised(context))
+            if (!IsProviderAuthorised(context)) 
             {
                 context.Fail();
                 return Task.CompletedTask;

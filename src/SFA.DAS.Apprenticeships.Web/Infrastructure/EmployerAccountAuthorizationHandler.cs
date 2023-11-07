@@ -9,13 +9,7 @@ using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
-    public interface IEmployerAccountAuthorisationHandler
-    {
-        bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles);
-    }
-
-    //TODO CHECK DETAILS
-    public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>, IEmployerAccountAuthorisationHandler
+    public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmployerAccountService _accountsService;
@@ -42,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return Task.CompletedTask;
         }
 
-        public bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles)
+        private bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles)
         {
             if (!_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.EmployerAccountId))
             {
@@ -110,12 +104,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 _httpContextAccessor.HttpContext.Items.Add(ContextItemKeys.EmployerIdentifier, employerAccounts.GetValueOrDefault(accountIdFromUrl));
             }
 
-            if (!CheckUserRoleForAccess(employerIdentifier, allowAllUserRoles))
-            {
-                return false;
-            }
-            
-            return true;
+            return CheckUserRoleForAccess(employerIdentifier, allowAllUserRoles);
         }
 
         private static bool CheckUserRoleForAccess(EmployerUserAccountItem employerIdentifier, bool allowAllUserRoles)

@@ -12,7 +12,6 @@ namespace SFA.DAS.Apprenticeships.Web
     {
         public static void Main(string[] args)
         {
-            //TODO refactor this file!
             //TODO ADD README
 
             // Logging and initial config
@@ -78,7 +77,7 @@ namespace SFA.DAS.Apprenticeships.Web
                 //TODO: Figure out what NavigationSection is and whether we need it
                 //.SetDefaultNavigationSection(NavigationSection.Home)
                 .EnableGoogleAnalytics()
-                //TODO: .SetDfESignInConfiguration() [See SFA.DAS.ProviderFunding.Web for example]
+                .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
                 //TODO: Figure out if/how zen desk config required for employer
 

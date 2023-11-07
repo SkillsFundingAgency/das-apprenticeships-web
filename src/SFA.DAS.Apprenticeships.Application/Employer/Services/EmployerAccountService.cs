@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.Domain.Employers.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Employers.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
-namespace SFA.DAS.Apprenticeships.Application.Services;
+namespace SFA.DAS.Apprenticeships.Application.Employer.Services;
 
 public class EmployerAccountService : IEmployerAccountService
 {
