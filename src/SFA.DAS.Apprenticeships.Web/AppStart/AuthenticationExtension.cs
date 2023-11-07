@@ -12,6 +12,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     [ExcludeFromCodeCoverage]
     public static class AuthenticationExtension
     {
+        private const string ProviderCookieAuthName = "SFA.DAS.ProviderApprenticeshipService";
         public static void SetUpProviderAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
             if (config.UseLocalStubAuth())
@@ -21,9 +22,10 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             else if (config.UseDfeSignIn())
             {
                 // Use DfESignIn OpenIdConnect
+                //TODO: ensure config for this works
                 services.AddAndConfigureDfESignInAuthentication(
                     config,
-                    "SFA.DAS.ProviderApprenticeshipService",
+                    ProviderCookieAuthName,
                     typeof(CustomServiceRole),
                     ClientName.ProviderRoatp,
                     "/signout",

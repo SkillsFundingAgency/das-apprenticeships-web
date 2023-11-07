@@ -11,7 +11,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
         }
         public static bool IsEnvironmentLocal(this IConfiguration configuration)
         {
-            return configuration["EnvironmentName"].StartsWith("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+            return configuration["ResourceEnvironmentName"].StartsWith("LOCAL", StringComparison.CurrentCultureIgnoreCase);
         }
 
         public static bool UseLocalStubAuth(this IConfiguration config)
