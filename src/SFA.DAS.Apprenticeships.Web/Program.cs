@@ -15,6 +15,9 @@ namespace SFA.DAS.Apprenticeships.Web
     {
         public static void Main(string[] args)
         {
+            //TODO ADD README
+
+            // Logging and initial config
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
@@ -86,6 +89,7 @@ namespace SFA.DAS.Apprenticeships.Web
                 .SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices)
                 //.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome)
                 .EnableGoogleAnalytics()
+                .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
             if (!config.IsEnvironmentLocal())
