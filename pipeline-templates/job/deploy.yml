@@ -58,7 +58,7 @@ jobs:
             ConfigurationSecrets: 
               ApprenticeshipsApimSubscriptionKey: $(ApprenticeshipsApimSubscriptionKey)
 
-- deployment: DeployEmployersApp
+- deployment: DeployEmployersWebApp
   dependsOn: DeployResources
   pool:
     name: DAS - Continuous Deployment Agents
@@ -73,7 +73,7 @@ jobs:
             AppServiceName: $(EmployersAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.zip
 
-- deployment: DeployProvidersApp
+- deployment: DeployProvidersWebApp
   dependsOn: DeployResources
   pool:
     name: DAS - Continuous Deployment Agents
