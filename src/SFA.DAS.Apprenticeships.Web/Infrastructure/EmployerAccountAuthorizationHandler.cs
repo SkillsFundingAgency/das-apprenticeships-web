@@ -26,7 +26,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, EmployerAccountRequirement requirement)
         {
-            if (!IsEmployerAuthorised(context, false))
+            if (!IsEmployerAuthorized(context, false))
             {
                 return Task.CompletedTask;
             }
@@ -36,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return Task.CompletedTask;
         }
 
-        private bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles)
+        private bool IsEmployerAuthorized(AuthorizationHandlerContext context, bool allowAllUserRoles)
         {
             if (!_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.EmployerAccountId))
             {
