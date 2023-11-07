@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.Services.AddApplicationInsightsTelemetry(config["APPINSIGHTS_INSTRUMENTATIONKEY"]);
             builder.ConfigureAzureTableStorage(config);
 
-            //Authentication & Authorization
+            // Authentication & Authorization
             var serviceParameters = new ServiceParameters();
             //TODO Store the below info as a claim for use elsewhere in app
             if (config["AuthType"].Equals("Employer", StringComparison.CurrentCultureIgnoreCase))
@@ -74,8 +75,8 @@ namespace SFA.DAS.Apprenticeships.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
-                //TODO: Figure out what NavigationSection is and whether we need it
-                //.SetDefaultNavigationSection(NavigationSection.Home)
+                
+                .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
                 .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
@@ -134,6 +135,18 @@ namespace SFA.DAS.Apprenticeships.Web
         {
             context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
             await next();
+        }
+
+        private static IMvcBuilder ConfigureNavigationSection(this IMvcBuilder builder, ServiceParameters serviceParameters)
+        {
+            if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
+            {
+                builder.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome);
+            }
+            else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
+            {
+                builder.SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices);
+            }
         }
     }
 }
