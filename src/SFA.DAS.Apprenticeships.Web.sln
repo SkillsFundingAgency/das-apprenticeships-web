@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Web
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Web.UnitTests", "SFA.DAS.Apprenticeships.Web.UnitTests\SFA.DAS.Apprenticeships.Web.UnitTests.csproj", "{87AE0AE0-7AFA-4501-8169-51A49461AE8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Domain", "SFA.DAS.Apprenticeships.Domain\SFA.DAS.Apprenticeships.Domain.csproj", "{6BBDFB2C-A3C3-4A62-B0EE-9F5A8C932280}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Domain", "SFA.DAS.Apprenticeships.Domain\SFA.DAS.Apprenticeships.Domain.csproj", "{6BBDFB2C-A3C3-4A62-B0EE-9F5A8C932280}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Infrastructure", "SFA.DAS.Apprenticeships.Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj", "{2BD5B0B7-3DD1-42E7-952A-0293567483AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Infrastructure", "SFA.DAS.Apprenticeships.Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj", "{2BD5B0B7-3DD1-42E7-952A-0293567483AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Application", "SFA.DAS.Apprenticeships.Application\SFA.DAS.Apprenticeships.Application.csproj", "{DF4AA430-1D63-4E6B-9C98-A061DA222F2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Application", "SFA.DAS.Apprenticeships.Application\SFA.DAS.Apprenticeships.Application.csproj", "{DF4AA430-1D63-4E6B-9C98-A061DA222F2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

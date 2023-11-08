@@ -4,9 +4,12 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 {
     public class CreateChangeOfPriceModel
     {
+        public string? ApprenticeshipHashedId { get; set; }
+        public string? ProviderReferenceNumber { get; set; }
         public int FundingBandMaximum { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
+        public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
     }
 
     public class CreatChangeOfPriceModelMapper : IMapper<CreateChangeOfPriceModel>

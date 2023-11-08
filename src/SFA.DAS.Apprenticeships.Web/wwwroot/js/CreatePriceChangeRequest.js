@@ -8,5 +8,5 @@ function calculateTotal() {
     if (epaPrice != null && epaPrice != "") {
         total += parseInt(epaPrice);
     }
-    document.getElementById("apprenticeship-total-price").innerHTML = '\u00A3' + total;
+    document.getElementById("ApprenticeshipTotalPrice").innerHTML = '\u00A3' + total;
 }
