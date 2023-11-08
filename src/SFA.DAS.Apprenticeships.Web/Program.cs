@@ -47,6 +47,7 @@ namespace SFA.DAS.Apprenticeships.Web
                 builder.Services.SetUpProviderAuthentication(config);
             }
             builder.Services.AddSharedAuthenticationServices();
+            builder.Services.AddAuthorizationPolicies();
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);

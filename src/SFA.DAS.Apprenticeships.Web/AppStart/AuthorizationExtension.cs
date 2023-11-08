@@ -33,8 +33,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             //services.AddSingleton<IAuthorizationHandler, TrainingProviderAllRolesAuthorizationHandler>();
         }
 
-        public static void AddAuthorizationService(this IServiceCollection services,
-            AuthenticationType? serviceParametersAuthenticationType)
+        public static void AddAuthorizationPolicies(this IServiceCollection services)
         {
             services.AddAuthorization(options =>
             {
