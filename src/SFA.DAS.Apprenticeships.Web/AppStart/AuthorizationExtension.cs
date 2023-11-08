@@ -7,10 +7,10 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     [ExcludeFromCodeCoverage]
     public static class AuthorizationExtension
     {
-        private const string _providerDaa = "DAA";
-        private const string _providerDab = "DAB";
-        private const string _providerDac = "DAC";
-        private const string _providerDav = "DAV";
+        private const string ProviderDaa = "DAA";
+        private const string ProviderDab = "DAB";
+        private const string ProviderDac = "DAC";
+        private const string ProviderDav = "DAV";
 
         public static void SetUpProviderAuthorizationServices(this IServiceCollection services)
         {
