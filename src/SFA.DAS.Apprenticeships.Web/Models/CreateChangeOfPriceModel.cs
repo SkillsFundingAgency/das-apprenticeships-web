@@ -10,9 +10,19 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
+
+        /// <summary>
+        /// This is required for validation purposes, and saves making a second call to the API to get the original price
+        /// </summary>
+        public int OriginalTrainingPrice { get; set; }
+
+        /// <summary>
+        /// This is required for validation purposes, and saves making a second call to the API to get the original price
+        /// </summary>
+        public int OriginalEndPointAssessmentPrice { get; set; }
     }
 
-    public class CreatChangeOfPriceModelMapper : IMapper<CreateChangeOfPriceModel>
+    public class CreateChangeOfPriceModelMapper : IMapper<CreateChangeOfPriceModel>
     {
         public CreateChangeOfPriceModel Map(object sourceObject)
         {
@@ -26,12 +36,17 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 
         public CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
         {
-            return new CreateChangeOfPriceModel
+            var model = new CreateChangeOfPriceModel
             {
                 FundingBandMaximum = Convert.ToInt32(apprenticeshipPrice.FundingBandMaximum),
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice)
             };
+
+            model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
+            model.OriginalEndPointAssessmentPrice = model.ApprenticeshipEndPointAssessmentPrice;
+
+            return model;
         }
     }
 }
