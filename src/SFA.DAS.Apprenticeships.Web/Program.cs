@@ -140,14 +140,16 @@ namespace SFA.DAS.Apprenticeships.Web
 
         private static IMvcBuilder ConfigureNavigationSection(this IMvcBuilder builder, ServiceParameters serviceParameters)
         {
-            if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
+            switch (serviceParameters.AuthenticationType)
             {
-                builder.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome);
+                case AuthenticationType.Employer:
+                    builder.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome);
+                    break;
+                case AuthenticationType.Provider:
+                    builder.SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices);
+                    break;
             }
-            else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
-            {
-                builder.SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices);
-            }
+            return builder;
         }
     }
 }

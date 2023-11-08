@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models.Error;
+using SFA.DAS.Provider.Shared.UI.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-    [AllowAnonymous]
+    [HideNavigationBar(hideAccountHeader: false, hideNavigationLinks: true)]
     [Route("[controller]")]
     public class ErrorController : Controller
     {
