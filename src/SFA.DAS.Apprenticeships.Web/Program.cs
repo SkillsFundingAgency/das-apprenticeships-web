@@ -16,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.Web
             var config = builder.Configuration;
 
             // Logging
-            builder.Services.AddApplicationInsightsTelemetry(config["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            builder.Services.AddApplicationInsightsTelemetry();
 
             // Config
             builder.ConfigureAzureTableStorage(config);
