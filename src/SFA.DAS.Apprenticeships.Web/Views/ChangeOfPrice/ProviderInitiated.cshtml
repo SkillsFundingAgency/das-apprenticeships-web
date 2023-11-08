@@ -10,8 +10,9 @@
 
 <div class="govuk-width-container ">
 
-
-    <a href="@Model.ProviderReferenceNumber/apprenticeship/@Model.ApprenticeshipHashedId" class="govuk-back-link">Back</a>
+    <a class="govuk-back-link" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprenticeships" asp-external-action="@Model.ApprenticeshipHashedId">
+        Back
+    </a>
 
     @await Html.PartialAsync("_validationSummary")
 
