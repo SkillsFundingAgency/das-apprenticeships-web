@@ -22,14 +22,12 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             switch (statusCode)
             {
                 case 403:
+                    var useDfESignIn = _configuration.UseDfeSignIn();
+                    var dashboardLink = _configuration["ProviderSharedUIConfiguration:DashboardUrl"];
                     var testPrefixForHelpPageLink = !_configuration.IsConfigValue("ResourceEnvironmentName","prd") ? "test-" : "";
-                    return View(statusCode.ToString(), new Error403ViewModel()
-                    {
-                        UseDfESignIn = _configuration.UseDfeSignIn(),
-                        HelpPageLink = $"https://{testPrefixForHelpPageLink}services.signin.education.gov.uk/approvals/select-organisation?action=request-service"
-                        //TODO: Dashboard link will need to be conditional on whether employer or provider is authenticated
-                        //DashboardLink = _configuration["ProviderSharedUIConfiguration:DashboardUrl"]
-                    });
+                    var helpPageLink =
+                        $"https://{testPrefixForHelpPageLink}services.signin.education.gov.uk/approvals/select-organisation?action=request-service";
+                    return View(statusCode.ToString(), new Error403ViewModel(dashboardLink, helpPageLink, useDfESignIn));
                 case 404:
                     return View(statusCode.ToString());
                 default:
