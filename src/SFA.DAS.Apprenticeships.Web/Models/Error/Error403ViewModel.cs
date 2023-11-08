@@ -14,7 +14,6 @@
 
         public bool UseDfESignIn { get; set; }
         public string HelpPageLink => $"https://{_integrationUrlPart}services.signin.education.gov.uk/approvals/select-organisation?action=request-service";
-        //TODO Once parent app connected, need to set up this HomePage link to (presumably) the PAS home page
         public string HomePageLink { get; set; }
     }
 }

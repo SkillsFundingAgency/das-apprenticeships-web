@@ -10,7 +10,6 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         {
             services.AddHttpContextAccessor();
             services.AddProviderUiServiceRegistration(config);
-            //TODO: Find equivalent for employer - NuGet already installed for SFA.DAS.Employer.Shared.UI but not visible in there
         }
     }
 }

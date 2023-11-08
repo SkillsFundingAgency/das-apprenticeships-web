@@ -23,10 +23,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 case 403:
                     return View(statusCode.ToString(), new Error403ViewModel(_configuration["ResourceEnvironmentName"])
                     {
-                        //TODO: Set up DfeSignIn
                         //UseDfESignIn = _configuration["UseDfESignIn"] != null && _configuration["UseDfESignIn"].Equals("true", StringComparison.CurrentCultureIgnoreCase),
                         
-                        //TODO: Dashboard link will need to be conditional on whether employer or provider is authenticated
                         //DashboardLink = _configuration["ProviderSharedUIConfiguration:DashboardUrl"]
                     });
                 case 404:
