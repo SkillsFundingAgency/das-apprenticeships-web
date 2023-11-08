@@ -3,8 +3,6 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-    //TODO: Figure out what NavigationSection is and whether we need it
-    //[SetNavigationSection(NavigationSection...)]
     public class ChangeOfPriceController : Controller
     {
         private readonly ILogger<ChangeOfPriceController> _logger;

@@ -12,14 +12,13 @@ namespace SFA.DAS.Apprenticeships.Web
     {
         public static void Main(string[] args)
         {
-            //TODO refactor this file!
-            //TODO ADD README
-
-            // Logging and initial config
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            builder.Services.AddApplicationInsightsTelemetry(config["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            // Logging
+            builder.Services.AddApplicationInsightsTelemetry();
+
+            // Config
             builder.ConfigureAzureTableStorage(config);
 
             //Authentication & Authorization
@@ -75,12 +74,9 @@ namespace SFA.DAS.Apprenticeships.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
-                //TODO: Figure out what NavigationSection is and whether we need it
                 //.SetDefaultNavigationSection(NavigationSection.Home)
                 .EnableGoogleAnalytics()
-                //TODO: .SetDfESignInConfiguration() [See SFA.DAS.ProviderFunding.Web for example]
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
-                //TODO: Figure out if/how zen desk config required for employer
 
             if (!config.IsEnvironmentLocal())
             {
@@ -97,7 +93,6 @@ namespace SFA.DAS.Apprenticeships.Web
             {
                 app.UseHealthChecks("");
 
-                //TODO Consider some simple exception handling middleware
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
             }

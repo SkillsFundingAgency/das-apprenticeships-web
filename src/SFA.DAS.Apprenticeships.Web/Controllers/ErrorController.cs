@@ -27,7 +27,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                     {
                         UseDfESignIn = _configuration.UseDfeSignIn(),
                         HelpPageLink = $"https://{testPrefixForHelpPageLink}services.signin.education.gov.uk/approvals/select-organisation?action=request-service"
-                        //TODO: Dashboard link will need to be conditional on whether employer or provider is authenticated
                         //DashboardLink = _configuration["ProviderSharedUIConfiguration:DashboardUrl"]
                     });
                 case 404:
