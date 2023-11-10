@@ -14,13 +14,13 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             _apiClient = apiClient;
         }
 
-        public async Task<string> GetApprenticeshipKey(string apprenticeshipHashId)
+        public async Task<Guid> GetApprenticeshipKey(string apprenticeshipHashId)
         {
-            var result = await _apiClient.Get<string>(new GetApprenticeshipKeyRequest(apprenticeshipHashId));
+            var result = await _apiClient.Get<Guid>(new GetApprenticeshipKeyRequest(apprenticeshipHashId));
             return result.Body;
         }
 
-        public async Task<ApprenticeshipPrice> GetApprenticeshipPrice(string apprenticeshipKey)
+        public async Task<ApprenticeshipPrice> GetApprenticeshipPrice(Guid apprenticeshipKey)
         {
             if(UseStub)
             {
@@ -32,7 +32,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
         }
 
         // DO NOT APPROVE PR WITH THIS STILL HERE
-        public Task<ApprenticeshipPrice> StubGetApprenticeshipPrice(string apprenticeshipKey)
+        public Task<ApprenticeshipPrice> StubGetApprenticeshipPrice(Guid apprenticeshipKey)
         {
             var temp = new ApprenticeshipPrice
             {

@@ -27,7 +27,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         public async Task<IActionResult> GetProviderInitiatedPage(string apprenticeshipHashedId)
         {
             var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-            if(string.IsNullOrEmpty(apprenticeshipKey))
+            if(apprenticeshipKey == default(Guid))
             {
                 _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
                 return NotFound();

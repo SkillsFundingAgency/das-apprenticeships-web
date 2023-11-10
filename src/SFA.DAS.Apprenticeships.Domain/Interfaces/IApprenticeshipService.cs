@@ -4,7 +4,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
 {
     public interface IApprenticeshipService
     {
-        Task<string> GetApprenticeshipKey(string apprenticeshipHashId);
-        Task<ApprenticeshipPrice> GetApprenticeshipPrice(string apprenticeshipKey);
+        Task<Guid> GetApprenticeshipKey(string apprenticeshipHashId);
+        Task<ApprenticeshipPrice> GetApprenticeshipPrice(Guid apprenticeshipKey);
     }
 }

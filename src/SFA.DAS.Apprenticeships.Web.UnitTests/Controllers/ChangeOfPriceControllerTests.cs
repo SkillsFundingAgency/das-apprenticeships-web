@@ -41,7 +41,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Arrange
             var apprenticeshipHashedId = _fixture.Create<string>();
 
-            var apprenticeshipKey = _fixture.Create<string>();
+            var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
             var apprenticeshipPrice = _fixture.Create<ApprenticeshipPrice>();
@@ -85,7 +85,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Arrange
             var apprenticeshipHashedId = _fixture.Create<string>();
 
-            var apprenticeshipKey = _fixture.Create<string>();
+            var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
             var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
@@ -97,6 +97,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var viewResult = result.ShouldBeOfType<NotFoundResult>();
             _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
         }
+        
         [Test]
         public void ProviderInitiatedPriceChangeRequest_InvalidModel_ReturnsCreatePriceChangeRequestView()
         {
