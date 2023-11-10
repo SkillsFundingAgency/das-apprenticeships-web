@@ -18,14 +18,14 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
     public class ChangeOfPriceControllerTests
     {
         private readonly Fixture _fixture;
-        private readonly ILogger<ChangeOfPriceController> _logger;
+        private readonly Mock<ILogger<ChangeOfPriceController>> _mockLogger;
         private Mock<IApprenticeshipService> _mockApprenticeshipService = null!; // should be initialized in Setup()
         private Mock<IMapper<CreateChangeOfPriceModel>> _mockMapper = null!; // should be initialized in Setup()
 
         public ChangeOfPriceControllerTests()
         {
             _fixture = new Fixture();
-            _logger = Mock.Of<ILogger<ChangeOfPriceController>>();
+            _mockLogger = new Mock<ILogger<ChangeOfPriceController>>();
         }
 
         [SetUp]
@@ -39,32 +39,70 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         public async Task GetProviderInitiatedPage_ReturnsMappedModel()
         {
             // Arrange
+            var apprenticeshipHashedId = _fixture.Create<string>();
+
+            var apprenticeshipKey = _fixture.Create<string>();
+            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
+
             var apprenticeshipPrice = _fixture.Create<ApprenticeshipPrice>();
-            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipPrice(It.IsAny<string>())).ReturnsAsync(apprenticeshipPrice);
+            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipPrice(apprenticeshipKey)).ReturnsAsync(apprenticeshipPrice);
 
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
             _mockMapper.Setup(m => m.Map(apprenticeshipPrice)).Returns(createChangeOfPriceModel);
 
-            var controller = new ChangeOfPriceController(_logger, _mockApprenticeshipService.Object, _mockMapper.Object);
-            AddProviderInitiatedRouteValues(controller, "anyProviderReference", "anyApprenticeshipId");
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+            AddProviderInitiatedRouteValues(controller, "anyProviderReference", apprenticeshipHashedId);
 
             // Act
-            var result = await controller.GetProviderInitiatedPage("anyApprenticeshipId");
+            var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
             var viewModel = viewResult.Model.ShouldBeOfType<CreateChangeOfPriceModel>();
             viewModel.Should().Be(createChangeOfPriceModel);
             viewModel.ProviderReferenceNumber.Should().Be("anyProviderReference");
-            viewModel.ApprenticeshipHashedId.Should().Be("anyApprenticeshipId");
+            viewModel.ApprenticeshipHashedId.Should().Be(apprenticeshipHashedId);
         }
 
+        [Test]
+        public async Task GetProviderInitiatedPage_HashIdNotFound_Returns404()
+        {
+            // Arrange
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+
+            // Act
+            var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<NotFoundResult>();
+            _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+        }
+
+        [Test]
+        public async Task GetProviderInitiatedPage_ApprenticeshipPriceNotFound_Returns404()
+        {
+            // Arrange
+            var apprenticeshipHashedId = _fixture.Create<string>();
+
+            var apprenticeshipKey = _fixture.Create<string>();
+            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
+
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+
+            // Act
+            var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<NotFoundResult>();
+            _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
+        }
         [Test]
         public void ProviderInitiatedPriceChangeRequest_InvalidModel_ReturnsCreatePriceChangeRequestView()
         {
             // Arrange
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
-            var controller = new ChangeOfPriceController(_logger, _mockApprenticeshipService.Object, _mockMapper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
             controller.ModelState.AddModelError("anyKey", "anyErrorMessage");
             AddProviderInitiatedRouteValues(controller, "anyProviderReference", "anyApprenticeshipId");
 

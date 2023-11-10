@@ -15,8 +15,4 @@
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Apprenticeships\Api\Requests\" />
-  </ItemGroup>
-
 </Project>

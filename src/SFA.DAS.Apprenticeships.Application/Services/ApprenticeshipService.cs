@@ -1,11 +1,38 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
 namespace SFA.DAS.Apprenticeships.Application.Services
 {
     public class ApprenticeshipService : IApprenticeshipService
     {
-        public Task<ApprenticeshipPrice> GetApprenticeshipPrice(string apprenticeshipId)
+        private readonly IApiClient _apiClient;
+        private const bool UseStub = false; // DO NOT APPROVE PR WITH THIS STILL HERE
+
+        public ApprenticeshipService(IApiClient apiClient)
+        {
+            _apiClient = apiClient;
+        }
+
+        public async Task<string> GetApprenticeshipKey(string apprenticeshipHashId)
+        {
+            var result = await _apiClient.Get<string>(new GetApprenticeshipKeyRequest(apprenticeshipHashId));
+            return result.Body;
+        }
+
+        public async Task<ApprenticeshipPrice> GetApprenticeshipPrice(string apprenticeshipKey)
+        {
+            if(UseStub)
+            {
+                return await StubGetApprenticeshipPrice(apprenticeshipKey);
+            }
+
+            var result = await _apiClient.Get<ApprenticeshipPrice>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
+            return result.Body;
+        }
+
+        // DO NOT APPROVE PR WITH THIS STILL HERE
+        public Task<ApprenticeshipPrice> StubGetApprenticeshipPrice(string apprenticeshipKey)
         {
             var temp = new ApprenticeshipPrice
             {
@@ -15,5 +42,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             };
             return Task.FromResult(temp);
         }
+
+
     }
 }

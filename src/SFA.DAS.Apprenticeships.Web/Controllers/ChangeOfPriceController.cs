@@ -26,7 +26,20 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public async Task<IActionResult> GetProviderInitiatedPage(string apprenticeshipHashedId)
         {
-            var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashedId);
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            if(string.IsNullOrEmpty(apprenticeshipKey))
+            {
+                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+                return NotFound();
+            }
+
+            var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipKey);
+            if (apprenticeshipPrice == null)
+            {
+                _logger.LogWarning($"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
+                return NotFound();
+            }
+
             var model = _mapper.Map(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
             return View(ProviderInitiatedViewName, model);
