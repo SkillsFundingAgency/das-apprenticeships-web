@@ -7,7 +7,6 @@ namespace SFA.DAS.Apprenticeships.Application.Services
     public class ApprenticeshipService : IApprenticeshipService
     {
         private readonly IApiClient _apiClient;
-        private const bool UseStub = false; // DO NOT APPROVE PR WITH THIS STILL HERE
 
         public ApprenticeshipService(IApiClient apiClient)
         {
@@ -22,27 +21,8 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 
         public async Task<ApprenticeshipPrice> GetApprenticeshipPrice(Guid apprenticeshipKey)
         {
-            if(UseStub)
-            {
-                return await StubGetApprenticeshipPrice(apprenticeshipKey);
-            }
-
             var result = await _apiClient.Get<ApprenticeshipPrice>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
             return result.Body;
         }
-
-        // DO NOT APPROVE PR WITH THIS STILL HERE
-        public Task<ApprenticeshipPrice> StubGetApprenticeshipPrice(Guid apprenticeshipKey)
-        {
-            var temp = new ApprenticeshipPrice
-            {
-                FundingBandMaximum = 10000,
-                AssessmentPrice = 1000,
-                TrainingPrice = 8000
-            };
-            return Task.FromResult(temp);
-        }
-
-
     }
 }

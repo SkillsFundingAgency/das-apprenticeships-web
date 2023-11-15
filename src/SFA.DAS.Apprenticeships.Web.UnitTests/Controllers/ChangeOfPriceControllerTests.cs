@@ -45,6 +45,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
             var apprenticeshipPrice = _fixture.Create<ApprenticeshipPrice>();
+            apprenticeshipPrice.ApprenticeshipKey = apprenticeshipKey;
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipPrice(apprenticeshipKey)).ReturnsAsync(apprenticeshipPrice);
 
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();

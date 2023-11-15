@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipKey);
-            if (apprenticeshipPrice == null)
+            if (apprenticeshipPrice == null || apprenticeshipPrice.ApprenticeshipKey != apprenticeshipKey)
             {
                 _logger.LogWarning($"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
                 return NotFound();
