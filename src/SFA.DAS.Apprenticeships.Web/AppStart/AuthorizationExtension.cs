@@ -53,7 +53,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                     {
                      
                         policy.RequireClaim(ProviderClaims.ProviderUkprn);
-                        policy.RequireClaim(ProviderClaims.Service, _providerDaa, _providerDab, _providerDac, _providerDav);
+                        policy.RequireClaim(ProviderClaims.Service, ProviderDaa, ProviderDab, ProviderDac, ProviderDav);
                         policy.Requirements.Add(new ProviderAccountRequirement());
                         policy.Requirements.Add(new TrainingProviderAllRolesRequirement());
                         policy.RequireAuthenticatedUser();
