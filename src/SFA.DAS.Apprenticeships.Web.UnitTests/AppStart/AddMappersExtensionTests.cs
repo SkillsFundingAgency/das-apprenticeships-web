@@ -1,19 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Moq;
+﻿using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.AppStart
 {
     public class AddMappersExtensionTests
     {
-        // test to see if addTransient is called for each concrete implmentation of IMapper<T>
         [Test]
         public void AddMappers_RegistersAllMappers()
         {
@@ -22,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.AppStart
 
             var iMapperType = typeof(IMapper<>);
             var assembly = Assembly.GetAssembly(typeof(IMapper<>));
-            var mappers = GetAllTypesImplementingInterface(iMapperType, assembly);
+            var mappers = GetAllTypesImplementingInterface(iMapperType, assembly!);
 
             // Act
             serviceCollection.AddMappers();
@@ -30,10 +24,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.AppStart
             // Assert
             foreach (var mapper in mappers)
             {
-                var interfaceType = mapper.GetInterfaces().First();
                 serviceCollection.Any(x => x.ImplementationType == mapper).Should().BeTrue();
-
-                //mockServiceCollection.Verify(m => m.AddTransient(interfaceType, mapper), Times.Once);
             }
         }
 

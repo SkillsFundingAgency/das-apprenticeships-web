@@ -27,5 +27,21 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions
             // Assert
             result.Should().Be(routeValue);
         }
+
+        [Test]
+        public void GetRouteValueString_ThrowsArgumentException()
+        {
+            // Arrange
+            const string valueKey = "anyValueKey";
+
+            var mockHttpContext = new Mock<HttpContext>();
+            var mockHttpRequest = new Mock<HttpRequest>();
+            mockHttpRequest.Setup(m => m.RouteValues).Returns(new RouteValueDictionary());
+            mockHttpContext.Setup(m => m.Request).Returns(mockHttpRequest.Object);
+
+            // Act / Assert
+            Assert.Throws<ArgumentException>(()=> mockHttpContext.Object.GetRouteValueString(valueKey));
+
+        }
     }
 }
