@@ -14,6 +14,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models
             _fixture = new Fixture();
         }
 
+        [Test]
         public void Map_ApprenticeshipPriceToCreateChangeOfPriceModel()
         {
             // Arrange
