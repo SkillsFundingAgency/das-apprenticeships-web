@@ -4,7 +4,6 @@ using SFA.DAS.DfESignIn.Auth.AppStart;
 using SFA.DAS.DfESignIn.Auth.Enums;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.AppStart;
-using SFA.DAS.Provider.Shared.UI.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
@@ -22,7 +21,6 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             else if (config.UseDfeSignIn())
             {
                 // Use DfESignIn OpenIdConnect
-                //TODO: ensure config for this works
                 services.AddAndConfigureDfESignInAuthentication(
                     config,
                     ProviderCookieAuthName,
@@ -45,11 +43,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             {
                 // Use GovSignIn OpenIdConnect
                 services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
-                //TODO NEEDED?
                 services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, config["ResourceEnvironmentName"]);
             }
-            //TODO NEEDED?
-            services.AddSingleton(new ProviderSharedUIConfiguration()); 
         }
         private static void AddAuthenticationCookie(this IServiceCollection services,
             AuthenticationType? serviceParametersAuthenticationType)
