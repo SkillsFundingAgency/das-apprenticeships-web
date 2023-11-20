@@ -14,9 +14,6 @@
         "sharedEnvResourceGroup": {
         "type": "string"
         },
-         "appConfiguration": {
-          "type": "array"
-        },
         "configurationStorageConnectionString": {
             "type": "securestring"
         },
@@ -366,8 +363,8 @@
                               "value": "[parameters('cdnUrl')]"
                             },
                             {
-                              "name": "AuthType",
-                              "value": "[parameters('appConfiguration')[copyIndex()].authType]"
+                                "name": "AuthType",
+                                "value": "[variables('providerAuthType')]"
                             }
                           ]
                         }
