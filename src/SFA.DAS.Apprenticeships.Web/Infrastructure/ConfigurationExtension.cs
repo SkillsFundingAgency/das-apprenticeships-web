@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
     {
         public static bool IsConfigValue(this IConfiguration config, string key, string value)
         {
-            return !string.IsNullOrEmpty(config[key]) && !config[key].Equals(value, StringComparison.CurrentCultureIgnoreCase);
+            return !string.IsNullOrEmpty(config[key]) && config[key].Equals(value, StringComparison.CurrentCultureIgnoreCase);
         }
         public static bool IsEnvironmentLocal(this IConfiguration configuration)
         {
