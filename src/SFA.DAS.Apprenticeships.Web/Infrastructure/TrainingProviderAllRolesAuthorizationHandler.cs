@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SFA.DAS.Provider.Shared.UI.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public class TrainingProviderAllRolesAuthorizationHandler : AuthorizationHandler<TrainingProviderAllRolesRequirement>
     {
         private readonly ITrainingProviderAuthorizationHandler _handler;

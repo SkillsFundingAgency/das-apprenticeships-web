@@ -1,10 +1,12 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Interfaces;
+﻿using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Domain.Providers.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Providers.Api.Responses;
 
 namespace SFA.DAS.Apprenticeships.Application.Provider.Services
 {
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public class TrainingProviderService : ITrainingProviderService
     {
         private readonly IApiClient _apiClient;

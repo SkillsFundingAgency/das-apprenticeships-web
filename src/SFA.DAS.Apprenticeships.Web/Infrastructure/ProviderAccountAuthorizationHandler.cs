@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
@@ -5,6 +6,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
     /// <summary>
     /// Authorization handler that ensures that the UkPrn value of the authenticated Provider matches that of incoming requests.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
