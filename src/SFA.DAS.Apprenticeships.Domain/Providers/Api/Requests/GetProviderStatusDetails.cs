@@ -1,7 +1,9 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Domain.Providers.Api.Requests
 {
+    [ExcludeFromCodeCoverage]
     public class GetProviderStatusDetails : IGetApiRequest
     {
         private readonly long _ukprn;
