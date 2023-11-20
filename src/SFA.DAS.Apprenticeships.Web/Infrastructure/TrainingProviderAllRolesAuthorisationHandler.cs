@@ -22,19 +22,6 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, TrainingProviderAllRolesRequirement requirement)
         {
-            HttpContext currentContext;
-            switch (context.Resource)
-            {
-                case HttpContext resource:
-                    currentContext = resource;
-                    break;
-                case AuthorizationFilterContext authorizationFilterContext:
-                    currentContext = authorizationFilterContext.HttpContext;
-                    break;
-                default:
-                    currentContext = null;
-                    break;
-            }
 
             if (!context.User.HasClaim(c => c.Type.Equals(ProviderClaims.ProviderUkprn)))
             {
@@ -51,9 +38,15 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             }
 
             var isStubProviderValidationEnabled = GetUseStubProviderValidationSetting();
+            var currentContext = context.Resource switch
+            {
+                HttpContext resource => resource,
+                AuthorizationFilterContext authorizationFilterContext => authorizationFilterContext.HttpContext,
+                _ => null
+            };
 
-            // check if the stub is activated to by-pass the validation. Mostly used for local development purpose.
-            // logic to check if the provider is authorized if not redirect the user to PAS 401 un-authorized page.
+            // Check if the stub is activated to by-pass the validation. Mostly used for local development purpose.
+            // Logic to check if the provider is authorized if not redirect the user to PAS 401 un-authorized page.
             if (!isStubProviderValidationEnabled && !(await _handler.IsProviderAuthorized(context)))
             {
                 currentContext?.Response.Redirect($"{_providerSharedUiConfiguration.DashboardUrl}/error/403/invalid-status");
