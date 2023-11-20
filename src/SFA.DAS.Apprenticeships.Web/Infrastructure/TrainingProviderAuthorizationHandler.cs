@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
@@ -17,6 +18,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
     }
 
     ///<inheritdoc cref="ITrainingProviderAuthorizationHandler"/>
+    [ExcludeFromCodeCoverage]
     public class TrainingProviderAuthorizationHandler : ITrainingProviderAuthorizationHandler
     {
         private readonly ITrainingProviderService _trainingProviderService;
