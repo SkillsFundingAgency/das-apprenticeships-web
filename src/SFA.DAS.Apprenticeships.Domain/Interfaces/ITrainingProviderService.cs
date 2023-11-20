@@ -8,8 +8,8 @@
         /// <summary>
         /// Contract to get the details of the Provider by given ukprn or provider Id.
         /// </summary>
-        /// <param name="providerId">ukprn.</param>
+        /// <param name="ukprn">Provider's ID (UK Provider Reference Number).</param>
         /// <returns>bool.</returns>
-        Task<bool> CanProviderAccessService(long providerId);
+        Task<bool> CanProviderAccessService(long ukprn);
     }
 }
