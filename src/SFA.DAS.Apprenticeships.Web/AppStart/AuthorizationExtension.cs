@@ -26,7 +26,6 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
         public static void AddSharedAuthenticationServices(this IServiceCollection services)
         {
-            //TODO Check with Dan - needed?
             //services.AddTransient<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             //services.AddTransient<IAuthorizationHandler, ProviderAccountAuthorizationHandler>();
             //services.AddSingleton<ITrainingProviderAuthorizationHandler, TrainingProviderAuthorizationHandler>();
