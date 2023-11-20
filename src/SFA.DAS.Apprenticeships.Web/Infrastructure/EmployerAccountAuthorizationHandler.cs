@@ -60,35 +60,27 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 return false;
             }
 
-            EmployerUserAccountItem employerIdentifier = null;
+            EmployerUserAccountItem employerIdentifier;
 
-            if (employerAccounts != null)
+            if (employerAccounts != null && employerAccounts.ContainsKey(accountIdFromUrl))
             {
-                employerIdentifier = employerAccounts.ContainsKey(accountIdFromUrl) 
-                    ? employerAccounts[accountIdFromUrl] : null;
+                employerIdentifier =  employerAccounts[accountIdFromUrl];
             }
-
-            if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
+            else
             {
                 const string requiredIdClaim = ClaimTypes.NameIdentifier;
                 
                 if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
                     return false;
                 
-                var userClaim = context.User.Claims
-                    .First(c => c.Type.Equals(requiredIdClaim));
-
+                var userClaim = context.User.Claims.First(c => c.Type.Equals(requiredIdClaim));
+                var userId = userClaim.Value;
                 var email = context.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value;
 
-                var userId = userClaim.Value;
-
-                var result = _accountsService.GetUserAccounts(userId, email).Result;
-                
-                var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
+                var accounts = _accountsService.GetUserAccounts(userId, email).Result;
+                var accountsAsJson = JsonConvert.SerializeObject(accounts.EmployerAccounts.ToDictionary(k => k.AccountId));
                 var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
-                
                 var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
-
                 userClaim.Subject.AddClaim(associatedAccountsClaim);
                 
                 if (!updatedEmployerAccounts.ContainsKey(accountIdFromUrl))

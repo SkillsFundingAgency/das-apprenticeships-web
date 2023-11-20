@@ -40,7 +40,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return providerDetails;
         }
 
-        private long GetProviderId(AuthorizationHandlerContext authorizationHandlerContext)
+        private static long GetProviderId(AuthorizationHandlerContext authorizationHandlerContext)
         {
             return long.TryParse(authorizationHandlerContext.User.FindFirst(c => c.Type.Equals(ProviderClaims.ProviderUkprn))?.Value, out var providerId) 
                 ? providerId 
