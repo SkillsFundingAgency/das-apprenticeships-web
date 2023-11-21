@@ -10,6 +10,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
         public DateField EffectiveFromDate { get; set; } = new DateField();
+        public DateTime? ApprenticeshipActualStartDate { get; set; }
+        public DateTime? ApprenticeshipPlannedEndDate { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 
         /// <summary>
@@ -41,7 +43,9 @@ namespace SFA.DAS.Apprenticeships.Web.Models
             {
                 FundingBandMaximum = Convert.ToInt32(apprenticeshipPrice.FundingBandMaximum),
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
-                ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice)
+                ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
+                ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipStartDate,
+                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate
             };
 
             model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
