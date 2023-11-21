@@ -1,10 +1,14 @@
-using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Provider.Shared.UI.Startup;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
+using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Provider.Shared.UI.Models;
+using SFA.DAS.Provider.Shared.UI.Startup;
+using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Provider.Shared.UI.Startup;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -77,6 +81,7 @@ namespace SFA.DAS.Apprenticeships.Web
                     }
                 })
                 .ConfigureNavigationSection(serviceParameters)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
                 .EnableGoogleAnalytics()
                 .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());

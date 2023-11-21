@@ -19,9 +19,11 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             services.AddHttpContextAccessor();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddHttpClient<IApiClient, ApiClient>();
+            services.AddTransient<IApprenticeshipService, ApprenticeshipService>();
             services.AddTransient<IEmployerAccountService, EmployerAccountService>();
             services.AddTransient<ITrainingProviderService, TrainingProviderService>();
             services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
+            services.AddMappers();
         }
     }
 }
