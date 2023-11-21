@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Apprenticeships.Application.Apprentice.Services;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Application.Employer.Services;
