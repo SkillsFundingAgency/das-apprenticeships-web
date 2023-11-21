@@ -1,9 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Provider.Shared.UI.Startup;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
+using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Provider.Shared.UI.Models;
+using SFA.DAS.Provider.Shared.UI.Startup;
+using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.Provider.Shared.UI.Startup;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -74,6 +78,8 @@ namespace SFA.DAS.Apprenticeships.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
+                //TODO: Figure out what NavigationSection is and whether we need it
                 //.SetDefaultNavigationSection(NavigationSection.Home)
                 .EnableGoogleAnalytics()
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
