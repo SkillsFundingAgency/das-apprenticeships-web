@@ -12,7 +12,7 @@
             "type": "string"
         },
         "sharedEnvResourceGroup": {
-        "type": "string"
+            "type": "string"
         },
         "configurationStorageConnectionString": {
             "type": "securestring"
