@@ -23,15 +23,15 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
         [TestCase(_endPointAssessmentPriceMessage, _endPointAssessmentPriceProperty, 1000, 100001, 2000, 2000)]
         [TestCase(_totalPriceExceedsMaximum, _totalPriceProperty, 95000, 15000, 2000, 2000)]
         public void CreateChangeOfPriceModelValidator_ReturnsExpectedErrorMessage(
-            string expectedMessage, string expectedProperty, int trainingPrice, int assessmentPrice, int orginalTrainingPrice, int orginalAssessmentPrice)
+            string expectedMessage, string expectedProperty, int trainingPrice, int assessmentPrice, int originalTrainingPrice, int originalAssessmentPrice)
         {
             // Arrange
             var model = new CreateChangeOfPriceModel
             {
                 ApprenticeshipTrainingPrice = trainingPrice,
                 ApprenticeshipEndPointAssessmentPrice = assessmentPrice,
-                OriginalTrainingPrice = orginalTrainingPrice,
-                OriginalEndPointAssessmentPrice = orginalAssessmentPrice
+                OriginalTrainingPrice = originalTrainingPrice,
+                OriginalEndPointAssessmentPrice = originalAssessmentPrice
             };
             var validator = new CreateChangeOfPriceModelValidator();
 
