@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 FundingBandMaximum = Convert.ToInt32(apprenticeshipPrice.FundingBandMaximum),
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
-                ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipStartDate,
+                ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate
             };
 
