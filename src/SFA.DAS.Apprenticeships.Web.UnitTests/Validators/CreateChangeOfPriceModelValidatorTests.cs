@@ -48,13 +48,13 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
             }
         }
 
-        [TestCase("Enter a date in the correct format", 41, 5, 2023, "1/06/2024", "1/06/2026")]
-        [TestCase("Enter a date in the correct format", 1, 15, 2023, "1/06/2024", "1/06/2026")]
-        [TestCase("Enter a date in the correct format", 1, 5, -1, "1/06/2024", "1/06/2026")]
-        [TestCase("Enter a date that is after the training start date", 1, 5, 2023, "1/06/2024", "1/06/2026")]
-        [TestCase("The date entered must be before the planned end date", 1, 5, 2027, "1/06/2024", "1/06/2026")]
+        [TestCase("Enter a date in the correct format", 41, 5, 2023)]
+        [TestCase("Enter a date in the correct format", 1, 15, 2023)]
+        [TestCase("Enter a date in the correct format", 1, 5, -1)]
+        [TestCase("Enter a date that is after the training start date", 1, 5, 2023)]
+        [TestCase("The date entered must be before the planned end date", 1, 5, 2027)]
         public void CreateChangeOfPriceModelValidator_EffectiveFromDate_ReturnsExpectedErrorMessage(
-            string expectedMessage, int day, int month, int year, string plannedStart, string plannedEnd)
+            string expectedMessage, int day, int month, int year)
         {
             // Arrange
             var model = new CreateChangeOfPriceModel
@@ -64,8 +64,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 OriginalTrainingPrice = 5000,
                 OriginalEndPointAssessmentPrice = 500,
                 EffectiveFromDate = new DateField { Day = day, Month = month, Year = year },
-                ApprenticeshipActualStartDate = DateTime.Parse(plannedStart),
-                ApprenticeshipPlannedEndDate = DateTime.Parse(plannedEnd)
+                ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
+                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1)
             };
             var validator = new CreateChangeOfPriceModelValidator();
 
