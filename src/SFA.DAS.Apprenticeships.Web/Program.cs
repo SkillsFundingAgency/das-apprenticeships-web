@@ -89,7 +89,7 @@ namespace SFA.DAS.Apprenticeships.Web
 
             if (!config.IsEnvironmentLocal())
             {
-                //builder.Services.AddHealthChecks();
+                builder.Services.AddHealthChecks();
             }
 
             var app = builder.Build();
@@ -100,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.Web
             }
             else
             {
-                //app.UseHealthChecks("");
+                app.CreateHealthCheckEndpoints();
 
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
