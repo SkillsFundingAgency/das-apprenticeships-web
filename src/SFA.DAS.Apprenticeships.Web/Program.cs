@@ -45,16 +45,16 @@ namespace SFA.DAS.Apprenticeships.Web
 
             if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
             {
-                builder.Services.SetUpEmployerAuthorizationServices();
-                builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
+                //builder.Services.SetUpEmployerAuthorizationServices();
+                //builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
             }
             else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
             {
                 builder.Services.AddProviderUiServiceRegistration(config);
-                builder.Services.SetUpProviderAuthorizationServices();
-                builder.Services.SetUpProviderAuthentication(config);
+                //builder.Services.SetUpProviderAuthorizationServices();
+                //builder.Services.SetUpProviderAuthentication(config);
             }
-            builder.Services.AddSharedAuthenticationServices();
+            //builder.Services.AddSharedAuthenticationServices();
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
