@@ -7,7 +7,6 @@ using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
-using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -90,7 +89,7 @@ namespace SFA.DAS.Apprenticeships.Web
 
             if (!config.IsEnvironmentLocal())
             {
-                builder.Services.AddHealthChecks();
+                //builder.Services.AddHealthChecks();
             }
 
             var app = builder.Build();
@@ -101,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.Web
             }
             else
             {
-                app.UseHealthChecks("");
+                //app.UseHealthChecks("");
 
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
