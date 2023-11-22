@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     [ExcludeFromCodeCoverage]
     public static class HealthCheckExtensions
     {
-        public static IApplicationBuilder UseHealthChecks(this IApplicationBuilder app)
+        public static IApplicationBuilder CreateHealthCheckEndpoints(this IApplicationBuilder app)
         {
             app.UseHealthChecks("/health", new HealthCheckOptions
             {

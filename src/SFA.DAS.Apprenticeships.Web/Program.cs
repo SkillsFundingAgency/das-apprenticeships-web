@@ -101,7 +101,6 @@ namespace SFA.DAS.Apprenticeships.Web
             else
             {
                 app.CreateHealthCheckEndpoints();
-
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
             }
