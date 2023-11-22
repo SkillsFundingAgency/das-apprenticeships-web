@@ -10,6 +10,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
         public DateField EffectiveFromDate { get; set; } = new DateField();
+        public string? ReasonForChangeOfPrice { get; set; }
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
@@ -37,7 +38,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
             throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
         }
 
-        public CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
+        private static CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
         {
             var model = new CreateChangeOfPriceModel
             {
