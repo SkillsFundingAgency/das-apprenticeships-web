@@ -7,8 +7,7 @@ using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
-using SFA.DAS.Provider.Shared.UI.Startup;
-using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -84,8 +83,8 @@ namespace SFA.DAS.Apprenticeships.Web
                     }
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
-                //TODO: Figure out what NavigationSection is and whether we need it
-                //.SetDefaultNavigationSection(NavigationSection.Home)
+                .SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices)
+                //.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome)
                 .EnableGoogleAnalytics()
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
