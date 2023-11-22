@@ -15,12 +15,18 @@
                     return null;
                 }
 
-                if(DateTime.TryParse($"{Day}/{Month}/{Year}", out var date))
+                DateTime? date = null;
+
+                try
                 {
-                    return date;
+                    date = new DateTime(Year.Value, Month.Value, Day.Value);
+                }
+                catch
+                {
+                    // swallow
                 }
 
-                return null;// new DateTime(Year.Value, Month.Value, Day.Value);
+                return date;
             } 
         }
 
