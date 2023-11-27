@@ -1,5 +1,8 @@
 ﻿@model IChangeOfPriceModel
 
+@{
+    var employerName = Model.EmployerName ?? "the employer";
+}
 <div class="govuk-form-group"><br>
     <fieldset class="govuk-fieldset" role="group" aria-describedby="ReasonForChangeOfPrice-hint">
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
@@ -8,7 +11,7 @@
                     What was the reason for changing the price?
                 </legend>
                 <div id="ReasonForChangeOfPrice-hint" class="govuk-hint">
-                    If the total price changes, this reason will be shared with [employer name]. They will need to approve
+                    If the total price changes, this reason will be shared with @employerName. They will need to approve
                     the
                     change. </div>
                 @Html.TextAreaFor(m=>m.ReasonForChangeOfPrice, new { @class = $"govuk-textarea", rows="5", aria_describedby="reason-for-update-hint", maxlength="200", onkeyup="calculateRemainingCharacters(this, 200, 'ReasonForChangeOfPrice-RemainingCharacters')" })

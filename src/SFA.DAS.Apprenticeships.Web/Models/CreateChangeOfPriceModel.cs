@@ -13,6 +13,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public string? ReasonForChangeOfPrice { get; set; }
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
+        public string? EmployerName { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 
         /// <summary>
@@ -46,7 +47,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
-                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate
+                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
+                EmployerName = apprenticeshipPrice.EmployerName
             };
 
             model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
