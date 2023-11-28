@@ -3,13 +3,15 @@
 @{
     var employerName = Model.EmployerName ?? "the employer";
 }
-<div class="govuk-form-group"><br>
+<div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.EffectiveFromDate))">
+    <br>
     <fieldset class="govuk-fieldset" role="group" aria-describedby="ReasonForChangeOfPrice-hint">
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
             <div class="govuk-form-group" id="ReasonForChangeOfPrice">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--m" for="ReasonForChangeOfPrice">
                     What was the reason for changing the price?
                 </legend>
+                @Html.ValidationMessageFor(m => m.ReasonForChangeOfPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ReasonForChangeOfPrice) })
                 <div id="ReasonForChangeOfPrice-hint" class="govuk-hint">
                     If the total price changes, this reason will be shared with @employerName. They will need to approve
                     the
