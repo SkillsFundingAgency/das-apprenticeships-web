@@ -12,6 +12,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper<CreateChangeOfPriceModel> _mapper;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
+        public const string ProviderInitiatedCheckDetails = "ProviderInitiatedCheckDetails";
 
         public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger, IApprenticeshipService apprenticeshipService, IMapper<CreateChangeOfPriceModel> mapper)
         {
@@ -47,13 +48,13 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public IActionResult ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model)
         {
-            if (!ModelState.IsValid)
+			PopulateProviderInitiatedRouteValues(model);
+			if (!ModelState.IsValid)
             {
-                PopulateProviderInitiatedRouteValues(model);
                 return View(ProviderInitiatedViewName, model);
             }
 
-            throw new NotImplementedException("Actions here to be completed in later User Story");
+            return View(ProviderInitiatedCheckDetails, model);
         }
 
         //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel

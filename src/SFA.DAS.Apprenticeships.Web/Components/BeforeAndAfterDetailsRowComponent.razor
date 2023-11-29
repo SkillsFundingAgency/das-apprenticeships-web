@@ -1,0 +1,27 @@
+﻿<tr class="govuk-table__row">
+	<th scope="row" class="govuk-table__header">@Label</th>
+	<td class="govuk-table__cell">@Before</td>
+	<td class="govuk-table__cell" id="@Id">@After</td>
+	<td class="govuk-table__cell" style="text-align: right;">
+		<a class="govuk-link" href="@Url">
+			Change<span class="govuk-visually-hidden">@Label</span>
+		</a>
+	</td>
+</tr>
+
+@code {
+	[Parameter]
+	public string Id { get; set; } = string.Empty;
+
+	[Parameter]
+	public string Label { get; set; } = string.Empty;
+
+	[Parameter]
+	public string Before { get; set; } = string.Empty;
+
+	[Parameter]
+	public string After { get; set; } = string.Empty;
+
+	[Parameter]
+	public string Url { get; set; } = string.Empty;
+}
