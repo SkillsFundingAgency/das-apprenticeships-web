@@ -7,9 +7,9 @@ namespace SFA.DAS.Apprenticeships.Web.Extensions
     {
         public static string FormatCurrency(this int value)
         {
-			CultureInfo cultureInfo = new CultureInfo("en-GB");
-			return value.ToString("C0", cultureInfo);
-		}
+            CultureInfo cultureInfo = new CultureInfo("en-GB");
+            return value.ToString("C0", cultureInfo);
+        }
 
         public static string DisplayFormGroupError(this ViewContext viewContext, string key)
         {
