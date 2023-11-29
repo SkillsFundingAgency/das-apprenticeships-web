@@ -24,6 +24,7 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Config
             builder.ConfigureAzureTableStorage(config);
+            builder.AddDistributedCache(config);
 
             //Authentication & Authorization
             var serviceParameters = new ServiceParameters();

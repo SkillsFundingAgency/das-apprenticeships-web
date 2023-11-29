@@ -1,25 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
+using System.Text.Json;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-    public class ChangeOfPriceController : Controller
+	public class ChangeOfPriceController : Controller
     {
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper<CreateChangeOfPriceModel> _mapper;
+        private readonly IDistributedCache _distributedCache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
         public const string ProviderInitiatedCheckDetails = "ProviderInitiatedCheckDetails";
 
-        public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger, IApprenticeshipService apprenticeshipService, IMapper<CreateChangeOfPriceModel> mapper)
+        public ChangeOfPriceController(
+            ILogger<ChangeOfPriceController> logger, 
+            IApprenticeshipService apprenticeshipService, 
+            IMapper<CreateChangeOfPriceModel> mapper,
+            IDistributedCache distributedCache)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
-        }
+			_distributedCache = distributedCache;
+
+		}
 
         [HttpGet]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
@@ -41,12 +50,27 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
             var model = _mapper.Map(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
+            model.CacheKey = await _distributedCache.SetNewAsync(model);
             return View(ProviderInitiatedViewName, model);
         }
 
-        [HttpPost]
+		[HttpGet]
+		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit/{cacheKey}")]
+		public async Task<IActionResult> GetProviderInitiatedEditPage(string cacheKey)
+		{
+            var model = await _distributedCache.GetAsync<CreateChangeOfPriceModel>(cacheKey);
+			if (model == null)
+			{
+				_logger.LogWarning($"CreateChangeOfPriceModel could not be found for cacheKey {cacheKey}");
+				return NotFound();
+			}
+
+			return View(ProviderInitiatedViewName, model);
+		}
+
+		[HttpPost]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public IActionResult ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model)
+        public async Task<IActionResult> ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model)
         {
 			PopulateProviderInitiatedRouteValues(model);
 			if (!ModelState.IsValid)
@@ -54,7 +78,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return View(ProviderInitiatedViewName, model);
             }
 
-            return View(ProviderInitiatedCheckDetails, model);
+            await _distributedCache.SetAsync(model.CacheKey!, model);
+			return View(ProviderInitiatedCheckDetails, model);
         }
 
         //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel

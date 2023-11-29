@@ -4,6 +4,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 {
     public class CreateChangeOfPriceModel : IChangeOfPriceModel
     {
+        public string? CacheKey { get; set; }
         public string? ApprenticeshipHashedId { get; set; }
         public string? ProviderReferenceNumber { get; set; }
         public int FundingBandMaximum { get; set; }
