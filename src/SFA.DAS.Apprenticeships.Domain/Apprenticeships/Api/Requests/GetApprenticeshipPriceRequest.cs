@@ -11,6 +11,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests
             _apprenticeshipKey = apprenticeshipKey;
         }
 
-        public string GetUrl => $"/Apprenticeship/{_apprenticeshipKey}/price";
+        public string GetUrl => $"Apprenticeship/{_apprenticeshipKey}/price";
     }
 }
