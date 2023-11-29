@@ -73,6 +73,7 @@ stages:
       SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
 
+
 - stage: Deploy_TEST2
   dependsOn: Build
   displayName: Deploy to TEST2
