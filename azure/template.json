@@ -82,7 +82,9 @@
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "employersAppServiceName": "[concat(variables('resourceNamePrefix'), '-emp-as')]",
+        "employerAuthType": "Employer",
         "providersAppServiceName": "[concat(variables('resourceNamePrefix'), '-prv-as')]",
+        "providerAuthType": "Provider",
         "configNames": "SFA.DAS.Apprenticeships.Web"
     },
     "resources": [
@@ -203,6 +205,10 @@
                                 {
                                     "name": "Cdn:Url",
                                     "value": "[parameters('cdnUrl')]"
+                                },
+                                {
+                                    "name": "AuthType",
+                                    "value": "[variables('employerAuthType')]"
                                 }
                             ]
                         }
@@ -355,6 +361,10 @@
                                 {
                                     "name": "Cdn:Url",
                                     "value": "[parameters('cdnUrl')]"
+                                },
+                                {
+                                    "name": "AuthType",
+                                    "value": "[variables('providerAuthType')]"
                                 }
                             ]
                         }

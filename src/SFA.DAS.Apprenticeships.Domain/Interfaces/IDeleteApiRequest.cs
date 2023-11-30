@@ -2,6 +2,9 @@
 {
     public interface IDeleteApiRequest
     {
+        /// <summary>
+        /// This is the relative URL used in the DELETE request. Note that this should not have a leading slash.
+        /// </summary>
         string DeleteUrl { get; }
     }
 }
