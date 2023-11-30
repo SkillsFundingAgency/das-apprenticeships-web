@@ -42,6 +42,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             var model = _mapper.Map(apprenticeshipPrice);
+            model.ApprenticeshipKey = apprenticeshipKey;
             PopulateProviderInitiatedRouteValues(model);
             return View(ProviderInitiatedViewName, model);
         }
@@ -57,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return View(ProviderInitiatedViewName, model);
             }
 
-            throw new NotImplementedException("Actions here to be completed in later User Story");
+            //_apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model., model ) todo
         }
 
         //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
