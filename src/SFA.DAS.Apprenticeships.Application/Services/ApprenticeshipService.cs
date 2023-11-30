@@ -24,5 +24,27 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             var result = await _apiClient.Get<ApprenticeshipPrice>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
             return result.Body;
         }
+
+        public async Task CreatePriceHistory(Guid apprenticeshipKey, long? providerId, long? employerId, string userId,
+            decimal? trainingPrice, decimal? assessmentPrice, decimal? totalPrice, string reason)
+        {
+            await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
+                new CreateApprenticeshipPriceHistoryData
+                {
+                    ProviderId = providerId,
+                    EmployerId = employerId,
+                    UserId = userId,
+                    TrainingPrice = trainingPrice,
+                    AssessmentPrice = assessmentPrice,
+                    TotalPrice = totalPrice,
+                    Reason = reason
+                }));
+        }
+
+        public async Task<ApprenticeshipPrice> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
+        {
+            var result = await _apiClient.Get<ApprenticeshipPrice>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
+            return result.Body;
+        }
     }
 }
