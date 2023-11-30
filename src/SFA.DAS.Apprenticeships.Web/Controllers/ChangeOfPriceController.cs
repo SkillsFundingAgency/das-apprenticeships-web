@@ -50,25 +50,18 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
             var model = _mapper.Map(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
-            model.CacheKey = await _distributedCache.SetNewAsync(model);
+            await _distributedCache.SetCacheModelAsync(model);
             return View(ProviderInitiatedViewName, model);
         }
 
-		[HttpGet]
-		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit/{cacheKey}")]
-		public async Task<IActionResult> GetProviderInitiatedEditPage(string cacheKey)
-		{
-            var model = await _distributedCache.GetAsync<CreateChangeOfPriceModel>(cacheKey);
-			if (model == null)
-			{
-				_logger.LogWarning($"CreateChangeOfPriceModel could not be found for cacheKey {cacheKey}");
-				return NotFound();
-			}
+        [HttpGet]
+        [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
+        public IActionResult GetProviderInitiatedEditPage(CreateChangeOfPriceModel model)
+        {
+            return View(ProviderInitiatedViewName, model);
+        }
 
-			return View(ProviderInitiatedViewName, model);
-		}
-
-		[HttpPost]
+        [HttpPost]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public async Task<IActionResult> ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model)
         {
@@ -78,7 +71,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return View(ProviderInitiatedViewName, model);
             }
 
-            await _distributedCache.SetAsync(model.CacheKey!, model);
+            await _distributedCache.SetCacheModelAsync(model);
 			return View(ProviderInitiatedCheckDetails, model);
         }
 

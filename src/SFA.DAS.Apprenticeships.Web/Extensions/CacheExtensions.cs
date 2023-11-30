@@ -1,29 +1,21 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using SFA.DAS.Apprenticeships.Web.Models;
 using System.Text.Json;
 
 namespace SFA.DAS.Apprenticeships.Web.Extensions
 {
 	public static class CacheExtensions
 	{
-		public static async Task<string> SetNewAsync(this IDistributedCache cache, Object obj, int expirationInMinutes = 5)
+		public static async Task SetCacheModelAsync(this IDistributedCache cache, ICacheModel cacheModel, int expirationInMinutes = 5)
 		{
-			var key = Guid.NewGuid().ToString();
-
-			var bytes = ObjectToByteArray(obj);
-
-			await cache.SetAsync(key, bytes, new DistributedCacheEntryOptions
+			if (string.IsNullOrEmpty(cacheModel.CacheKey))
 			{
-				AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(expirationInMinutes)
-			});
+				cacheModel.CacheKey = Guid.NewGuid().ToString();
+			}
 
-			return key;
-		}
+			var bytes = ObjectToByteArray(cacheModel);
 
-		public static async Task SetAsync(this IDistributedCache cache, string key, Object obj, int expirationInMinutes = 5)
-		{
-			var bytes = ObjectToByteArray(obj);
-
-			await cache.SetAsync(key, bytes, new DistributedCacheEntryOptions
+			await cache.SetAsync(cacheModel.CacheKey, bytes, new DistributedCacheEntryOptions
 			{
 				AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(expirationInMinutes)
 			});

@@ -30,5 +30,15 @@
             } 
         }
 
+        public override string ToString()
+        {
+            var date = Date;
+            if(date == null || !date.HasValue)
+            {
+				return string.Empty;
+			}
+
+			return date.Value.ToString("dd MMMM yyyy");
+		}
     }
 }

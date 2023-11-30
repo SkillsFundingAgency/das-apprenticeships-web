@@ -19,9 +19,7 @@
 
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
-        <form method="post">
-            @Html.HiddenFor(m=> m.OriginalEndPointAssessmentPrice)
-            @Html.HiddenFor(m=> m.OriginalTrainingPrice)
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId">
             @Html.HiddenFor(m=> m.CacheKey)
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
