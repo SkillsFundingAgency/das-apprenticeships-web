@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
@@ -16,14 +15,12 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmployerAccountService _accountsService;
         private readonly ILogger<EmployerAccountAuthorizationHandler> _logger;
-        private readonly ApprenticeshipsWeb _apprenticeshipsWebConfiguration;
 
-        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger, IOptions<ApprenticeshipsWeb> apprenticeshipsWebConfiguration)
+        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _accountsService = accountsService;
             _logger = logger;
-            _apprenticeshipsWebConfiguration = apprenticeshipsWebConfiguration.Value;
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, EmployerAccountRequirement requirement)
