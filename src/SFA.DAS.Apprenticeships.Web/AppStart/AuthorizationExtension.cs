@@ -24,14 +24,6 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
         }
 
-        public static void AddSharedAuthenticationServices(this IServiceCollection services)
-        {
-            //services.AddTransient<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
-            //services.AddTransient<IAuthorizationHandler, ProviderAccountAuthorizationHandler>();
-            //services.AddSingleton<ITrainingProviderAuthorizationHandler, TrainingProviderAuthorizationHandler>();
-            //services.AddSingleton<IAuthorizationHandler, TrainingProviderAllRolesAuthorizationHandler>();
-        }
-
         public static void AddAuthorizationPolicies(this IServiceCollection services)
         {
             services.AddAuthorization(options =>
