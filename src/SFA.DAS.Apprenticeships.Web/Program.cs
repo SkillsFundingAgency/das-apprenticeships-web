@@ -31,7 +31,6 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Authentication & Authorization
             var serviceParameters = new ServiceParameters();
-            //TODO Store the below info as a claim for use elsewhere in app
             if (config.IsConfigValue("AuthType", "Employer"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Employer;
