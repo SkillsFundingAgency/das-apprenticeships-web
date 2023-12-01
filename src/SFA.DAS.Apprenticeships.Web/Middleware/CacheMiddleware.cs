@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Primitives;
 using SFA.DAS.Apprenticeships.Web.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web.Middleware
 {
 	/// <summary>
 	/// The purpose of this middleware is to retreive data from the cache and add it to the request
 	/// </summary>
+	[ExcludeFromCodeCoverage]
 	public class CacheMiddleware
 	{
 		private readonly RequestDelegate _next;
