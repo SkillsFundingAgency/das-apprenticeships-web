@@ -18,19 +18,19 @@
             <div class="govuk-date-input__item">
                 <div class="govuk-form-group">
                     @Html.LabelFor(m=>m.EffectiveFromDate.Day, new { @class = $"govuk-label govuk-date-input__label" })
-                    @Html.TextBoxFor(m => m.EffectiveFromDate.Day, new { @class = $"govuk-input govuk-date-input__input govuk-input--width-2", @type = "number", @inputmode = "numeric", @pattern="[0-9]*", @min = 1, @max = 31, aria_describedby="EffectiveFromDate" })
+                    @Html.TextBoxFor(m => m.EffectiveFromDate.Day, new { @class = $"govuk-input govuk-date-input__input govuk-input--width-2 length-limit", @type = "number", @inputmode = "numeric", @pattern="[0-9]*", @maxlength="2", @min = 1, @max = 31, aria_describedby="EffectiveFromDate" })
                 </div>
             </div>
             <div class="govuk-date-input__item">
                 <div class="govuk-form-group">
                     @Html.LabelFor(m=>m.EffectiveFromDate.Month, new { @class = $"govuk-label govuk-date-input__label" })
-                    @Html.TextBoxFor(m => m.EffectiveFromDate.Month, new { @class = $"govuk-input govuk-date-input__input govuk-input--width-2", @type = "number", @inputmode = "numeric", @pattern="[0-9]*", @min = 1, @max = 12})
+                    @Html.TextBoxFor(m => m.EffectiveFromDate.Month, new { @class = $"govuk-input govuk-date-input__input govuk-input--width-2 length-limit", @type = "number", @inputmode = "numeric", @pattern="[0-9]*", @maxlength="2", @min = 1, @max = 12})
                 </div>
             </div>
             <div class="govuk-date-input__item">
                 <div class="govuk-form-group">
                     @Html.LabelFor(m=>m.EffectiveFromDate.Year, new { @class = $"govuk-label govuk-date-input__label" })
-                    @Html.TextBoxFor(m => m.EffectiveFromDate.Year, new { @class = $"govuk-input govuk-date-input__input govuk-input--width-4", @type = "number", @inputmode = "numeric", @pattern="[0-9]*", @min = 1900, @max = 9999})
+                    @Html.TextBoxFor(m => m.EffectiveFromDate.Year, new { @class = $"govuk-input govuk-date-input__input govuk-input--width-4 length-limit", @type = "number", @inputmode = "numeric", @pattern="[0-9]*", @maxlength="4", @min = 1900, @max = 9999})
                 </div>
             </div>
         </div>
