@@ -64,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
 
         private bool MustBeAfterTrainingStartDate(CreateChangeOfPriceModel model)
         {
-            if(model.ApprenticeshipActualStartDate.HasValue && model.EffectiveFromDate.Date < model.ApprenticeshipActualStartDate)
+            if(model.ApprenticeshipActualStartDate.HasValue && model.EffectiveFromDate.Date <= model.ApprenticeshipActualStartDate)
             {
                 return false;
             }
@@ -74,7 +74,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
 
         private bool MustBeBeforePlannedEndDate(CreateChangeOfPriceModel model)
         {
-            if (model.ApprenticeshipPlannedEndDate.HasValue && model.EffectiveFromDate.Date > model.ApprenticeshipPlannedEndDate)
+            if (model.ApprenticeshipPlannedEndDate.HasValue && model.EffectiveFromDate.Date >= model.ApprenticeshipPlannedEndDate)
             {
                 return false;
             }
