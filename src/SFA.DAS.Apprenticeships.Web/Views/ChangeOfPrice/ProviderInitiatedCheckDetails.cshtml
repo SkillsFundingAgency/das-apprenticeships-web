@@ -12,7 +12,7 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header app-custom-class" style="width=250px;"></th>
+					<th scope="col" class="govuk-table__header app-custom-class" style="width:250px;"></th>
 					<th scope="col" class="govuk-table__header app-custom-class">Current</th>
 					<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
                     <th scope="col" class="govuk-table__header app-custom-class "></th>
@@ -33,7 +33,7 @@
 						   param-Label='"End-point assessment price"'
 						   param-OrginalValue='Model.OriginalEndPointAssessmentPrice.FormatCurrency()'
 						   param-Value='Model.ApprenticeshipEndPointAssessmentPrice.FormatCurrency()'
-						   param-Url='editPage'
+						   param-Url='$"{editPage}#{nameof(Model.ApprenticeshipEndPointAssessmentPrice)}"'
 						   render-mode="Static" />
 
 				<component type="typeof(DetailsRowComponent)"
@@ -41,7 +41,6 @@
 						   param-Label='"Total price"'
 						   param-OrginalValue='(Model.OriginalTrainingPrice + Model.OriginalEndPointAssessmentPrice).FormatCurrency()'
 						   param-Value='Model.ApprenticeshipTotalPrice.FormatCurrency()'
-						   param-Url='editPage'
 						   render-mode="Static" />
 			</tbody>
 		</table>
@@ -50,7 +49,7 @@
 					   param-Id='"EffectiveFromDate"'
 					   param-Label='"Effective from date"'
 					   param-Value='Model.EffectiveFromDate.ToString()'
-					   param-Url='editPage'
+					   param-Url='$"{editPage}#{nameof(Model.EffectiveFromDate)}_{nameof(Model.EffectiveFromDate.Day)}"'
 					   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
 					   render-mode="Static" />
 
@@ -58,7 +57,7 @@
 					   param-Id='"ReasonForChange"'
 					   param-Label='"Reason for change"'
 					   param-Value='Model.ReasonForChangeOfPrice'
-					   param-Url='editPage'
+					   param-Url='$"{editPage}#{nameof(Model.ReasonForChangeOfPrice)}"'
 					   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
 					   render-mode="Static" />
 		</dl>
@@ -68,10 +67,10 @@
 	<div class="govuk-grid-column-two-thirds">
 		<h2 class="govuk-heading-m">Now send to the employer for approval</h2>
 		<p class="govuk-body">Your payment schedule will not change until the employer approves your request.</p>
-		<form action="confirmation" method="post" novalidate="">
-			<input type="hidden" name="answers-checked" value="true">
+		<form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/submit">
+			@Html.HiddenFor(m=> m.CacheKey)
 			<div class="govuk-button-group">
-				<button class="govuk-button" data-module="govuk-button">
+				<button class="govuk-button" data-module="govuk-button" type="submit">
 					Send
 				</button>
 				<a class="govuk-link" href="@editPage">Go back to edit changes</a>

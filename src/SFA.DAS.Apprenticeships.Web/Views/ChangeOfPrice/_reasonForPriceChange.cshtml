@@ -5,11 +5,11 @@
     var employerName = Model.EmployerName ?? "the employer";
     var charactersRemaining = MaxCharacters - Model.ReasonForChangeOfPrice?.Length ?? MaxCharacters;
 }
-<div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.EffectiveFromDate))">
+<div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.ReasonForChangeOfPrice))">
     <br>
     <fieldset class="govuk-fieldset" role="group" aria-describedby="ReasonForChangeOfPrice-hint">
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="@MaxCharacters">
-            <div class="govuk-form-group" id="ReasonForChangeOfPrice">
+            <div class="govuk-form-group" id="ReasonForChangeOfPriceGroup">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--m" for="ReasonForChangeOfPrice">
                     What was the reason for changing the price?
                 </legend>

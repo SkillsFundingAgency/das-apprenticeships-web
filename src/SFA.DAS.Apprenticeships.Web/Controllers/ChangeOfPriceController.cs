@@ -4,7 +4,7 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
-using System.Text.Json;
+using SFA.DAS.Apprenticeships.Web.Services;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -13,20 +13,20 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper<CreateChangeOfPriceModel> _mapper;
-        private readonly IDistributedCache _distributedCache;
+        private readonly ICacheService _cache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
-        public const string ProviderInitiatedCheckDetails = "ProviderInitiatedCheckDetails";
+        public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
 
         public ChangeOfPriceController(
             ILogger<ChangeOfPriceController> logger, 
             IApprenticeshipService apprenticeshipService, 
             IMapper<CreateChangeOfPriceModel> mapper,
-            IDistributedCache distributedCache)
+			ICacheService cache)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
-			_distributedCache = distributedCache;
+			_cache = cache;
 
 		}
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
             var model = _mapper.Map(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
-            await _distributedCache.SetCacheModelAsync(model);
+            await _cache.SetCacheModelAsync(model);
             return View(ProviderInitiatedViewName, model);
         }
 
@@ -63,7 +63,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
         [HttpPost]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model)
+        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(CreateChangeOfPriceModel model)
         {
 			PopulateProviderInitiatedRouteValues(model);
 			if (!ModelState.IsValid)
@@ -71,12 +71,19 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return View(ProviderInitiatedViewName, model);
             }
 
-            await _distributedCache.SetCacheModelAsync(model);
-			return View(ProviderInitiatedCheckDetails, model);
+            await _cache.SetCacheModelAsync(model);
+			return View(ProviderInitiatedCheckDetailsViewName, model);
         }
 
-        //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-        private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
+		[HttpPost]
+		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
+		public IActionResult ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
+		{
+			return View(ProviderInitiatedCheckDetailsViewName, model); // For now return to previous page, functionality to be added later
+		}
+
+		//  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
+		private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber = HttpContext.GetRouteValueString(RouteValues.Ukprn);

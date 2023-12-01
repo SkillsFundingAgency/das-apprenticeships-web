@@ -10,7 +10,9 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Controllers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
+using System.Runtime.CompilerServices;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 {
@@ -21,8 +23,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         private readonly Mock<ILogger<ChangeOfPriceController>> _mockLogger;
         private Mock<IApprenticeshipService> _mockApprenticeshipService = null!; // should be initialized in Setup()
         private Mock<IMapper<CreateChangeOfPriceModel>> _mockMapper = null!; // should be initialized in Setup()
+		private Mock<ICacheService> _mockCacheService = null!; // should be initialized in Setup()
 
-        public ChangeOfPriceControllerTests()
+		public ChangeOfPriceControllerTests()
         {
             _fixture = new Fixture();
             _mockLogger = new Mock<ILogger<ChangeOfPriceController>>();
@@ -33,7 +36,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             _mockApprenticeshipService = new Mock<IApprenticeshipService>();
             _mockMapper = new Mock<IMapper<CreateChangeOfPriceModel>>();
-        }
+			_mockCacheService = new Mock<ICacheService>();
+
+		}
 
         [Test]
         public async Task GetProviderInitiatedPage_ReturnsMappedModel()
@@ -51,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
             _mockMapper.Setup(m => m.Map(apprenticeshipPrice)).Returns(createChangeOfPriceModel);
 
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object);
             AddProviderInitiatedRouteValues(controller, "anyProviderReference", apprenticeshipHashedId);
 
             // Act
@@ -70,7 +75,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             // Arrange
             var apprenticeshipHashedId = _fixture.Create<string>();
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object);
 
             // Act
             var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
@@ -89,7 +94,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object);
 
             // Act
             var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
@@ -100,23 +105,54 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         }
         
         [Test]
-        public void ProviderInitiatedPriceChangeRequest_InvalidModel_ReturnsCreatePriceChangeRequestView()
+        public async Task ProviderInitiatedCheckDetailsPage_InvalidModel_ReturnsProviderInitiatedViewName()
         {
             // Arrange
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object);
             controller.ModelState.AddModelError("anyKey", "anyErrorMessage");
             AddProviderInitiatedRouteValues(controller, "anyProviderReference", "anyApprenticeshipId");
 
             // Act
-            var result = controller.ProviderInitiatedPriceChangeRequest(createChangeOfPriceModel);
+            var result = await controller.ProviderInitiatedCheckDetailsPage(createChangeOfPriceModel);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
             viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderInitiatedViewName);
         }
 
-        private void AddProviderInitiatedRouteValues(ChangeOfPriceController controller, string providerReferenceNumber, string apprenticeshipHashedId)
+		[Test]
+		public async Task ProviderInitiatedCheckDetailsPage_ReturnsProviderInitiatedCheckDetailsViewName()
+		{
+			// Arrange
+			var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
+			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object);
+			AddProviderInitiatedRouteValues(controller, "anyProviderReference", "anyApprenticeshipId");
+
+			// Act
+			var result = await controller.ProviderInitiatedCheckDetailsPage(createChangeOfPriceModel);
+
+			// Assert
+			var viewResult = result.ShouldBeOfType<ViewResult>();
+			viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderInitiatedCheckDetailsViewName);
+		}
+
+		[Test]
+		public void GetProviderInitiatedEditPage_ReturnsProviderInitiatedViewName()
+		{
+			// Arrange
+			var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
+			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object);
+
+			// Act
+			var result = controller.GetProviderInitiatedEditPage(createChangeOfPriceModel);
+
+			// Assert
+			var viewResult = result.ShouldBeOfType<ViewResult>();
+			viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderInitiatedViewName);
+		}
+
+		private void AddProviderInitiatedRouteValues(ChangeOfPriceController controller, string providerReferenceNumber, string apprenticeshipHashedId)
         {
             if(controller.HttpContext == null)
             {

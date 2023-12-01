@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Primitives;
-using System.Text.Json;
+using SFA.DAS.Apprenticeships.Web.Extensions;
 
 namespace SFA.DAS.Apprenticeships.Web.Middleware
 {
@@ -36,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Web.Middleware
 			if (string.IsNullOrEmpty(json))
 				return;
 
-			var cachedValues = GetFlatJson(json);
+			var cachedValues = json.GetFlatJson();
 
 			if (cachedValues == null)
 				return;
@@ -86,17 +86,5 @@ namespace SFA.DAS.Apprenticeships.Web.Middleware
 			return newForm;
 		}
 
-		public static Dictionary<string, JsonElement> GetFlatJson(string json)
-		{
-			IEnumerable<(string Path, JsonProperty P)> GetLeaves(string path, JsonProperty p)
-				=> p.Value.ValueKind != JsonValueKind.Object
-					? new[] { (Path: path == null ? p.Name : path + "." + p.Name, p) }
-					: p.Value.EnumerateObject().SelectMany(child => GetLeaves(path == null ? p.Name : path + "." + p.Name, child));
-
-			using (JsonDocument document = JsonDocument.Parse(json)) // Optional JsonDocumentOptions options
-				return document.RootElement.EnumerateObject()
-					.SelectMany(p => GetLeaves(null, p))
-					.ToDictionary(k => k.Path, v => v.P.Value.Clone()); //Clone so that we can use the values outside of using
-		}
 	}
 }

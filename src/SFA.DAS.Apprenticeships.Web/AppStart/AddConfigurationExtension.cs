@@ -15,10 +15,14 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         {
             //TODO establish if authenticationType-specific config is necessary?
             builder.Services.Configure<ApprenticeshipsWeb>(config.GetSection(nameof(ApprenticeshipsWeb)));
-            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsWeb>>().Value);
+            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsWeb>>()!.Value);
+
             builder.Services.Configure<ApprenticeshipsOuterApi>(config.GetSection(nameof(ApprenticeshipsOuterApi)));
-            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsOuterApi>>().Value);
-        }
+            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsOuterApi>>()!.Value);
+
+			builder.Services.Configure<CacheConfiguration>(config.GetSection(nameof(CacheConfiguration)));
+			builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<CacheConfiguration>>()!.Value);
+		}
 
         public static void ConfigureAzureTableStorage(this WebApplicationBuilder builder, ConfigurationManager config)
         {
