@@ -1,6 +1,10 @@
-﻿@{
-    //TODO: Replace if statement with something that evaluates whether user is provider or employer
-    if(true)
+﻿@using System.Security.Claims
+@using SFA.DAS.Apprenticeships.Web.AppStart
+@using SFA.DAS.Apprenticeships.Web.Infrastructure
+@{
+    if(ClaimsPrincipal.Current.HasClaim(x => 
+        x.Type == UserClaims.AuthenticationType &&
+        x.Value == AuthenticationType.Provider.ToString()))
     {
         Layout = "_ProviderLayout";
     }
