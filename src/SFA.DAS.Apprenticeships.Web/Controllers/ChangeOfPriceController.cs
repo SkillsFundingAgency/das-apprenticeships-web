@@ -22,6 +22,15 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             _mapper = mapper;
         }
 
+        
+        [HttpGet]
+        [Route("test")]
+        public async Task<IActionResult> Test()
+        {
+            var model = new CreateChangeOfPriceModel() { };
+            return View(ProviderInitiatedViewName, model);
+        }
+        
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
