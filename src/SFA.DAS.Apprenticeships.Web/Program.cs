@@ -1,3 +1,4 @@
+using System.Configuration;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
@@ -27,28 +28,32 @@ namespace SFA.DAS.Apprenticeships.Web
             //Authentication & Authorization
             var serviceParameters = new ServiceParameters();
             //TODO Store the below info as a claim for use elsewhere in app
-            if (config["AuthType"].Equals("Employer", StringComparison.CurrentCultureIgnoreCase))
+            if (config.IsConfigValue("AuthType", "Employer"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Employer;
             }
-            else if (config["AuthType"].Equals("Provider", StringComparison.CurrentCultureIgnoreCase))
+            else if (config.IsConfigValue("AuthType", "Provider"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Provider;
+            }
+            else
+            {
+                throw new ConfigurationErrorsException($"Configuration for a valid 'AuthType' not found.");
             }
             builder.AddConfigurationOptions(config, serviceParameters.AuthenticationType);
 
             if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
             {
-                builder.Services.SetUpEmployerAuthorizationServices();
-                builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
+                //builder.Services.SetUpEmployerAuthorizationServices();
+                //builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
             }
             else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
             {
                 builder.Services.AddProviderUiServiceRegistration(config);
-                builder.Services.SetUpProviderAuthorizationServices();
-                builder.Services.SetUpProviderAuthentication(config);
+                //builder.Services.SetUpProviderAuthorizationServices();
+                //builder.Services.SetUpProviderAuthentication(config);
             }
-            builder.Services.AddSharedAuthenticationServices();
+            //builder.Services.AddSharedAuthenticationServices();
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
@@ -78,8 +83,8 @@ namespace SFA.DAS.Apprenticeships.Web
                     }
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
-                //TODO: Figure out what NavigationSection is and whether we need it
-                //.SetDefaultNavigationSection(NavigationSection.Home)
+                .SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices)
+                //.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome)
                 .EnableGoogleAnalytics()
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
@@ -98,8 +103,7 @@ namespace SFA.DAS.Apprenticeships.Web
             }
             else
             {
-                app.UseHealthChecks("");
-
+                app.CreateHealthCheckEndpoints();
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
             }

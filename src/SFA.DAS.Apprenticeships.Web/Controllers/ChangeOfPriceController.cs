@@ -5,6 +5,8 @@ using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Services;
+using SFA.DAS.Provider.Shared.UI;
+using SFA.DAS.Provider.Shared.UI.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -31,6 +33,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		}
 
         [HttpGet]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public async Task<IActionResult> GetProviderInitiatedPage(string apprenticeshipHashedId)
         {
@@ -62,6 +65,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(CreateChangeOfPriceModel model)
         {
