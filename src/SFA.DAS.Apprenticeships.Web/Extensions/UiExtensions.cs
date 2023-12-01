@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Globalization;
 
 namespace SFA.DAS.Apprenticeships.Web.Extensions
 {
@@ -6,7 +7,8 @@ namespace SFA.DAS.Apprenticeships.Web.Extensions
     {
         public static string FormatCurrency(this int value)
         {
-            return value.ToString("C0");
+            CultureInfo cultureInfo = new CultureInfo("en-GB");
+            return value.ToString("C0", cultureInfo);
         }
 
         public static string DisplayFormGroupError(this ViewContext viewContext, string key)
