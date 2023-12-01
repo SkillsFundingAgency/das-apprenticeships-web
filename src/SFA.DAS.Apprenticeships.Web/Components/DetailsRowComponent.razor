@@ -17,7 +17,7 @@
 			<td class="govuk-table__cell" style="text-align: right;">
 				@if (!string.IsNullOrEmpty(Url))
 				{
-					<a class="govuk-link" href="@Url">
+					<a class="govuk-link" href="@Url" id="@GetLinkId()">
 						Change<span class="govuk-visually-hidden">@Label</span>
 					</a>
 				}
@@ -32,7 +32,7 @@
 			<dd class="govuk-summary-list__actions">
 				@if (!string.IsNullOrEmpty(Url))
 				{
-					<a class="govuk-link" href="@Url">
+					<a class="govuk-link" href="@Url" id="@GetLinkId()">
 						Change<span class="govuk-visually-hidden">@Label</span>
 					</a>
 				}
@@ -65,4 +65,9 @@
 		Table,
 		DescriptionList
 	}
+
+	public string GetLinkId()
+    {
+        return $"link{Id}";
+    }
 }

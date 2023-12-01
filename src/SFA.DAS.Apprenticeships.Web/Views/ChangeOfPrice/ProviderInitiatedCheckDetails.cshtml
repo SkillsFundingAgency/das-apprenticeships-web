@@ -70,10 +70,10 @@
 		<form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/submit">
 			@Html.HiddenFor(m=> m.CacheKey)
 			<div class="govuk-button-group">
-				<button class="govuk-button" data-module="govuk-button" type="submit">
+				<button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfPrice">
 					Send
 				</button>
-				<a class="govuk-link" href="@editPage">Go back to edit changes</a>
+				<a class="govuk-link" href="@editPage" id="linkGoBackToEdit">Go back to edit changes</a>
 			</div>
 		</form>
 	</div>
