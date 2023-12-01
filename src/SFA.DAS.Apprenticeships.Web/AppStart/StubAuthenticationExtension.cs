@@ -8,7 +8,9 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     {
         public static void AddProviderStubAuthentication(this IServiceCollection services)
         {
-            services.AddAuthentication("Provider-stub").AddScheme<AuthenticationSchemeOptions, ProviderStubAuthHandler>(
+            services
+                .AddAuthentication("Provider-stub")
+                .AddScheme<AuthenticationSchemeOptions, ProviderStubAuthHandler>(
                 "Provider-stub",
                 options => { });
         }

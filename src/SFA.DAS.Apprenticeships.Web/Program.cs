@@ -8,8 +8,6 @@ using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Provider.Shared.UI.Startup;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -29,7 +27,6 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Authentication & Authorization
             var serviceParameters = new ServiceParameters();
-            //TODO Store the below info as a claim for use elsewhere in app
             if (config.IsConfigValue("AuthType", "Employer"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Employer;
