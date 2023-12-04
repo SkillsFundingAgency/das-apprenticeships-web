@@ -25,4 +25,5 @@ public class CreateApprenticeshipPriceHistoryData
     public decimal? AssessmentPrice { get; set; }
     public decimal? TotalPrice { get; set; }
     public string Reason { get; set; }
+    public DateTime EffectiveFromDate { get; set; }
 }

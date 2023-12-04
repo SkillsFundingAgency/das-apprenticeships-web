@@ -25,8 +25,16 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             return result.Body;
         }
 
-        public async Task CreatePriceHistory(Guid apprenticeshipKey, long? providerId, long? employerId, string userId,
-            decimal? trainingPrice, decimal? assessmentPrice, decimal? totalPrice, string reason)
+        public async Task CreatePriceHistory(
+            Guid apprenticeshipKey,
+            long? providerId,
+            long? employerId,
+            string userId,
+            decimal? trainingPrice,
+            decimal? assessmentPrice,
+            decimal? totalPrice,
+            string reason,
+            DateTime effectiveFromDate)
         {
             await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
                 new CreateApprenticeshipPriceHistoryData
@@ -37,7 +45,8 @@ namespace SFA.DAS.Apprenticeships.Application.Services
                     TrainingPrice = trainingPrice,
                     AssessmentPrice = assessmentPrice,
                     TotalPrice = totalPrice,
-                    Reason = reason
+                    Reason = reason,
+                    EffectiveFromDate = effectiveFromDate
                 }));
         }
 

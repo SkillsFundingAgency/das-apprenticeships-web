@@ -58,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return View(ProviderInitiatedViewName, model);
             }
 
-            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, ukprn, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354");
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, ukprn, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
             throw new NotImplementedException("todo link back to provider commitments");
         }
 
