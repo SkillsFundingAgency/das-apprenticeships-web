@@ -50,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public IActionResult ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model)
+        public async Task<IActionResult> ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model, long ukprn)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return View(ProviderInitiatedViewName, model);
             }
 
-            //_apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model., model ) todo
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, ukprn, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354");
+            throw new NotImplementedException("todo link back to provider commitments");
         }
 
         //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel

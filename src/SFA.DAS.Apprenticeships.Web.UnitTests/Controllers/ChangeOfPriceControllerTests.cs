@@ -100,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         }
         
         [Test]
-        public void ProviderInitiatedPriceChangeRequest_InvalidModel_ReturnsCreatePriceChangeRequestView()
+        public async Task ProviderInitiatedPriceChangeRequest_InvalidModel_ReturnsCreatePriceChangeRequestView()
         {
             // Arrange
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
@@ -109,7 +109,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             AddProviderInitiatedRouteValues(controller, "anyProviderReference", "anyApprenticeshipId");
 
             // Act
-            var result = controller.ProviderInitiatedPriceChangeRequest(createChangeOfPriceModel);
+            var result = await controller.ProviderInitiatedPriceChangeRequest(createChangeOfPriceModel, 10005123);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();

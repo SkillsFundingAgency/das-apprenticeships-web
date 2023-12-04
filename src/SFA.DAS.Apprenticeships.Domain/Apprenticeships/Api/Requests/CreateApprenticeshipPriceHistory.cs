@@ -12,7 +12,7 @@ public class CreateApprenticeshipPriceHistoryRequest : IPostApiRequest
         Data = data;
     }
 
-    public string PostUrl => $"{_apprenticeshipKey}/priceHistory";
+    public string PostUrl => $"Apprenticeship/{_apprenticeshipKey}/priceHistory";
     public object Data { get; set; }
 }
 
