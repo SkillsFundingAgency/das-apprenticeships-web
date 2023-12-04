@@ -72,7 +72,8 @@
                         </div>
                     </div>
 
-                    @* Price Effective from goes here*@
+                    @await Html.PartialAsync("_effectiveFromDate", Model)
+
                     @* Reason change goes here*@
 
                 </div>
