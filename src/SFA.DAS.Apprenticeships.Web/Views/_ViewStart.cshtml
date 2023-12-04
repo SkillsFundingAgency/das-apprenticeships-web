@@ -2,14 +2,23 @@
 @using SFA.DAS.Apprenticeships.Web.AppStart
 @using SFA.DAS.Apprenticeships.Web.Infrastructure
 @{
-    if(ClaimsPrincipal.Current.HasClaim(x => 
-        x.Type == UserClaims.AuthenticationType &&
-        x.Value == AuthenticationType.Provider.ToString()))
+    var currentClaimsPrincipal = ClaimsPrincipal.Current;
+
+    if(currentClaimsPrincipal == null)
     {
-        Layout = "_ProviderLayout";
+        Layout = "_Layout";
     }
     else
     {
-        Layout = "_EmployerLayout";
+        if (currentClaimsPrincipal.HasClaim(x =>
+            x.Type == UserClaims.AuthenticationType &&
+            x.Value == AuthenticationType.Provider.ToString()))
+        {
+            Layout = "_ProviderLayout";
+        }
+        else
+        {
+            Layout = "_EmployerLayout";
+        }
     }
 }
