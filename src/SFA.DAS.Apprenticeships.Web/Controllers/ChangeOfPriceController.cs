@@ -5,6 +5,8 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Provider.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
+using SFA.DAS.Provider.Shared.UI.Extensions;
+using SFA.DAS.Provider.Shared.UI.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -13,13 +15,15 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper<CreateChangeOfPriceModel> _mapper;
+        private readonly IExternalUrlHelper _externalUrlHelper;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
 
-        public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger, IApprenticeshipService apprenticeshipService, IMapper<CreateChangeOfPriceModel> mapper)
+        public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger, IApprenticeshipService apprenticeshipService, IMapper<CreateChangeOfPriceModel> mapper, IExternalUrlHelper externalUrlHelper)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
+            _externalUrlHelper = externalUrlHelper;
         }
 
         [HttpGet]
@@ -59,7 +63,10 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, ukprn, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
-            throw new NotImplementedException("todo link back to provider commitments");
+
+            var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
+                { Controller = "", SubDomain = "pas", RelativeRoute = $"{ukprn}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
+            return Redirect(providerCommitmentsReturnUrl);
         }
 
         //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
