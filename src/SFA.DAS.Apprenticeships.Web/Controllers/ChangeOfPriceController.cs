@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -11,7 +12,8 @@ using SFA.DAS.Provider.Shared.UI.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-	public class ChangeOfPriceController : Controller
+    [Authorize]
+    public class ChangeOfPriceController : Controller
     {
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
