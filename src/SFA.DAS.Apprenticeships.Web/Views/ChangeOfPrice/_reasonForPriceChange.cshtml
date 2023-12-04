@@ -2,7 +2,9 @@
 
 @{
     const int MaxCharacters = 200;
-    var employerName = Model.EmployerName ?? "the employer";
+
+    var defaultApprovingPartyName = Model.InitiatedBy == InitiatedBy.Employer ? "the training provider" : "the employer";
+    var approvingPartyName = Model.ApprovingPartyName ?? defaultApprovingPartyName;
     var charactersRemaining = MaxCharacters - Model.ReasonForChangeOfPrice?.Length ?? MaxCharacters;
 }
 <div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.ReasonForChangeOfPrice))">
@@ -15,9 +17,9 @@
                 </legend>
                 @Html.ValidationMessageFor(m => m.ReasonForChangeOfPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ReasonForChangeOfPrice) })
                 <div id="ReasonForChangeOfPrice-hint" class="govuk-hint">
-                    If the total price changes, this reason will be shared with @employerName. They will need to approve
-                    the
-                    change. </div>
+                    If the total price changes, this reason will be shared with @approvingPartyName. 
+                    They will need to approve the change. 
+                </div>
                 @Html.TextAreaFor(m=>m.ReasonForChangeOfPrice, new { @class = $"govuk-textarea", rows="5", aria_describedby="reason-for-update-hint", maxlength=MaxCharacters, onkeyup=$"calculateRemainingCharacters(this, {MaxCharacters}, 'ReasonForChangeOfPrice-RemainingCharacters')" })
             </div>
             <div id="with-hint-info" class="govuk-hint govuk-character-count__message">
