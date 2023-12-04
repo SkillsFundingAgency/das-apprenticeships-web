@@ -47,5 +47,38 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 result.Errors.Should().Contain(x => x.PropertyName == expectedProperty);
             }
         }
+
+        [TestCase("Enter a date in the correct format", 41, 5, 2023)]
+        [TestCase("Enter a date in the correct format", 1, 15, 2023)]
+        [TestCase("Enter a date in the correct format", 1, 5, -1)]
+        [TestCase("Enter a date that is after the training start date", 1, 5, 2023)]
+        [TestCase("Enter a date that is after the training start date", 1, 6, 2024)]
+        [TestCase("The date entered must be before the planned end date", 1, 5, 2027)]
+        [TestCase("The date entered must be before the planned end date", 1, 6, 2026)]
+        public void CreateChangeOfPriceModelValidator_EffectiveFromDate_ReturnsExpectedErrorMessage(
+            string expectedMessage, int day, int month, int year)
+        {
+            // Arrange
+            var model = new CreateChangeOfPriceModel
+            {
+                ApprenticeshipTrainingPrice = 5500,
+                ApprenticeshipEndPointAssessmentPrice = 500,
+                OriginalTrainingPrice = 5000,
+                OriginalEndPointAssessmentPrice = 500,
+                EffectiveFromDate = new DateField { Day = day, Month = month, Year = year },
+                ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
+                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1)
+            };
+            var validator = new CreateChangeOfPriceModelValidator();
+
+            // Act
+            var result = validator.Validate(model);
+
+            // Assert
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(x => x.ErrorMessage == expectedMessage);
+            result.Errors.Should().Contain(x => x.PropertyName == nameof(CreateChangeOfPriceModel.EffectiveFromDate));
+
+        }
     }
 }
