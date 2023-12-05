@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Provider.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
@@ -10,21 +12,29 @@ using SFA.DAS.Provider.Shared.UI.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-    public class ChangeOfPriceController : Controller
+	public class ChangeOfPriceController : Controller
     {
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper<CreateChangeOfPriceModel> _mapper;
         private readonly IExternalUrlHelper _externalUrlHelper;
+        private readonly ICacheService _cache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
+        public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
 
-        public ChangeOfPriceController(ILogger<ChangeOfPriceController> logger, IApprenticeshipService apprenticeshipService, IMapper<CreateChangeOfPriceModel> mapper, IExternalUrlHelper externalUrlHelper)
+        public ChangeOfPriceController(
+            ILogger<ChangeOfPriceController> logger, 
+            IApprenticeshipService apprenticeshipService, 
+            IMapper<CreateChangeOfPriceModel> mapper,
+			ICacheService cache)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
+			_cache = cache;
             _externalUrlHelper = externalUrlHelper;
-        }
+
+		}
 
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
@@ -48,29 +58,48 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             var model = _mapper.Map(apprenticeshipPrice);
             model.ApprenticeshipKey = apprenticeshipKey;
             PopulateProviderInitiatedRouteValues(model);
+            await _cache.SetCacheModelAsync(model);
+            return View(ProviderInitiatedViewName, model);
+        }
+
+        [HttpGet]
+        [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
+        public IActionResult GetProviderInitiatedEditPage(CreateChangeOfPriceModel model)
+        {
             return View(ProviderInitiatedViewName, model);
         }
 
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> ProviderInitiatedPriceChangeRequest(CreateChangeOfPriceModel model, long ukprn)
+        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(CreateChangeOfPriceModel model)
         {
-            if (!ModelState.IsValid)
+			PopulateProviderInitiatedRouteValues(model);
+			if (!ModelState.IsValid)
             {
-                PopulateProviderInitiatedRouteValues(model);
                 return View(ProviderInitiatedViewName, model);
             }
 
+            await _cache.SetCacheModelAsync(model);
+			return View(ProviderInitiatedCheckDetailsViewName, model);
+        }
+
+		
             await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, ukprn, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
 
             var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
                 { Controller = "", SubDomain = "pas", RelativeRoute = $"{ukprn}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
             return Redirect(providerCommitmentsReturnUrl);
-        }
+            }
+            	[HttpPost]
+		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
+		public IActionResult ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
+		{
+			return View(ProviderInitiatedCheckDetailsViewName, model); // For now return to previous page, functionality to be added later
+		}
 
-        //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-        private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
+		//  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
+		private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber = HttpContext.GetRouteValueString(RouteValues.Ukprn);
