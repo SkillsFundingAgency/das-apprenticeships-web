@@ -16,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             _configuration = configuration;
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        [Route("error/{statuscode?}")]
+        [Route("{statuscode?}")]
         public IActionResult Error(int? statusCode)
         {
             switch (statusCode)
