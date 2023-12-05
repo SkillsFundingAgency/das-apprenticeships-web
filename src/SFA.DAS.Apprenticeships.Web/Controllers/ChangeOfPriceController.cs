@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -26,15 +25,15 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             ILogger<ChangeOfPriceController> logger, 
             IApprenticeshipService apprenticeshipService, 
             IMapper<CreateChangeOfPriceModel> mapper,
-			ICacheService cache)
+			ICacheService cache,
+            IExternalUrlHelper externalUrlHelper)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
 			_cache = cache;
             _externalUrlHelper = externalUrlHelper;
-
-		}
+        }
 
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
@@ -83,26 +82,21 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             await _cache.SetCacheModelAsync(model);
 			return View(ProviderInitiatedCheckDetailsViewName, model);
         }
-
-		
-            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, ukprn, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
+        [HttpPost]
+		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
+		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
+		{
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
 
             var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = "pas", RelativeRoute = $"{ukprn}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
+                { Controller = "", SubDomain = "pas", RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
             return Redirect(providerCommitmentsReturnUrl);
-            }
-            	[HttpPost]
-		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
-		public IActionResult ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
-		{
-			return View(ProviderInitiatedCheckDetailsViewName, model); // For now return to previous page, functionality to be added later
 		}
 
 		//  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
 		private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
-            model.ProviderReferenceNumber = HttpContext.GetRouteValueString(RouteValues.Ukprn);
         }
     }
 }

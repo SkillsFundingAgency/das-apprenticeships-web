@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public string? CacheKey { get; set; }
         public Guid ApprenticeshipKey { get; set; }
         public string? ApprenticeshipHashedId { get; set; }
-        public string? ProviderReferenceNumber { get; set; }
+        public long? ProviderReferenceNumber { get; set; }
         public int FundingBandMaximum { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
