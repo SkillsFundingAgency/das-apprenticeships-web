@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication
 
             var result = AuthenticateResult.Success(ticket);
 
-            _httpContextAccessor.HttpContext.Items.Add(ClaimsIdentity.DefaultNameClaimType, "10000001");
+            _httpContextAccessor.HttpContext!.Items.Add(ClaimsIdentity.DefaultNameClaimType, "10000001");
             _httpContextAccessor.HttpContext.Items.Add(ProviderClaims.DisplayName, "AED User");
 
             return Task.FromResult(result);
