@@ -26,19 +26,7 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.ConfigureAzureTableStorage(config);
 
             // Authentication & Authorization
-            var serviceParameters = new ServiceParameters();
-            if (config.IsConfigValue("AuthType", "Employer"))
-            {
-                serviceParameters.AuthenticationType = AuthenticationType.Employer;
-            }
-            else if (config.IsConfigValue("AuthType", "Provider"))
-            {
-                serviceParameters.AuthenticationType = AuthenticationType.Provider;
-            }
-            else
-            {
-                throw new ConfigurationErrorsException($"Configuration for a valid 'AuthType' not found.");
-            }
+            var serviceParameters = config.GetServiceParameters();
             builder.AddConfigurationOptions(config, serviceParameters.AuthenticationType);
 
             if (serviceParameters.AuthenticationType == AuthenticationType.Employer)

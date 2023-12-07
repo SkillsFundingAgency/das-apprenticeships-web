@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.Services;
@@ -16,13 +15,11 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 {
     private readonly IEmployerAccountService _accountsSvc;
     private readonly IConfiguration _configuration;
-    private readonly ApprenticeshipsWeb _apprenticeshipsWebConfiguration;
 
-    public EmployerAccountPostAuthenticationClaimsHandler(IEmployerAccountService accountsSvc, IConfiguration configuration, IOptions<ApprenticeshipsWeb> apprenticeshipsWebConfiguration)
+    public EmployerAccountPostAuthenticationClaimsHandler(IEmployerAccountService accountsSvc, IConfiguration configuration)
     {
         _accountsSvc = accountsSvc;
         _configuration = configuration;
-        _apprenticeshipsWebConfiguration = apprenticeshipsWebConfiguration.Value;
     }
 
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext ctx)
