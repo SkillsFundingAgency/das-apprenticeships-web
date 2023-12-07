@@ -201,7 +201,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
                 controller.ControllerContext.HttpContext = httpContext.Object;
             }
 
-            controller.HttpContext!.Request.RouteValues.Add(RouteValues.Ukprn, providerReferenceNumber);
+            controller.HttpContext!.Request.RouteValues.Add(RouteValues.Ukprn, providerReferenceNumber.ToString());
             controller.HttpContext.Request.RouteValues.Add(RouteValues.ApprenticeshipHashedId, apprenticeshipHashedId);
         }
     }

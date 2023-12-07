@@ -97,6 +97,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
+            model.ProviderReferenceNumber =  long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));
         }
     }
 }
