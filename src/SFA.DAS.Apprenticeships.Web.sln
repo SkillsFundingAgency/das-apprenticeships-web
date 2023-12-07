@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Application", "SFA.DAS.Apprenticeships.Application\SFA.DAS.Apprenticeships.Application.csproj", "{DF4AA430-1D63-4E6B-9C98-A061DA222F2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Application.UnitTests", "SFA.DAS.Apprenticeships.Application.UnitTests\SFA.DAS.Apprenticeships.Application.UnitTests.csproj", "{01D58488-3DD2-4D4F-B0A1-49D7D55C1CB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Application.UnitTests", "SFA.DAS.Apprenticeships.Application.UnitTests\SFA.DAS.Apprenticeships.Application.UnitTests.csproj", "{01D58488-3DD2-4D4F-B0A1-49D7D55C1CB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Domain.UnitTests", "SFA.DAS.Apprenticeships.Domain.UnitTests\SFA.DAS.Apprenticeships.Domain.UnitTests.csproj", "{BF656F35-0684-4512-96F0-7589209FD51B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Domain.UnitTests", "SFA.DAS.Apprenticeships.Domain.UnitTests\SFA.DAS.Apprenticeships.Domain.UnitTests.csproj", "{BF656F35-0684-4512-96F0-7589209FD51B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

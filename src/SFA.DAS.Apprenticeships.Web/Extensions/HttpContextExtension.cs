@@ -1,6 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.Web.Controllers;
-
-namespace SFA.DAS.Apprenticeships.Web.Extensions
+﻿namespace SFA.DAS.Apprenticeships.Web.Extensions
 {
     public static class HttpContextExtension
     {

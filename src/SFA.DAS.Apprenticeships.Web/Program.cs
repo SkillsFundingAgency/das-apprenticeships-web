@@ -2,11 +2,11 @@ using System.Configuration;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
+using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Apprenticeships.Web.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -23,6 +23,7 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Config
             builder.ConfigureAzureTableStorage(config);
+            builder.AddDistributedCache(config);
 
             //Authentication & Authorization
             var serviceParameters = new ServiceParameters();
@@ -94,7 +95,9 @@ namespace SFA.DAS.Apprenticeships.Web
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
+            app.AddMiddleware();
+
+			if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }

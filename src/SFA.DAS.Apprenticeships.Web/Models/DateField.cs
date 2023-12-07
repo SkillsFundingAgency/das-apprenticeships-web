@@ -30,5 +30,6 @@
             } 
         }
 
+        public override string ToString() => !Date.HasValue ? string.Empty : Date.Value.ToString("dd MMMM yyyy");
     }
 }

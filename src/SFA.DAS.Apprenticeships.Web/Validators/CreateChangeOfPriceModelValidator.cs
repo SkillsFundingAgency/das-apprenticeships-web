@@ -39,6 +39,10 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
                 .Must(MustBeBeforePlannedEndDate)
                 .WithName(nameof(CreateChangeOfPriceModel.EffectiveFromDate))
                 .WithMessage("The date entered must be before the planned end date");
+
+            RuleFor(x => x.ReasonForChangeOfPrice)
+                .NotEmpty()
+                .WithMessage("You must enter a reason for requesting a price change. This will help the employer when they review your request.");
         }
 
         private bool HavePriceChange(CreateChangeOfPriceModel model)

@@ -2,16 +2,21 @@
 
 namespace SFA.DAS.Apprenticeships.Web.Models
 {
-    public class CreateChangeOfPriceModel : IChangeOfPriceModel
-    {
+    public class CreateChangeOfPriceModel : IChangeOfPriceModel, ICacheModel
+	{
+        public string? CacheKey { get; set; }
+        public Guid ApprenticeshipKey { get; set; }
         public string? ApprenticeshipHashedId { get; set; }
-        public string? ProviderReferenceNumber { get; set; }
+        public long? ProviderReferenceNumber { get; set; }
         public int FundingBandMaximum { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
         public DateField EffectiveFromDate { get; set; } = new DateField();
+        public string? ReasonForChangeOfPrice { get; set; }
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
+        public string? ApprovingPartyName { get; set; }
+        public InitiatedBy InitiatedBy { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 
         /// <summary>
@@ -37,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
             throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
         }
 
-        public CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
+        private static CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
         {
             var model = new CreateChangeOfPriceModel
             {
@@ -45,7 +50,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
-                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate
+                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
+                ApprovingPartyName = apprenticeshipPrice.EmployerName
             };
 
             model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
