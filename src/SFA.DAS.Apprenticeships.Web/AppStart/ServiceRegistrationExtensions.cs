@@ -7,6 +7,7 @@ using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Application.Employer.Services;
 using SFA.DAS.Apprenticeships.Application.Provider.Services;
+using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
