@@ -2,10 +2,12 @@
 
 namespace SFA.DAS.Apprenticeships.Web.Models
 {
-    public class CreateChangeOfPriceModel : IChangeOfPriceModel
-    {
+    public class CreateChangeOfPriceModel : IChangeOfPriceModel, ICacheModel
+	{
+        public string? CacheKey { get; set; }
+        public Guid ApprenticeshipKey { get; set; }
         public string? ApprenticeshipHashedId { get; set; }
-        public string? ProviderReferenceNumber { get; set; }
+        public long? ProviderReferenceNumber { get; set; }
         public int FundingBandMaximum { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
@@ -13,7 +15,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public string? ReasonForChangeOfPrice { get; set; }
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
-        public string? EmployerName { get; set; }
+        public string? ApprovingPartyName { get; set; }
+        public InitiatedBy InitiatedBy { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
-                EmployerName = apprenticeshipPrice.EmployerName
+                ApprovingPartyName = apprenticeshipPrice.EmployerName
             };
 
             model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
