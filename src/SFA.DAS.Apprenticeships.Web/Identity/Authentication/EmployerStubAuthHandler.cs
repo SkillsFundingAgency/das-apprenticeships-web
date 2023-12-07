@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 
-namespace SFA.DAS.Apprenticeships.Web.AppStart
+namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication
 {
     public class EmployerStubAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {

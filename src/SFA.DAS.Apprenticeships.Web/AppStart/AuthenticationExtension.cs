@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.DfESignIn.Auth.AppStart;
 using SFA.DAS.DfESignIn.Auth.Enums;
@@ -59,6 +61,22 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.CookieManager = new ChunkingCookieManager { ChunkSize = 3000 };
             });
+        }
+
+        private static void AddProviderStubAuthentication(this IServiceCollection services)
+        {
+            services
+                .AddAuthentication("Provider-stub")
+                .AddScheme<AuthenticationSchemeOptions, ProviderStubAuthHandler>(
+                "Provider-stub",
+                options => { });
+        }
+
+        private static void AddEmployerStubAuthentication(this IServiceCollection services)
+        {
+            services.AddAuthentication("Employer-stub").AddScheme<AuthenticationSchemeOptions, EmployerStubAuthHandler>(
+                "Employer-stub",
+                options => { });
         }
     }
 }
