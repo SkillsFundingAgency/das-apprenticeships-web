@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Domain.Providers.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Providers.Api.Responses;
 
-namespace SFA.DAS.Apprenticeships.Application.Provider.Services
+namespace SFA.DAS.Apprenticeships.Application.Services
 {
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

@@ -4,7 +4,7 @@ using SFA.DAS.Apprenticeships.Domain.Employers.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Application.Employer.Services;
+namespace SFA.DAS.Apprenticeships.Application.Services;
 
 [ExcludeFromCodeCoverage]
 public class EmployerAccountService : IEmployerAccountService

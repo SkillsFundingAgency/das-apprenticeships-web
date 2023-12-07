@@ -2,7 +2,7 @@
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
-namespace SFA.DAS.Apprenticeships.Application.Apprentice.Services
+namespace SFA.DAS.Apprenticeships.Application.Services
 {
     public class ApprenticeshipService : IApprenticeshipService
     {
