@@ -65,7 +65,7 @@
                             </div>
                         </fieldset>
 
-                        <div class="govuk-inset-text">
+                        <div class="govuk-inset-text" js-enabled-show hidden>
                             The total price the employer will see is:
                             <div class="@ViewContext.StyleAsError(nameof(Model.ApprenticeshipTotalPrice))" id="ApprenticeshipTotalPrice" name="ApprenticeshipTotalPrice">@((Model.ApprenticeshipTotalPrice).FormatCurrency())</div>
                         </div>
@@ -73,7 +73,7 @@
 
                     @await Html.PartialAsync("_effectiveFromDate", Model)
 
-                    @* Reason change goes here*@
+                    @await Html.PartialAsync("_reasonForPriceChange", Model)
 
                 </div>
 

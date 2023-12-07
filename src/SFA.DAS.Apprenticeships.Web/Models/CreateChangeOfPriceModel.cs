@@ -10,8 +10,10 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
         public DateField EffectiveFromDate { get; set; } = new DateField();
+        public string? ReasonForChangeOfPrice { get; set; }
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
+        public string? EmployerName { get; set; }
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
             throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
         }
 
-        public CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
+        private static CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
         {
             var model = new CreateChangeOfPriceModel
             {
@@ -45,7 +47,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
-                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate
+                ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
+                EmployerName = apprenticeshipPrice.EmployerName
             };
 
             model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
