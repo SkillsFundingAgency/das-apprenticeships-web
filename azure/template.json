@@ -366,7 +366,7 @@
                                     "name": "AuthType",
                                     "value": "[variables('providerAuthType')]"
                                 }
-                          ]
+                            ]
                         }
                     },
                     "customHostName": {
