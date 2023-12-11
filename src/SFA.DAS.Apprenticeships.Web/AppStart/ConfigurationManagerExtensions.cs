@@ -9,17 +9,17 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         public static ServiceParameters GetServiceParameters(this ConfigurationManager config)
         {
             var serviceParameters = new ServiceParameters();
-            if (config.IsConfigValue("AuthType", "Employer"))
+            if (config.IsConfigValue("ApprenticeshipsWeb:AuthType", "Employer"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Employer;
             }
-            else if (config.IsConfigValue("AuthType", "Provider"))
+            else if (config.IsConfigValue("ApprenticeshipsWeb:AuthType", "Provider"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Provider;
             }
             else
             {
-                throw new ConfigurationErrorsException($"Configuration for a valid 'AuthType' not found.");
+                throw new ConfigurationErrorsException($"Configuration for a valid 'ApprenticeshipsWeb:AuthType' not found.");
             }
 
             return serviceParameters;
