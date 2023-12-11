@@ -28,8 +28,8 @@ namespace SFA.DAS.Apprenticeships.Web
             var cacheConfiguration = config.GetSection(nameof(CacheConfiguration)).Get<CacheConfiguration>();
 
             //todo tidy up temporary logging for demo
-            if (string.IsNullOrEmpty(cacheConfiguration.CacheConnection) || string.IsNullOrEmpty(cacheConfiguration.DefaultCache))
-                throw new ArgumentException($"Missing cache config - connection:{cacheConfiguration.CacheConnection} defaultCache:{cacheConfiguration.DefaultCache}");
+            // if (string.IsNullOrEmpty(cacheConfiguration.CacheConnection) || string.IsNullOrEmpty(cacheConfiguration.DefaultCache))
+            //     throw new ArgumentException($"Missing cache config - connection:{cacheConfiguration.CacheConnection} defaultCache:{cacheConfiguration.DefaultCache}");
             
             builder.AddDistributedCache(config);
 
