@@ -1,7 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
-using StackExchange.Redis;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
@@ -23,7 +22,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 			
 			builder.Services.AddOptions<RedisCacheOptions>().Configure<IServiceProvider>((options, serviceProvider) =>
 			{
-				options.ConnectionMultiplexerFactory = () => Task.FromResult(serviceProvider.GetService<IConnectionMultiplexer>())!;
+				options.Configuration = cacheConfiguration.CacheConnection;
 			});
 
 			builder.Services.AddStackExchangeRedisCache(options =>
