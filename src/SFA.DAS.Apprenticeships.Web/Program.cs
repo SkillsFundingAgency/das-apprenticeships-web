@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -23,6 +24,13 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Config
             builder.ConfigureAzureTableStorage(config);
+
+            var cacheConfiguration = config.GetSection(nameof(CacheConfiguration)).Get<CacheConfiguration>();
+
+            //todo tidy up temporary logging for demo
+            if (string.IsNullOrEmpty(cacheConfiguration.CacheConnection) || string.IsNullOrEmpty(cacheConfiguration.DefaultCache))
+                throw new ArgumentException($"Missing cache config - connection:{cacheConfiguration.CacheConnection} defaultCache:{cacheConfiguration.DefaultCache}");
+            
             builder.AddDistributedCache(config);
 
             //Authentication & Authorization
