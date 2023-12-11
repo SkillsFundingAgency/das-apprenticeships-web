@@ -68,6 +68,7 @@
 		<h2 class="govuk-heading-m">Now send to the employer for approval</h2>
 		<p class="govuk-body">Your payment schedule will not change until the employer approves your request.</p>
 		<form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/submit">
+			@Html.AntiForgeryToken()
 			@Html.HiddenFor(m=> m.CacheKey)
 			<div class="govuk-button-group">
 				<button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfPrice">
