@@ -19,11 +19,6 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 		private static void AddRedisCache(WebApplicationBuilder builder, ConfigurationManager config)
 		{
 			var cacheConfiguration = config.GetSection(nameof(CacheConfiguration)).Get<CacheConfiguration>();
-			
-			builder.Services.AddOptions<RedisCacheOptions>().Configure<IServiceProvider>((options, serviceProvider) =>
-			{
-				options.Configuration = cacheConfiguration.CacheConnection;
-			});
 
 			builder.Services.AddStackExchangeRedisCache(options =>
 			{
