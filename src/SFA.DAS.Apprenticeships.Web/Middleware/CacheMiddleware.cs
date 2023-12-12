@@ -13,11 +13,13 @@ namespace SFA.DAS.Apprenticeships.Web.Middleware
 	{
 		private readonly RequestDelegate _next;
 		private readonly IDistributedCache _distributedCache;
+		private readonly ILogger<CacheMiddleware> _logger;
 
-		public CacheMiddleware(RequestDelegate next, IDistributedCache distributedCache)
+		public CacheMiddleware(RequestDelegate next, IDistributedCache distributedCache, ILogger<CacheMiddleware> logger)
 		{
 			_next = next;
 			_distributedCache = distributedCache;
+			_logger = logger;
 		}
 
 		public async Task InvokeAsync(HttpContext context)
@@ -25,6 +27,7 @@ namespace SFA.DAS.Apprenticeships.Web.Middleware
 			var cacheKey = GetCacheKey(context);
 			if(!string.IsNullOrEmpty(cacheKey))
 			{
+				_logger.LogInformation($"CacheMiddleware: Found cache key {cacheKey}");
 				await PopulateRequestFromCache(context, cacheKey);
 			}
 
@@ -36,12 +39,18 @@ namespace SFA.DAS.Apprenticeships.Web.Middleware
 		{
 			var json = await _distributedCache.GetStringAsync(cacheKey);
 			if (string.IsNullOrEmpty(json))
+			{
+				_logger.LogInformation($"CacheMiddleware: No cache record found for Key:{cacheKey}");
 				return;
+			}
 
 			var cachedValues = json.GetFlatJson();
 
 			if (cachedValues == null)
+			{
+				_logger.LogInformation($"CacheMiddleware: No data found in cache record for Key:{cacheKey}");
 				return;
+			}
 
 			var newForm = GetForm(context);
 
