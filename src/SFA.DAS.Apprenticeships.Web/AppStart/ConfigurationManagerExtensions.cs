@@ -1,10 +1,12 @@
 ﻿using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
-    public static class ConfigurationManagerExtensions
+	[ExcludeFromCodeCoverage]
+	public static class ConfigurationManagerExtensions
     {
         public static ServiceParameters GetServiceParameters(this ConfigurationManager config)
         {
