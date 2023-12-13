@@ -14,26 +14,19 @@ namespace SFA.DAS.Apprenticeships.Web.Services
 	public class CacheService : ICacheService
 	{
 		private readonly IDistributedCache _distributedCache;
-		private readonly ILogger<CacheService> _logger;
 		private int _expirationInMinutes;
 
-        public CacheService(IDistributedCache distributedCache, IOptions<CacheConfiguration> options, ILogger<CacheService> logger)
+        public CacheService(IDistributedCache distributedCache, IOptions<CacheConfiguration> options)
         {
 			_distributedCache = distributedCache;
 			_expirationInMinutes = options.Value.ExpirationInMinutes;
-			_logger = logger;
-		}
+        }
 
         public async Task SetCacheModelAsync(ICacheModel cacheModel)
 		{
 			if (string.IsNullOrEmpty(cacheModel.CacheKey))
 			{
 				cacheModel.CacheKey = Guid.NewGuid().ToString();
-				_logger.LogInformation($"CacheService: Creating cacheItem with Key:{cacheModel.CacheKey}");
-			}
-			else
-			{
-				_logger.LogInformation($"CacheService: Updating cacheItem with Key:{cacheModel.CacheKey}");
 			}
 
 			var bytes = ObjectToByteArray(cacheModel);

@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
@@ -13,24 +12,22 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Services
 	public class CacheServiceTests
 	{
 		private Mock<IDistributedCache> _distributedCacheMock;
-		private Mock<ILogger<CacheService>> _loggerMock;
 		private IOptions<CacheConfiguration> _options;
 		private Fixture _fixture;
-		
+
 		[SetUp]
 		public void SetUp()
 		{
 			_distributedCacheMock = new Mock<IDistributedCache>();
 			_options = Options.Create(new CacheConfiguration { ExpirationInMinutes = 60 });
 			_fixture = new Fixture();
-			_loggerMock = new Mock<ILogger<CacheService>>();
 		}
 
 		[Test]
 		public async Task SetCacheModelAsync_SetsNewGuidAsCacheKey()
 		{
 			// Arrange
-			var cacheService = new CacheService(_distributedCacheMock.Object, _options, _loggerMock.Object);
+			var cacheService = new CacheService(_distributedCacheMock.Object, _options);
 			var cacheModel = new ExampleCacheModel { Value = _fixture.Create<string>() };
 
 			// Act
@@ -48,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Services
 		public async Task SetCacheModelAsync_UsesExistingGuidAsCacheKey()
 		{
 			// Arrange
-			var cacheService = new CacheService(_distributedCacheMock.Object, _options, _loggerMock.Object);
+			var cacheService = new CacheService(_distributedCacheMock.Object, _options);
 			var cacheModel = _fixture.Create<ExampleCacheModel>();
 			var expectedBytes = JsonSerializer.SerializeToUtf8Bytes(cacheModel);
 

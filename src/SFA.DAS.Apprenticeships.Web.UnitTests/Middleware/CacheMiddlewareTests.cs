@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Moq;
+using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using System.Text.Json;
 
@@ -15,12 +16,10 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Middleware
 		private Mock<IDistributedCache> _mockDistributedCache;
 		private Mock<HttpContext> _mockHttpContext;
 		private Mock<IQueryCollection> _mockQueryCollection;
-		private Mock<ILogger<CacheMiddleware>> _mockLogger;
 		
 		[SetUp]
 		public void SetUp()
 		{
-			_mockLogger = new Mock<ILogger<CacheMiddleware>>();
 			_mockNext = new Mock<RequestDelegate>();
 			_mockDistributedCache = new Mock<IDistributedCache>();
 			
@@ -42,7 +41,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Middleware
 			// Arrange
 			_mockQueryCollection.Setup(m => m["cacheKey"]).Returns(new StringValues("testKey"));
 			MockMethodGetStringAsync(_mockDistributedCache, new TestObject { TestProperty = "testValue" });
-			var middleware = new CacheMiddleware(_mockNext.Object, _mockDistributedCache.Object, _mockLogger.Object);
+			var middleware = new CacheMiddleware(_mockNext.Object, _mockDistributedCache.Object);
 
 			// Act
 			await middleware.InvokeAsync(_mockHttpContext.Object);
@@ -57,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Middleware
 		public async Task InvokeAsync_WithoutCacheKey_DoesNotPopulateRequestFromCache()
 		{
 			// Arrange
-			var middleware = new CacheMiddleware(_mockNext.Object, _mockDistributedCache.Object, _mockLogger.Object);
+			var middleware = new CacheMiddleware(_mockNext.Object, _mockDistributedCache.Object);
 
 			// Act
 			await middleware.InvokeAsync(_mockHttpContext.Object);
