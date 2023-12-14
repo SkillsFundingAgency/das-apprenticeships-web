@@ -73,7 +73,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(CreateChangeOfPriceModel model)
         {
 			PopulateProviderInitiatedRouteValues(model);
@@ -87,7 +86,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
         [HttpPost]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
-		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
 		{
             await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
