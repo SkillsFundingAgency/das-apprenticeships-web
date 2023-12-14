@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 			_cache = cache;
             _externalUrlHelper = externalUrlHelper;
         }
-
+        
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
