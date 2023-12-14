@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.Apprenticeships.Web.Controllers;
-@model CreateChangeOfPriceModel
+﻿@model CreateChangeOfPriceModel
 @{
     ViewData["Title"] = "Change the training price and/or the end-point assessment price - Manage apprenticeships";
 }
@@ -20,6 +19,7 @@
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
         <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId">
+            @Html.AntiForgeryToken()
             @Html.HiddenFor(m=> m.CacheKey)
             @Html.HiddenFor(m=> m.ApprenticeshipKey)
             <div class="govuk-grid-row">
