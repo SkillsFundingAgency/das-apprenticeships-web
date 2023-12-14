@@ -25,14 +25,5 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 }
             );
         }
-
-        [HttpGet]
-        [Route("signed-out")]
-        public IActionResult SignedOut()
-        {
-            // PR NOTE : Raise Jira ticket to redirect to a suitable page
-            return View();
-        }
-
     }
 }
