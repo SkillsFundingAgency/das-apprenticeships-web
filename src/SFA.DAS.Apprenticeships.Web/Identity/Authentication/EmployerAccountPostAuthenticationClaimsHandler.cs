@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
@@ -22,7 +21,7 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
         _configuration = configuration;
     }
 
-    public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext ctx)
+    public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
         var claims = new List<Claim>()
         {
@@ -43,20 +42,25 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 
             return claims.ToList();
         }
-
-        var userId = ctx.Principal.Claims
-            .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-            .Value;
-        var email = ctx.Principal.Claims
-            .First(c => c.Type.Equals(ClaimTypes.Email))
-            .Value;
         
         var returnClaims = new List<Claim>();
+        if (tokenValidatedContext.Principal == null)
+        {
+	        return returnClaims;
+        }
+
+        var userId = tokenValidatedContext.Principal.Claims
+	        .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+	        .Value;
+        var email = tokenValidatedContext.Principal.Claims
+	        .First(c => c.Type.Equals(ClaimTypes.Email))
+	        .Value;
+        
         var result = await _accountsSvc.GetUserAccounts(userId, email);
 
         if (result.IsSuspended)
         {
-            returnClaims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));
+	        returnClaims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));
         }
 
         var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));

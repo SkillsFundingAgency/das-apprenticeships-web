@@ -18,10 +18,10 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             authenticationProperties.Parameters.Add("id_token", idToken);
             return SignOut(
                 authenticationProperties,
-                new[]
+                authenticationSchemes: new[] 
                 {
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme
+	                CookieAuthenticationDefaults.AuthenticationScheme,
+					OpenIdConnectDefaults.AuthenticationScheme
                 }
             );
         }
