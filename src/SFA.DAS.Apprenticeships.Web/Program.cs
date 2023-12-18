@@ -19,13 +19,13 @@ namespace SFA.DAS.Apprenticeships.Web
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            // Logging
+            // Logging & caching
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.AddDistributedCache(config);
 
             // Config
             builder.ConfigureAzureTableStorage(config);
             builder.AddConfigurationOptions(config);
-            builder.AddDistributedCache(config);
 
             // Authentication & Authorization
             var serviceParameters = config.GetServiceParameters();
