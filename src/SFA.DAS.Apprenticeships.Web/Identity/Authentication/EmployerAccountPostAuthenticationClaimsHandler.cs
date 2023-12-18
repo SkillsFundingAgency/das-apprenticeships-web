@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -10,6 +11,7 @@ using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 
+[ExcludeFromCodeCoverage]
 public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 {
     private readonly IEmployerAccountService _accountsSvc;
