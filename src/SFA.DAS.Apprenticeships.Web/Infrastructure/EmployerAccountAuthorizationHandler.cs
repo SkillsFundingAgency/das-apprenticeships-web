@@ -8,7 +8,10 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
-    [ExcludeFromCodeCoverage]
+	/// <summary>
+	/// Authorization handler that evaluates whether the EmployerAccountId in the claim of the authenticated Provider matches that of any incoming requests.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
     public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

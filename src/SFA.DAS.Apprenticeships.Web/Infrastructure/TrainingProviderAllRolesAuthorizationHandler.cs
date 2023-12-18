@@ -5,6 +5,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
+	/// <summary>
+	/// Authorization handler that evaluates if the provider is authorized to use the service
+	/// </summary>
+	/// <remarks>
+	/// If not authorized, then the user will be redirected to the PAS 401 page.
+	/// This requirement is overriden if the stub for provider validation is enabled.
+	/// </remarks>
     [ExcludeFromCodeCoverage]
     public class TrainingProviderAllRolesAuthorizationHandler : AuthorizationHandler<TrainingProviderAllRolesRequirement>
     {
@@ -24,7 +31,6 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, TrainingProviderAllRolesRequirement requirement)
         {
-
             if (!context.User.HasClaim(c => c.Type.Equals(ProviderClaims.ProviderUkprn)))
             {
                 context.Fail();
@@ -47,8 +53,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 _ => null
             };
 
-            // Check if the stub is activated to by-pass the validation. Mostly used for local development purpose.
-            // Logic to check if the provider is authorized if not redirect the user to PAS 401 un-authorized page.
+            
             if (!isStubProviderValidationEnabled && !(await _handler.IsProviderAuthorized(context)))
             {
                 currentContext?.Response.Redirect($"{_providerSharedUiConfiguration.DashboardUrl}/error/403/invalid-status");
