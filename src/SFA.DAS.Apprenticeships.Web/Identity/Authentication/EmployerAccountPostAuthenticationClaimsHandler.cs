@@ -28,7 +28,7 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
             new(UserClaims.AuthenticationType, AuthenticationType.Employer.ToString())
         };
 
-        if (_configuration.UseLocalStubAuth())
+        if (_configuration.UseStubAuth())
         {
             var accountClaims = new Dictionary<string, EmployerUserAccountItem>();
             accountClaims.Add("", new EmployerUserAccountItem
