@@ -3,6 +3,11 @@
     remainingCharactersDisplayElement.innerHTML = maxNumber - inputElement.value.length;
 }
 
+function enforceMaxLength(inputElement) {
+    if(inputElement.value.length > inputElement.maxLength)
+        inputElement.value = inputElement.value.substring(0, inputElement.maxLength);
+}
+
 function showHideJavascriptDependantElements(){
     var showElements = document.querySelectorAll('[js-enabled-show]');
     var hideElements = document.querySelectorAll('[js-enabled-hide]');
