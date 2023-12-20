@@ -20,6 +20,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly ICacheService _cache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
         public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
+        public const string ViewPendingPriceViewName = "ViewPending";
 
         public ChangeOfPriceController(
             ILogger<ChangeOfPriceController> logger, 
@@ -91,6 +92,28 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
                 { Controller = "", SubDomain = "pas", RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
             return Redirect(providerCommitmentsReturnUrl);
+		}
+
+		[HttpGet]
+		[SetNavigationSection(NavigationSection.ManageApprentices)]
+		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+		public async Task<IActionResult> GetViewPendingPriceChangePage(string apprenticeshipHashedId)
+		{
+			var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+			if (apprenticeshipKey == default(Guid))
+			{
+				_logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+				return NotFound();
+			}
+
+			var pendingPriceChange = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipKey);
+			if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
+			{
+				_logger.LogWarning($"Pending Apprenticeship Price not found for apprenticeshipKey {apprenticeshipKey}");
+				return NotFound();
+			}
+
+			return View(ViewPendingPriceViewName, new ViewPendingPriceChangeModel(pendingPriceChange.PendingPriceChange));
 		}
 
 		//  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel

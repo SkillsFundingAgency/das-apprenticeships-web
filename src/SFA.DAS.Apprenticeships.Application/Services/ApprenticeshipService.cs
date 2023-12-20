@@ -25,7 +25,13 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             return result.Body;
         }
 
-        public async Task CreatePriceHistory(
+        public async Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey)
+        {
+	        var result = await _apiClient.Get<GetPendingPriceChangeResponse>(new GetPendingPriceChangeRequest(apprenticeshipKey));
+	        return result.Body;
+        }
+
+		public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
             long? providerId,
             long? employerId,
@@ -50,9 +56,9 @@ namespace SFA.DAS.Apprenticeships.Application.Services
                 }));
         }
 
-        public async Task<ApprenticeshipPrice> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
+        public async Task<GetPendingPriceChangeResponse> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
         {
-            var result = await _apiClient.Get<ApprenticeshipPrice>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
+            var result = await _apiClient.Get<GetPendingPriceChangeResponse>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
             return result.Body;
         }
     }
