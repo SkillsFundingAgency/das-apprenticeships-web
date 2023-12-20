@@ -34,7 +34,8 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             decimal? assessmentPrice,
             decimal? totalPrice,
             string reason,
-            DateTime effectiveFromDate)
+            DateTime effectiveFromDate,
+            string? providerApprovedBy)
         {
             await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
                 new CreateApprenticeshipPriceHistoryData
@@ -46,7 +47,8 @@ namespace SFA.DAS.Apprenticeships.Application.Services
                     AssessmentPrice = assessmentPrice,
                     TotalPrice = totalPrice,
                     Reason = reason,
-                    EffectiveFromDate = effectiveFromDate
+                    EffectiveFromDate = effectiveFromDate,
+                    ProviderApprovedBy = providerApprovedBy
                 }));
         }
 
