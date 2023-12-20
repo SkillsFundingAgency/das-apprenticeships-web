@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
