@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.Apprenticeships.Web.Controllers;
-@model ViewPendingPriceChangeModel
+﻿@model ViewPendingPriceChangeModel
 @{
     ViewData["Title"] = "View change request - Manage apprenticeships";
 }
@@ -48,21 +47,44 @@
 							   render-mode="Static" />
 				</tbody>
 			</table>
-			<dl class="govuk-summary-list govuk-summary-list--no-border">
-				<component type="typeof(DetailsRowComponent)"
-						   param-Id='"EffectiveFromDate"'
-						   param-Label='"Effective from date"'
-						   param-Value='Model.EffectiveFromDate.ToString()'
-						   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
-						   render-mode="Static" />
+            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                <component type="typeof(DetailsRowComponent)"
+                           param-Id='"EffectiveFromDate"'
+                           param-Label='"Effective from date"'
+                           param-Value='Model.EffectiveFromDate.ToString()'
+                           param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+                           render-mode="Static" />
 
-				<component type="typeof(DetailsRowComponent)"
-						   param-Id='"ReasonForChange"'
-						   param-Label='"Reason for change"'
-						   param-Value='Model.ReasonForChangeOfPrice'
-						   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
-						   render-mode="Static" />
-			</dl>
+                <component type="typeof(DetailsRowComponent)"
+                           param-Id='"ReasonForChange"'
+                           param-Label='"Reason for change"'
+                           param-Value='Model.ReasonForChangeOfPrice'
+                           param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+                           render-mode="Static" />
+            </dl>
+            <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m=> m.ApprenticeshipKey)
+                <div class="govuk-form-group">
+                    <div id="select-a-version-hint" class="govuk-hint">
+                        Do you want to cancel this request?
+                    </div>
+                    
+                    <div class="govuk-radios">
+                        <div class="govuk-radios__item" id="radio-item-yes">
+                            <input class="govuk-radios__input" type="radio" id="option-yes" name="CancelRequest" value="1">
+                            <label class="govuk-label govuk-radios__label" for="option-yes">Yes, cancel the request</label>
+                        </div>
+                        <div class="govuk-radios__item" id="radio-item-no">
+                            <input class="govuk-radios__input" type="radio" id="option-no" name="CancelRequest" value="0">
+                            <label class="govuk-label govuk-radios__label" for="option-no">No, keep the request</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                    Continue
+                </button>
+            </form>
 		</div>
 	</div>
 </div>

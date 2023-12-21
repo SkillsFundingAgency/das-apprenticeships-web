@@ -19,5 +19,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
             DateTime effectiveFromDate);
 
         Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey);
-	}
+        Task CancelPendingPriceChange(Guid apprenticeshipKey);
+
+    }
 }

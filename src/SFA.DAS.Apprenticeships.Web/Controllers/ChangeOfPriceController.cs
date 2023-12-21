@@ -97,7 +97,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[HttpGet]
 		[SetNavigationSection(NavigationSection.ManageApprentices)]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-		public async Task<IActionResult> GetViewPendingPriceChangePage(string apprenticeshipHashedId)
+		public async Task<IActionResult> GetViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
 		{
 			var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
 			if (apprenticeshipKey == default(Guid))
@@ -113,11 +113,32 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 				return NotFound();
 			}
 
-			return View(ViewPendingPriceViewName, new ViewPendingPriceChangeModel(pendingPriceChange.PendingPriceChange));
+			return View(ViewPendingPriceViewName, new ViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, ukprn, pendingPriceChange.PendingPriceChange));
 		}
 
-		//  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-		private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
+        [HttpPost]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
+        [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+        public async Task<IActionResult> PostViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+        {
+            if (CancelRequest != "1")
+            {
+                return Redirect(_externalUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
+            }
+
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            if (apprenticeshipKey == default(Guid))
+            {
+                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+                return NotFound();
+            }
+
+            await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
+            return Redirect(_externalUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}?showPriceChangeCancelled=true" }));
+        }
+
+        //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
+        private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber =  long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));

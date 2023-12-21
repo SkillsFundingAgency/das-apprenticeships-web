@@ -31,7 +31,12 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 	        return result.Body;
         }
 
-		public async Task CreatePriceHistory(
+        public async Task CancelPendingPriceChange(Guid apprenticeshipKey)
+        {
+            await _apiClient.Delete<object>(new CancelPendingPriceChangeRequest(apprenticeshipKey));
+        }
+
+        public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
             long? providerId,
             long? employerId,

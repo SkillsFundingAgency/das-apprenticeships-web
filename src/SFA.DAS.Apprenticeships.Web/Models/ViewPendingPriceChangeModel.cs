@@ -4,9 +4,12 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 {
 	public class ViewPendingPriceChangeModel
 	{
-		public ViewPendingPriceChangeModel(PendingPriceChange pendingPriceChange)
-		{
-			ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice.Value;
+		public ViewPendingPriceChangeModel(Guid apprenticeshipKey, string apprenticeshipHashedId, long providerReferenceNumber, PendingPriceChange pendingPriceChange)
+        {
+            ApprenticeshipKey = apprenticeshipKey;
+            ApprenticeshipHashedId = apprenticeshipHashedId;
+            ProviderReferenceNumber = providerReferenceNumber;
+            ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice.Value;
 			ApprenticeshipEndPointAssessmentPrice = pendingPriceChange.PendingAssessmentPrice.Value;
 			OriginalTrainingPrice = pendingPriceChange.OriginalTrainingPrice.Value;
 			OriginalEndPointAssessmentPrice = pendingPriceChange.OriginalAssessmentPrice.Value;
@@ -14,6 +17,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 			ReasonForChangeOfPrice = pendingPriceChange.Reason;
 		}
 
+		public Guid ApprenticeshipKey { get; set; }
 		public string? ApprenticeshipHashedId { get; set; }
 		public long? ProviderReferenceNumber { get; set; }
 		public decimal ApprenticeshipTrainingPrice { get; set; }
