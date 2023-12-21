@@ -11,7 +11,13 @@ namespace SFA.DAS.Apprenticeships.Web.Extensions
             return value.ToString("C0", cultureInfo);
         }
 
-        public static string DisplayFormGroupError(this ViewContext viewContext, string key)
+        public static string FormatCurrency(this decimal value)
+        {
+	        CultureInfo cultureInfo = new CultureInfo("en-GB");
+	        return value.ToString("C0", cultureInfo);
+        }
+
+		public static string DisplayFormGroupError(this ViewContext viewContext, string key)
         {
             if (viewContext.ModelState[key]?.Errors.Any() == true)
             {
