@@ -26,5 +26,4 @@ public class CreateApprenticeshipPriceHistoryData
     public decimal? TotalPrice { get; set; }
     public string Reason { get; set; }
     public DateTime EffectiveFromDate { get; set; }
-    public string? ProviderApprovedBy { get; set; }
 }

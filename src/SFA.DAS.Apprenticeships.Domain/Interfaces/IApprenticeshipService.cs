@@ -16,7 +16,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
             decimal? assessmentPrice,
             decimal? totalPrice,
             string reason,
-            DateTime effectiveFromDate,
-            string? providerApprovedBy);
+            DateTime effectiveFromDate);
     }
 }
