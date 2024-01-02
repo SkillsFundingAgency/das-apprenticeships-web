@@ -171,6 +171,10 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var expectedUrl = _fixture.Create<string>();
             _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
 
+            var expectedUser = _fixture.Create<string>();
+            controller.SetUserName(expectedUser);
+
+
             // Act
             var result = await controller.ProviderInitiatedSubmitChange(createChangeOfPriceModel);
 
@@ -179,7 +183,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
                 createChangeOfPriceModel.ApprenticeshipKey, 
                 createChangeOfPriceModel.ProviderReferenceNumber, 
                 null,
-                It.IsAny<string>(),
+                expectedUser,
                 createChangeOfPriceModel.ApprenticeshipTrainingPrice,
                 createChangeOfPriceModel.ApprenticeshipEndPointAssessmentPrice,
                 createChangeOfPriceModel.ApprenticeshipTotalPrice,
