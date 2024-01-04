@@ -32,7 +32,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 ApprenticeshipEndPointAssessmentPrice = assessmentPrice,
                 OriginalTrainingPrice = originalTrainingPrice,
                 OriginalEndPointAssessmentPrice = originalAssessmentPrice,
-				HardCloseDate = new DateTime(2025, 10, 17)
+				EarliestEffectiveDate = new DateTime(2025, 10, 17)
 			};
             var validator = new CreateChangeOfPriceModelValidator();
 
@@ -71,7 +71,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 EffectiveFromDate = new DateField { Day = day, Month = month, Year = year },
                 ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
                 ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
-				HardCloseDate = new DateTime(2025, 10, 17)
+				EarliestEffectiveDate = new DateTime(2025, 10, 17)
 			};
             var validator = new CreateChangeOfPriceModelValidator();
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 EffectiveFromDate = new DateField { Day = 15, Month = 7, Year = 2025 },
                 ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
                 ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
-				HardCloseDate = new DateTime(2025, 10, 17),
+				EarliestEffectiveDate = new DateTime(2025, 10, 17),
                 ReasonForChangeOfPrice = null
             };
             var validator = new CreateChangeOfPriceModelValidator();
