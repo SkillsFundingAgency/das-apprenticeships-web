@@ -7,6 +7,7 @@ using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -24,7 +25,8 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.AddDistributedCache(config);
 
             // Config
-            builder.ConfigureAzureTableStorage(config);
+            builder.ConfigureAzureTableStorage(config);            
+            builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
 
             // Authentication & Authorization
