@@ -1,3 +1,4 @@
+
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
@@ -25,6 +26,7 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.AddDistributedCache(config);
 
             // Config
+            config.AddJsonFile("local.settings.json", optional: true);
             builder.ConfigureAzureTableStorage(config);            
             builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
