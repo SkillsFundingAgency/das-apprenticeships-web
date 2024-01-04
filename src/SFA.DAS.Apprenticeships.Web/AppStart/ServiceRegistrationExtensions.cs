@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Application.Services;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Apprenticeships.Web.Services;
+using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
@@ -21,6 +22,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             services.AddHttpClient<IApiClient, ApiClient>();
             services.AddTransient<IApprenticeshipService, ApprenticeshipService>();
             services.AddTransient<IEmployerAccountService, EmployerAccountService>();
+            services.AddTransient<ITrainingProviderService, TrainingProviderService>();
             services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
             services.AddTransient<ICacheService, CacheService>();
             services.AddMappers();

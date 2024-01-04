@@ -3,9 +3,10 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 
-namespace SFA.DAS.Apprenticeships.Web.AppStart
+namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication
 {
     [ExcludeFromCodeCoverage]
     public class ProviderStubAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
@@ -33,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
             var result = AuthenticateResult.Success(ticket);
 
-            _httpContextAccessor.HttpContext.Items.Add(ClaimsIdentity.DefaultNameClaimType, "10000001");
+            _httpContextAccessor.HttpContext!.Items.Add(ClaimsIdentity.DefaultNameClaimType, "10000001");
             _httpContextAccessor.HttpContext.Items.Add(ProviderClaims.DisplayName, "AED User");
 
             return Task.FromResult(result);

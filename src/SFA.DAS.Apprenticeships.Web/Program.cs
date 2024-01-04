@@ -1,4 +1,3 @@
-using System.Configuration;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
@@ -7,7 +6,7 @@ using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -16,46 +15,33 @@ namespace SFA.DAS.Apprenticeships.Web
     {
         public static void Main(string[] args)
         {
+            // Logging and initial config
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            // Logging
+            // Logging & caching
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.AddDistributedCache(config);
 
             // Config
             builder.ConfigureAzureTableStorage(config);
-            
-            builder.AddDistributedCache(config);
+            builder.AddConfigurationOptions(config);
 
-            //Authentication & Authorization
-            var serviceParameters = new ServiceParameters();
-            //TODO Store the below info as a claim for use elsewhere in app
-            if (config.IsConfigValue("AuthType", "Employer"))
+            // Authentication & Authorization
+            var serviceParameters = config.GetServiceParameters();
+            switch (serviceParameters.AuthenticationType)
             {
-                serviceParameters.AuthenticationType = AuthenticationType.Employer;
+	            case AuthenticationType.Employer:
+		            builder.Services.SetUpEmployerAuthorizationServices();
+		            builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
+		            break;
+	            case AuthenticationType.Provider:
+		            builder.Services.AddProviderUiServiceRegistration(config);
+		            builder.Services.SetUpProviderAuthorizationServices();
+		            builder.Services.SetUpProviderAuthentication(config);
+		            break;
             }
-            else if (config.IsConfigValue("AuthType", "Provider"))
-            {
-                serviceParameters.AuthenticationType = AuthenticationType.Provider;
-            }
-            else
-            {
-                throw new ConfigurationErrorsException($"Configuration for a valid 'AuthType' not found.");
-            }
-            builder.AddConfigurationOptions(config, serviceParameters.AuthenticationType);
-
-            if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
-            {
-                //builder.Services.SetUpEmployerAuthorizationServices();
-                //builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
-            }
-            else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
-            {
-                builder.Services.AddProviderUiServiceRegistration(config);
-                //builder.Services.SetUpProviderAuthorizationServices();
-                //builder.Services.SetUpProviderAuthentication(config);
-            }
-            //builder.Services.AddSharedAuthenticationServices();
+            builder.Services.AddAuthorizationPolicies();
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
@@ -85,9 +71,9 @@ namespace SFA.DAS.Apprenticeships.Web
                     }
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
-                .SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices)
-                //.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome)
+                .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
+                .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
             if (!config.IsEnvironmentLocal())
@@ -143,6 +129,20 @@ namespace SFA.DAS.Apprenticeships.Web
         {
             context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
             await next();
+        }
+
+        private static IMvcBuilder ConfigureNavigationSection(this IMvcBuilder builder, ServiceParameters serviceParameters)
+        {
+            switch (serviceParameters.AuthenticationType)
+            {
+                case AuthenticationType.Employer:
+                    builder.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome);
+                    break;
+                case AuthenticationType.Provider:
+                    builder.SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices);
+                    break;
+            }
+            return builder;
         }
     }
 }

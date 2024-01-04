@@ -207,7 +207,7 @@
                                     "value": "[parameters('cdnUrl')]"
                                 },
                                 {
-                                    "name": "AuthType",
+                                    "name": "ApprenticeshipsWeb:AuthType",
                                     "value": "[variables('employerAuthType')]"
                                 }
                             ]
@@ -363,7 +363,7 @@
                                     "value": "[parameters('cdnUrl')]"
                                 },
                                 {
-                                    "name": "AuthType",
+                                    "name": "ApprenticeshipsWeb:AuthType",
                                     "value": "[variables('providerAuthType')]"
                                 }
                             ]

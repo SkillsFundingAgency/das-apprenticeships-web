@@ -1,13 +1,13 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
-    public interface IProviderAccountAuthorisationHandler
-    {
-        bool IsProviderAuthorised(AuthorizationHandlerContext context);
-    }
-    //TODO CHECK DETAILS
-    public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>, IProviderAccountAuthorisationHandler
+    /// <summary>
+    /// Authorization handler that evaluates whether the UkPrn in the claim of the authenticated Provider matches that of any incoming requests.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -18,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
         
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ProviderAccountRequirement requirement)
         {
-            if (!IsProviderAuthorised(context))
+            if (!IsProviderAuthorized(context)) 
             {
                 context.Fail();
                 return Task.CompletedTask;
@@ -29,7 +29,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return Task.CompletedTask;
         }
         
-        public bool IsProviderAuthorised(AuthorizationHandlerContext context)
+        public bool IsProviderAuthorized(AuthorizationHandlerContext context)
         {
             if (!context.User.HasClaim(c => c.Type.Equals(ProviderClaims.ProviderUkprn)))
             {

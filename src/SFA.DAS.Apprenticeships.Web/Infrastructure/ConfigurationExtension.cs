@@ -14,9 +14,9 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return configuration["ResourceEnvironmentName"].StartsWith("LOCAL", StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public static bool UseLocalStubAuth(this IConfiguration config)
+        public static bool UseStubAuth(this IConfiguration config)
         {
-            return IsTrueInConfig("LocalStubAuth", config);
+            return IsTrueInConfig("ApprenticeshipsWeb:StubAuth", config);
         }
 
         public static bool UseGovSignIn(this IConfiguration config)
