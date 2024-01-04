@@ -31,8 +31,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 ApprenticeshipTrainingPrice = trainingPrice,
                 ApprenticeshipEndPointAssessmentPrice = assessmentPrice,
                 OriginalTrainingPrice = originalTrainingPrice,
-                OriginalEndPointAssessmentPrice = originalAssessmentPrice
-            };
+                OriginalEndPointAssessmentPrice = originalAssessmentPrice,
+				HardCloseDate = new DateTime(2025, 10, 17)
+			};
             var validator = new CreateChangeOfPriceModelValidator();
 
             // Act
@@ -55,7 +56,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
         [TestCase("Enter a date that is after the training start date", 1, 6, 2024)]
         [TestCase("The date entered must be before the planned end date", 1, 5, 2027)]
         [TestCase("The date entered must be before the planned end date", 1, 6, 2026)]
-        public void CreateChangeOfPriceModelValidator_EffectiveFromDate_ReturnsExpectedErrorMessage(
+		[TestCase("You cannot enter a date in a previous academic year. The earliest date you can enter is 17/10/2025.", 10, 9, 2025)]
+		[TestCase("You cannot enter a date in a previous academic year. The earliest date you can enter is 17/10/2025.", 17, 10, 2025)]
+		public void CreateChangeOfPriceModelValidator_EffectiveFromDate_ReturnsExpectedErrorMessage(
             string expectedMessage, int day, int month, int year)
         {
             // Arrange
@@ -67,8 +70,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 OriginalEndPointAssessmentPrice = 500,
                 EffectiveFromDate = new DateField { Day = day, Month = month, Year = year },
                 ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
-                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1)
-            };
+                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
+				HardCloseDate = new DateTime(2025, 10, 17)
+			};
             var validator = new CreateChangeOfPriceModelValidator();
 
             // Act
@@ -94,6 +98,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 EffectiveFromDate = new DateField { Day = 15, Month = 7, Year = 2025 },
                 ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
                 ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
+				HardCloseDate = new DateTime(2025, 10, 17),
                 ReasonForChangeOfPrice = null
             };
             var validator = new CreateChangeOfPriceModelValidator();
