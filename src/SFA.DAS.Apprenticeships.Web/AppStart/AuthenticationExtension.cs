@@ -16,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         private const string ProviderCookieAuthName = "SFA.DAS.ProviderApprenticeshipService";
         public static void SetUpProviderAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
-            if (config.UseLocalStubAuth())
+            if (config.UseStubAuth())
             {
                 services.AddProviderStubAuthentication();
             }
@@ -28,14 +28,14 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                     ProviderCookieAuthName,
                     typeof(CustomServiceRole),
                     ClientName.ProviderRoatp,
-                    "/signout",     // This will set the cookie signout route value (note: naming is misleading in the nuget package)
-                    "/signed-out"); // This is where the user will be redirected after signing out
+                    "/signout", // This will set the cookie signout route value (note: naming is misleading in the nuget package)
+                    ""); // This will redirect the user to the PAS home page after being signed out
             }
         }
 
         public static void SetUpEmployerAuthentication(this IServiceCollection services, ConfigurationManager config, ServiceParameters serviceParameters)
         {
-            if (config.UseLocalStubAuth())
+            if (config.UseStubAuth())
             {
                 services.AddEmployerStubAuthentication();    
                 services.AddAuthenticationCookie(serviceParameters.AuthenticationType);

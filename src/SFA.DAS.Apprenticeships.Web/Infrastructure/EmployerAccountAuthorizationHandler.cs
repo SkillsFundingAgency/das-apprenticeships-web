@@ -2,14 +2,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
-    [ExcludeFromCodeCoverage]
+	/// <summary>
+	/// Authorization handler that evaluates whether the EmployerAccountId in the claim of the authenticated Provider matches that of any incoming requests.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
     public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -37,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 
         private bool IsEmployerAuthorized(AuthorizationHandlerContext context, bool allowAllUserRoles)
         {
-            if (!_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.EmployerAccountId))
+            if (_httpContextAccessor.HttpContext != null && !_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.EmployerAccountId))
             {
                 return false;
             }

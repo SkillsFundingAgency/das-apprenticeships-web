@@ -10,10 +10,10 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
     public interface ITrainingProviderAuthorizationHandler
     {
         /// <summary>
-        /// Contract to check is the logged in Provider is a valid Training Provider. 
+        /// Contract to check if the authenticated Provider is a valid Training Provider.
         /// </summary>
-        /// <param name="context">AuthorizationHandlerContext.</param>
-        /// <returns>boolean.</returns>
+        /// <param name="context">AuthorizationHandlerContext</param>
+        /// <returns>true if the ukprn of the user's claim is associated with a valid training provider with access to the service; otherwise, false.</returns>
         Task<bool> IsProviderAuthorized(AuthorizationHandlerContext context);
     }
 

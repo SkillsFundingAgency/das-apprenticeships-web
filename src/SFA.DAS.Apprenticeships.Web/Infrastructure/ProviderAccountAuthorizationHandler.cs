@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
     /// <summary>
-    /// Authorization handler that ensures that the UkPrn value of the authenticated Provider matches that of incoming requests.
+    /// Authorization handler that evaluates whether the UkPrn in the claim of the authenticated Provider matches that of any incoming requests.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class ProviderAccountAuthorizationHandler : AuthorizationHandler<ProviderAccountRequirement>

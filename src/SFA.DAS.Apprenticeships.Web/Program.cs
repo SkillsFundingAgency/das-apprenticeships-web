@@ -1,4 +1,3 @@
-using System.Configuration;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
@@ -17,34 +16,32 @@ namespace SFA.DAS.Apprenticeships.Web
     {
         public static void Main(string[] args)
         {
-            //TODO ADD README
-
             // Logging and initial config
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            // Logging
+            // Logging & caching
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.AddDistributedCache(config);
 
             // Config
-            builder.ConfigureAzureTableStorage(config);
-            
+            builder.ConfigureAzureTableStorage(config);            
             builder.AddDistributedCache(config);
+            builder.AddConfigurationOptions(config);
 
             // Authentication & Authorization
             var serviceParameters = config.GetServiceParameters();
-            builder.AddConfigurationOptions(config, serviceParameters.AuthenticationType);
-
-            if (serviceParameters.AuthenticationType == AuthenticationType.Employer)
+            switch (serviceParameters.AuthenticationType)
             {
-                builder.Services.SetUpEmployerAuthorizationServices();
-                builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
-            }
-            else if (serviceParameters.AuthenticationType == AuthenticationType.Provider)
-            {
-                builder.Services.AddProviderUiServiceRegistration(config);
-                builder.Services.SetUpProviderAuthorizationServices();
-                builder.Services.SetUpProviderAuthentication(config);
+	            case AuthenticationType.Employer:
+		            builder.Services.SetUpEmployerAuthorizationServices();
+		            builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
+		            break;
+	            case AuthenticationType.Provider:
+		            builder.Services.AddProviderUiServiceRegistration(config);
+		            builder.Services.SetUpProviderAuthorizationServices();
+		            builder.Services.SetUpProviderAuthentication(config);
+		            break;
             }
             builder.Services.AddAuthorizationPolicies();
 
@@ -76,9 +73,6 @@ namespace SFA.DAS.Apprenticeships.Web
                     }
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
-                .SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices)
-                //.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome)
-                
                 .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
                 .SetDfESignInConfiguration(config.UseDfeSignIn())

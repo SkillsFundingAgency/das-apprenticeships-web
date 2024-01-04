@@ -18,21 +18,12 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             authenticationProperties.Parameters.Add("id_token", idToken);
             return SignOut(
                 authenticationProperties,
-                new[]
+                authenticationSchemes: new[] 
                 {
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme
+	                CookieAuthenticationDefaults.AuthenticationScheme,
+					OpenIdConnectDefaults.AuthenticationScheme
                 }
             );
         }
-
-        [HttpGet]
-        [Route("signed-out")]
-        public IActionResult SignedOut()
-        {
-            // PR NOTE : Raise Jira ticket to redirect to a suitable page
-            return View();
-        }
-
     }
 }
