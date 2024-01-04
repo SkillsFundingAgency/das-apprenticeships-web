@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             (
                 config["ConfigNames"],
                 config["ConfigurationStorageConnectionString"],
-                config["EnvironmentName"]
+                config["ResourceEnvironmentName"]
             );
         }
     }
