@@ -10,10 +10,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     {
         public static void AddConfigurationOptions(
             this WebApplicationBuilder builder, 
-            ConfigurationManager config,
-            AuthenticationType? authenticationType)
+            ConfigurationManager config)
         {
-            //TODO establish if authenticationType-specific config is necessary?
             builder.Services.Configure<ApprenticeshipsWeb>(config.GetSection(nameof(ApprenticeshipsWeb)));
             builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsWeb>>()!.Value);
 

@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class EmployerClaims
     {
         public static string AccountsClaimsTypeIdentifier => "http://das/employer/identity/claims/associatedAccounts";

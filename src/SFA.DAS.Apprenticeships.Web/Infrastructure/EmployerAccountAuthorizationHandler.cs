@@ -1,38 +1,33 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 {
-    public interface IEmployerAccountAuthorisationHandler
-    {
-        bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles);
-    }
-
-    //TODO CHECK DETAILS
-    public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>, IEmployerAccountAuthorisationHandler
+	/// <summary>
+	/// Authorization handler that evaluates whether the EmployerAccountId in the claim of the authenticated Provider matches that of any incoming requests.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
+    public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmployerAccountService _accountsService;
         private readonly ILogger<EmployerAccountAuthorizationHandler> _logger;
-        private readonly ApprenticeshipsWeb _apprenticeshipsWebConfiguration;
 
-        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger, IOptions<ApprenticeshipsWeb> apprenticeshipsWebConfiguration)
+        public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _accountsService = accountsService;
             _logger = logger;
-            _apprenticeshipsWebConfiguration = apprenticeshipsWebConfiguration.Value;
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, EmployerAccountRequirement requirement)
         {
-            if (!IsEmployerAuthorised(context, false))
+            if (!IsEmployerAuthorized(context, false))
             {
                 return Task.CompletedTask;
             }
@@ -42,9 +37,9 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return Task.CompletedTask;
         }
 
-        public bool IsEmployerAuthorised(AuthorizationHandlerContext context, bool allowAllUserRoles)
+        private bool IsEmployerAuthorized(AuthorizationHandlerContext context, bool allowAllUserRoles)
         {
-            if (!_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.EmployerAccountId))
+            if (_httpContextAccessor.HttpContext != null && !_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.EmployerAccountId))
             {
                 return false;
             }
@@ -66,35 +61,27 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 return false;
             }
 
-            EmployerUserAccountItem employerIdentifier = null;
+            EmployerUserAccountItem employerIdentifier;
 
-            if (employerAccounts != null)
+            if (employerAccounts != null && employerAccounts.ContainsKey(accountIdFromUrl))
             {
-                employerIdentifier = employerAccounts.ContainsKey(accountIdFromUrl) 
-                    ? employerAccounts[accountIdFromUrl] : null;
+                employerIdentifier =  employerAccounts[accountIdFromUrl];
             }
-
-            if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
+            else
             {
                 const string requiredIdClaim = ClaimTypes.NameIdentifier;
                 
                 if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
                     return false;
                 
-                var userClaim = context.User.Claims
-                    .First(c => c.Type.Equals(requiredIdClaim));
-
+                var userClaim = context.User.Claims.First(c => c.Type.Equals(requiredIdClaim));
+                var userId = userClaim.Value;
                 var email = context.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value;
 
-                var userId = userClaim.Value;
-
-                var result = _accountsService.GetUserAccounts(userId, email).Result;
-                
-                var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
+                var accounts = _accountsService.GetUserAccounts(userId, email).Result;
+                var accountsAsJson = JsonConvert.SerializeObject(accounts.EmployerAccounts.ToDictionary(k => k.AccountId));
                 var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
-                
                 var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
-
                 userClaim.Subject.AddClaim(associatedAccountsClaim);
                 
                 if (!updatedEmployerAccounts.ContainsKey(accountIdFromUrl))
@@ -110,12 +97,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 _httpContextAccessor.HttpContext.Items.Add(ContextItemKeys.EmployerIdentifier, employerAccounts.GetValueOrDefault(accountIdFromUrl));
             }
 
-            if (!CheckUserRoleForAccess(employerIdentifier, allowAllUserRoles))
-            {
-                return false;
-            }
-            
-            return true;
+            return CheckUserRoleForAccess(employerIdentifier, allowAllUserRoles);
         }
 
         private static bool CheckUserRoleForAccess(EmployerUserAccountItem employerIdentifier, bool allowAllUserRoles)
