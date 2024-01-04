@@ -41,9 +41,9 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
                 .WithMessage("The date entered must be before the planned end date");
 
 			RuleFor(x => x)
-	            .Must(MustBeBeforeHardClosedDate)
+	            .Must(MustBeAfterEarliestValidDate)
 	            .WithName(nameof(CreateChangeOfPriceModel.EffectiveFromDate))
-	            .WithMessage(x => $"You cannot enter a date in a previous academic year. The earliest date you can enter is {x.HardCloseDate!.Value.ToString("dd/MM/yyyy")}.");
+	            .WithMessage(x => $"You cannot enter a date in a previous academic year. The earliest date you can enter is {x.EarliestEffectiveDate!.Value.ToString("dd/MM/yyyy")}.");
 
 			RuleFor(x => x.ReasonForChangeOfPrice)
                 .NotEmpty()
@@ -91,14 +91,14 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
             return true;
         }
 
-		private bool MustBeBeforeHardClosedDate(CreateChangeOfPriceModel model)
+		private bool MustBeAfterEarliestValidDate(CreateChangeOfPriceModel model)
 		{
-            if (!model.HardCloseDate.HasValue)
+            if (!model.EarliestEffectiveDate.HasValue)
             {
                 throw new InvalidOperationException("HardCloseDate must be set");
             }
 
-			if (model.EffectiveFromDate.Date <= model.HardCloseDate)
+			if (model.EffectiveFromDate.Date <= model.EarliestEffectiveDate)
 			{
 				return false;
 			}
