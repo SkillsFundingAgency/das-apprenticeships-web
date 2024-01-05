@@ -30,8 +30,10 @@ namespace SFA.DAS.Apprenticeships.Web
 				var builder = WebApplication.CreateBuilder(args);
 				builder.Services.AddMvc();
 				var app = builder.Build();
+				var logger = app.Services.GetService<ILogger>();
+                logger?.LogError(ex, "Failed to start application");
 
-                if(ex is StartUpException startUpException)
+				if (ex is StartUpException startUpException)
                 {
                     FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
 
