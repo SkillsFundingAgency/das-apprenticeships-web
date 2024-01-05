@@ -1,6 +1,8 @@
-﻿using SFA.DAS.Apprenticeships.Web.Exceptions;
+﻿using Microsoft.Extensions.Configuration;
+using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
+using SFA.DAS.DfESignIn.Auth.Configuration;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
@@ -40,6 +42,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 			config.ThrowIfConfigValueIsNullOrEmpty("CacheConfiguration:DefaultCache");
 			config.ThrowIfConfigValueIsNullOrEmpty("CacheConfiguration:ExpirationInMinutes");
 			config.ThrowIfConfigValueIsNullOrEmpty("CacheConfiguration:CacheConnection");
+			config.ThrowIfConfigSectionNotPresent("DfEOidcConfiguration");
+			
 		}
 
         private static void ThrowIfConfigValueIsNullOrEmpty(this ConfigurationManager config, string key)
@@ -49,5 +53,13 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 				throw new StartUpException($"Configuration for '{key}' not found.");
 			}
 		}
-    }
+
+		private static void ThrowIfConfigSectionNotPresent(this ConfigurationManager config, string key)
+		{
+			if (!config.GetSection(key).GetChildren().Any())
+			{
+				throw new StartUpException($"Configuration for '{key}' not found.");
+			}
+		}
+	}
 }
