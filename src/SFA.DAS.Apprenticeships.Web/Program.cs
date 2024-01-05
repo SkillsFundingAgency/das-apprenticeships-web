@@ -197,8 +197,13 @@ namespace SFA.DAS.Apprenticeships.Web
 			{
 				action.Invoke();
 			}
-			catch
+			catch(Exception ex)
 			{
+				if (ex is StartUpException)
+				{
+					throw;
+				}
+
 				throw new StartUpException(uiSafeMessage);
 			}
 		}
