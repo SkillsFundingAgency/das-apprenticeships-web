@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Web.Infrastructure;
+﻿using SFA.DAS.Apprenticeships.Web.Exceptions;
+using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
@@ -28,5 +29,14 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
             return serviceParameters;
         }
+
+        public static void ValidateConfiguration(this ConfigurationManager config)
+        {
+			FailedStartUpMiddleware.StartupStep = "ValidateConfiguration";
+            if (!config.HasConfigValue("ResourceEnvironmentName"))
+            {
+                throw new StartUpException("ResourceEnvironmentName is not set in configuration.");
+            }
+		}
     }
 }

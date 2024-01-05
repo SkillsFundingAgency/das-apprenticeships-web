@@ -29,6 +29,16 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             return IsTrueInConfig("ApprenticeshipsWeb:UseDfESignIn", config);
         }
 
+        public static bool HasConfigValue(this IConfiguration config, string key)
+        {
+            if (string.IsNullOrEmpty(config[key]))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private static bool IsTrueInConfig(string key, IConfiguration config)
         {
             return config[key] != null && config[key].Equals("true", StringComparison.CurrentCultureIgnoreCase);
