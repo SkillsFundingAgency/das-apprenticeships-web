@@ -68,14 +68,18 @@ namespace SFA.DAS.Apprenticeships.Web
             switch (serviceParameters.AuthenticationType)
             {
 	            case AuthenticationType.Employer:
-		            builder.Services.SetUpEmployerAuthorizationServices();
+					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
+					builder.Services.SetUpEmployerAuthorizationServices();
 		            builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
 		            break;
 	            case AuthenticationType.Provider:
-		            builder.Services.AddProviderUiServiceRegistration(config);
+					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
+					builder.Services.AddProviderUiServiceRegistration(config);
 		            builder.Services.SetUpProviderAuthorizationServices();
 		            builder.Services.SetUpProviderAuthentication(config);
 		            break;
+                default:
+					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
 
