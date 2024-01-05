@@ -8,6 +8,11 @@ using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Builder;
+using SFA.DAS.Apprenticeships.Web.Middleware;
+using SFA.DAS.Apprenticeships.Web.Exceptions;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
@@ -16,16 +21,45 @@ namespace SFA.DAS.Apprenticeships.Web
     {
         public static void Main(string[] args)
         {
-            // Logging and initial config
-            var builder = WebApplication.CreateBuilder(args);
+			try
+			{
+                TryStartApp(args);
+			}
+			catch (Exception ex)
+			{
+				var builder = WebApplication.CreateBuilder(args);
+				builder.Services.AddMvc();
+				var app = builder.Build();
+
+                if(ex is StartUpException startUpException)
+                {
+					FailedStartUpMiddleware.ErrorMessage = startUpException.UiSafeMessage;
+                }
+                else
+                {
+					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
+				}
+
+				app.UseMiddleware<FailedStartUpMiddleware>();
+				app.UseRouting();
+
+				app.Run();
+			}
+		}
+
+        public static void TryStartApp(string[] args)
+        {
+			// Logging and initial config
+			var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            // Logging & caching
-            builder.Services.AddApplicationInsightsTelemetry();
+			// Logging & caching
+			FailedStartUpMiddleware.StartupStep = "Logging and Caching";
+			builder.Services.AddApplicationInsightsTelemetry();
             builder.AddDistributedCache(config);
 
-            // Config
-            builder.ConfigureAzureTableStorage(config);            
+			// Config
+			builder.ConfigureAzureTableStorage(config);            
             builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
 
@@ -47,7 +81,9 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
-            builder.Services
+
+			FailedStartUpMiddleware.StartupStep = "Adding MVC builder";
+			builder.Services
                 .Configure<CookiePolicyOptions>(options =>
                 {
                     options.CheckConsentNeeded = context => true;
@@ -78,15 +114,18 @@ namespace SFA.DAS.Apprenticeships.Web
                 .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
-            if (!config.IsEnvironmentLocal())
+			FailedStartUpMiddleware.StartupStep = "Adding Health Checks";
+			if (!config.IsEnvironmentLocal())
             {
                 builder.Services.AddHealthChecks();
             }
 
-            var app = builder.Build();
+			FailedStartUpMiddleware.StartupStep = "App Build";
+			var app = builder.Build();
 
             app.AddMiddleware();
 
+			FailedStartUpMiddleware.StartupStep = "Environment Specific app setup";
 			if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -98,7 +137,8 @@ namespace SFA.DAS.Apprenticeships.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+			FailedStartUpMiddleware.StartupStep = "Closing steps";
+			app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -146,5 +186,34 @@ namespace SFA.DAS.Apprenticeships.Web
             }
             return builder;
         }
-    }
+
+		public static void ServeErrorPage()
+		{
+			string errorHtml = "<html><body><h1>An error occurred during startup.</h1></body></html>";
+
+			using (HttpListener listener = new HttpListener())
+			{
+				//listener.Prefixes.Add("http://localhost:8080/"); // Change URL/port if needed
+				listener.Start();
+
+				Console.WriteLine("Listening for error page requests...");
+
+				while (listener.IsListening)
+				{
+					HttpListenerContext context = listener.GetContext();
+					HttpListenerResponse response = context.Response;
+
+					byte[] buffer = System.Text.Encoding.UTF8.GetBytes(errorHtml);
+
+					response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					response.ContentType = "text/html";
+					response.ContentLength64 = buffer.Length;
+
+					Stream output = response.OutputStream;
+					output.Write(buffer, 0, buffer.Length);
+					output.Close();
+				}
+			}
+		}
+	}
 }

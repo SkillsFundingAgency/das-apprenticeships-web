@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.Apprenticeships.Web.Middleware;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
@@ -10,7 +11,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     {
         public static ServiceParameters GetServiceParameters(this ConfigurationManager config)
         {
-            var serviceParameters = new ServiceParameters();
+			FailedStartUpMiddleware.StartupStep = "GetServiceParameters";
+			var serviceParameters = new ServiceParameters();
             if (config.IsConfigValue("ApprenticeshipsWeb:AuthType", "Employer"))
             {
                 serviceParameters.AuthenticationType = AuthenticationType.Employer;

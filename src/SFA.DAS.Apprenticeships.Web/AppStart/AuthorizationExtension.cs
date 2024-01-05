@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.Apprenticeships.Web.Middleware;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
@@ -26,7 +27,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
         public static void AddAuthorizationPolicies(this IServiceCollection services)
         {
-            services.AddAuthorization(options =>
+			FailedStartUpMiddleware.StartupStep = "AddAuthorizationPolicies";
+			services.AddAuthorization(options =>
             {
                 options.AddPolicy(
                     PolicyNames
