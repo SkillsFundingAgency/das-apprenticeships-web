@@ -33,10 +33,21 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         public static void ValidateConfiguration(this ConfigurationManager config)
         {
 			FailedStartUpMiddleware.StartupStep = "ValidateConfiguration";
-            if (!config.HasConfigValue("ResourceEnvironmentName"))
+
+            config.ThrowIfConfigValueIsNullOrEmpty("ResourceEnvironmentName");
+			config.ThrowIfConfigValueIsNullOrEmpty("ProviderSharedUIConfiguration:DashboardUrl");
+			config.ThrowIfConfigValueIsNullOrEmpty("ApprenticeshipsOuterApi:BaseUrl");
+			config.ThrowIfConfigValueIsNullOrEmpty("CacheConfiguration:DefaultCache");
+			config.ThrowIfConfigValueIsNullOrEmpty("CacheConfiguration:ExpirationInMinutes");
+			config.ThrowIfConfigValueIsNullOrEmpty("CacheConfiguration:CacheConnection");
+		}
+
+        private static void ThrowIfConfigValueIsNullOrEmpty(this ConfigurationManager config, string key)
+        {
+			if (!config.HasConfigValue(key))
             {
-                throw new StartUpException("ResourceEnvironmentName is not set in configuration.");
-            }
+				throw new StartUpException($"Configuration for '{key}' not found.");
+			}
 		}
     }
 }

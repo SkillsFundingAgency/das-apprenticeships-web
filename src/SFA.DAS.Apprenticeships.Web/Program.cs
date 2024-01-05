@@ -53,7 +53,6 @@ namespace SFA.DAS.Apprenticeships.Web
 			// Logging and initial config
 			var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
-            config.ValidateConfiguration();
 
 			// Logging & caching
 			FailedStartUpMiddleware.StartupStep = "Logging and Caching";
@@ -61,8 +60,9 @@ namespace SFA.DAS.Apprenticeships.Web
             builder.AddDistributedCache(config);
 
 			// Config
-			builder.ConfigureAzureTableStorage(config);            
-            builder.AddDistributedCache(config);
+			builder.ConfigureAzureTableStorage(config);
+			config.ValidateConfiguration();
+			builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
 
             // Authentication & Authorization
