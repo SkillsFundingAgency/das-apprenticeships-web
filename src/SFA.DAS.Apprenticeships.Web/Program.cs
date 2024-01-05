@@ -33,8 +33,9 @@ namespace SFA.DAS.Apprenticeships.Web
 
                 if(ex is StartUpException startUpException)
                 {
-					FailedStartUpMiddleware.ErrorMessage = startUpException.UiSafeMessage;
-                }
+                    FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
+
+				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
