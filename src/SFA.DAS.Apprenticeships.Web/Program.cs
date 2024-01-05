@@ -30,17 +30,33 @@ namespace SFA.DAS.Apprenticeships.Web
 				var builder = WebApplication.CreateBuilder(args);
 				builder.Services.AddMvc();
 				var app = builder.Build();
-				var logger = app.Services.GetService<ILogger>();
-                logger?.LogError(ex, "Failed to start application");
+
+                if(ex.InnerException != null)
+                {
+					var logger = app.Services.GetService<ILogger>();
+					logger?.LogError(ex.InnerException, "Failed to start application");
+				}
+
+                Exception? innerException = null;
 
 				if (ex is StartUpException startUpException)
                 {
                     FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
-
+					if (startUpException.InnerException != null)
+					{
+						innerException = startUpException.InnerException;
+					}
 				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
+                    innerException = ex;
+				}
+
+				if (innerException != null)
+				{
+					var logger = app.Services.GetService<ILogger<FailedStartUpMiddleware>>();
+					logger?.LogError(ex.InnerException, "Failed to start application");
 				}
 
 				app.UseMiddleware<FailedStartUpMiddleware>();
@@ -207,7 +223,7 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw;
 				}
 
-				throw new StartUpException(uiSafeMessage);
+				throw new StartUpException(uiSafeMessage, ex);
 			}
 		}
 	}
