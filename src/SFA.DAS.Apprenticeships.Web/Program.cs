@@ -76,8 +76,15 @@ namespace SFA.DAS.Apprenticeships.Web
 					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
 					Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
 					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
-					Try(() => builder.Services.SetUpProviderAuthentication(config), "SetUpProviderAuthentication");
-					break;
+                    try
+                    {
+                        builder.Services.SetUpProviderAuthentication(config);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new StartUpException($"TODO remove before merging, exception: {e.ToString()}");
+                    }
+                    break;
                 default:
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
