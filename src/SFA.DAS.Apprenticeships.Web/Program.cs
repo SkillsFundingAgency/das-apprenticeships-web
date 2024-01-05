@@ -31,13 +31,32 @@ namespace SFA.DAS.Apprenticeships.Web
 				builder.Services.AddMvc();
 				var app = builder.Build();
 
-                if(ex is StartUpException startUpException)
+                if(ex.InnerException != null)
                 {
-					FailedStartUpMiddleware.ErrorMessage = startUpException.UiSafeMessage;
-                }
+					var logger = app.Services.GetService<ILogger>();
+					logger?.LogError(ex.InnerException, "Failed to start application");
+				}
+
+                Exception? innerException = null;
+
+				if (ex is StartUpException startUpException)
+                {
+                    FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
+					if (startUpException.InnerException != null)
+					{
+						innerException = startUpException.InnerException;
+					}
+				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
+                    innerException = ex;
+				}
+
+				if (innerException != null)
+				{
+					var logger = app.Services.GetService<ILogger<FailedStartUpMiddleware>>();
+					logger?.LogError(ex.InnerException, "Failed to start application");
 				}
 
 				app.UseMiddleware<FailedStartUpMiddleware>();
@@ -53,14 +72,14 @@ namespace SFA.DAS.Apprenticeships.Web
 			var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-			// Logging & caching
-			FailedStartUpMiddleware.StartupStep = "Logging and Caching";
+			// Logging 
+			FailedStartUpMiddleware.StartupStep = "Logging";
 			builder.Services.AddApplicationInsightsTelemetry();
-            builder.AddDistributedCache(config);
 
 			// Config
-			builder.ConfigureAzureTableStorage(config);            
-            builder.AddDistributedCache(config);
+			builder.ConfigureAzureTableStorage(config);
+			config.ValidateConfiguration();
+			builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
 
             // Authentication & Authorization
@@ -211,7 +230,7 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw;
 				}
 
-				throw new StartUpException(uiSafeMessage);
+				throw new StartUpException(uiSafeMessage, ex);
 			}
 		}
 	}
