@@ -69,15 +69,15 @@ namespace SFA.DAS.Apprenticeships.Web
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-					builder.Services.SetUpEmployerAuthorizationServices();
-		            builder.Services.SetUpEmployerAuthentication(config, serviceParameters);
-		            break;
+					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
+					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
+					break;
 	            case AuthenticationType.Provider:
 					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
-					builder.Services.AddProviderUiServiceRegistration(config);
-		            builder.Services.SetUpProviderAuthorizationServices();
-		            builder.Services.SetUpProviderAuthentication(config);
-		            break;
+					Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
+					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
+					Try(() => builder.Services.SetUpProviderAuthentication(config), "SetUpProviderAuthentication");
+					break;
                 default:
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
@@ -191,32 +191,20 @@ namespace SFA.DAS.Apprenticeships.Web
             return builder;
         }
 
-		public static void ServeErrorPage()
+		public static void Try(Action action, string uiSafeMessage)
 		{
-			string errorHtml = "<html><body><h1>An error occurred during startup.</h1></body></html>";
-
-			using (HttpListener listener = new HttpListener())
+			try
 			{
-				//listener.Prefixes.Add("http://localhost:8080/"); // Change URL/port if needed
-				listener.Start();
-
-				Console.WriteLine("Listening for error page requests...");
-
-				while (listener.IsListening)
+				action.Invoke();
+			}
+			catch(Exception ex)
+			{
+				if (ex is StartUpException)
 				{
-					HttpListenerContext context = listener.GetContext();
-					HttpListenerResponse response = context.Response;
-
-					byte[] buffer = System.Text.Encoding.UTF8.GetBytes(errorHtml);
-
-					response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					response.ContentType = "text/html";
-					response.ContentLength64 = buffer.Length;
-
-					Stream output = response.OutputStream;
-					output.Write(buffer, 0, buffer.Length);
-					output.Close();
+					throw;
 				}
+
+				throw new StartUpException(uiSafeMessage);
 			}
 		}
 	}
