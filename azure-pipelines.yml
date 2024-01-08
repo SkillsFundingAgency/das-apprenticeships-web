@@ -51,6 +51,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: AT DevTest Shared Resources
+  - group: AT das-apprenticeships-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -64,6 +65,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: TEST DevTest Shared Resources
+  - group: TEST das-apprenticeships-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -71,12 +73,14 @@ stages:
       SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
 
+
 - stage: Deploy_TEST2
   dependsOn: Build
   displayName: Deploy to TEST2
   variables:
   - group: DevTest Management Resources
   - group: TEST2 DevTest Shared Resources
+  - group: TEST2 das-apprenticeships-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -90,6 +94,7 @@ stages:
   variables:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
+  - group: PreProd das-apprenticeships-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -103,7 +108,7 @@ stages:
 #   variables:
 #   - group: PROD Management Resources
 #   - group: PROD Shared Resources
-#   - group: __PRODSpecificReleaseVariables__ #PLACEHOLDER
+#   - group: PROD das-apprenticeships-web
 #   jobs:
 #   - template: pipeline-templates/job/deploy.yml
 #     parameters:
@@ -117,6 +122,7 @@ stages:
 #   variables:
 #   - group: MO Management Resources
 #   - group: MO Shared Resources
+#   - group: MO das-apprenticeships-web
 #   jobs:
 #   - template: pipeline-templates/job/deploy.yml
 #     parameters:
@@ -130,6 +136,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: DEMO DevTest Shared Resources
+  - group: DEMO das-apprenticeships-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:

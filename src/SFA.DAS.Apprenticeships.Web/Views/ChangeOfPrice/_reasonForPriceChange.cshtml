@@ -1,0 +1,31 @@
+﻿@model IChangeOfPriceModel
+
+@{
+    const int MaxCharacters = 200;
+
+    var defaultApprovingPartyName = Model.InitiatedBy == InitiatedBy.Employer ? "the training provider" : "the employer";
+    var approvingPartyName = Model.ApprovingPartyName ?? defaultApprovingPartyName;
+    var charactersRemaining = MaxCharacters - Model.ReasonForChangeOfPrice?.Length ?? MaxCharacters;
+}
+<div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.ReasonForChangeOfPrice))">
+    <br>
+    <fieldset class="govuk-fieldset" role="group" aria-describedby="ReasonForChangeOfPrice-hint">
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="@MaxCharacters">
+            <div class="govuk-form-group" id="ReasonForChangeOfPriceGroup">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m" for="ReasonForChangeOfPrice">
+                    What was the reason for changing the price?
+                </legend>
+                @Html.ValidationMessageFor(m => m.ReasonForChangeOfPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ReasonForChangeOfPrice) })
+                <div id="ReasonForChangeOfPrice-hint" class="govuk-hint">
+                    If the total price changes, this reason will be shared with @approvingPartyName. 
+                    They will need to approve the change. 
+                </div>
+                @Html.TextAreaFor(m=>m.ReasonForChangeOfPrice, new { @class = $"govuk-textarea", rows="5", aria_describedby="reason-for-update-hint", maxlength=MaxCharacters, onkeyup=$"calculateRemainingCharacters(this, {MaxCharacters}, 'ReasonForChangeOfPrice-RemainingCharacters')" })
+            </div>
+            <div id="with-hint-info" class="govuk-hint govuk-character-count__message">
+                <span js-enabled-show hidden><span id="ReasonForChangeOfPrice-RemainingCharacters">@charactersRemaining</span> characters remaining</span>
+                <span js-enabled-hide>Max @MaxCharacters characters</span>
+            </div>
+        </div>
+    </fieldset>
+</div>

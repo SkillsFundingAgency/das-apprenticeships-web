@@ -1,0 +1,23 @@
+﻿@if (!ViewContext.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" data-module="govuk-error-summary">
+        <div role="alert">
+            <h2 class="govuk-error-summary__title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    @foreach (var errorKey in ViewContext.ModelState.Keys)
+                    {
+                        @foreach (var error in ViewContext.ModelState[errorKey]!.Errors)
+                        {
+                            <li>
+                                <a href="#@errorKey">@error.ErrorMessage</a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}

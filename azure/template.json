@@ -82,8 +82,10 @@
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "employersAppServiceName": "[concat(variables('resourceNamePrefix'), '-emp-as')]",
+        "employerAuthType": "Employer",
         "providersAppServiceName": "[concat(variables('resourceNamePrefix'), '-prv-as')]",
-        "configNames": "SFA.DAS.Apprenticeships.Web"
+        "providerAuthType": "Provider",
+        "configNames": "SFA.DAS.Apprenticeships.Web,SFA.DAS.Provider.DfeSignIn,SFA.DAS.Employer.GovSignIn"
     },
     "resources": [
         {
@@ -177,6 +179,10 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
@@ -203,6 +209,10 @@
                                 {
                                     "name": "Cdn:Url",
                                     "value": "[parameters('cdnUrl')]"
+                                },
+                                {
+                                    "name": "ApprenticeshipsWeb:AuthType",
+                                    "value": "[variables('employerAuthType')]"
                                 }
                             ]
                         }
@@ -329,6 +339,10 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
@@ -355,6 +369,10 @@
                                 {
                                     "name": "Cdn:Url",
                                     "value": "[parameters('cdnUrl')]"
+                                },
+                                {
+                                    "name": "ApprenticeshipsWeb:AuthType",
+                                    "value": "[variables('providerAuthType')]"
                                 }
                             ]
                         }
