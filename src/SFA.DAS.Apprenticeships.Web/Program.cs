@@ -136,7 +136,7 @@ namespace SFA.DAS.Apprenticeships.Web
                 app.CreateHealthCheckEndpoints();
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
-                app.UseContentSecurityPolicy();
+                app.UseContentSecurityPolicy(config);
 			}
 
 			FailedStartUpMiddleware.StartupStep = "Closing steps";
