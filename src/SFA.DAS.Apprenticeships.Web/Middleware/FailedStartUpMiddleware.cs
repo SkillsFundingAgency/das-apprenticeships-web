@@ -1,8 +1,11 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Middleware
-{ 
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SFA.DAS.Apprenticeships.Web.Middleware
+{
 	/// <summary>
 	/// This middleware returns a static error message when the application fails to start
 	/// </summary>
+	[ExcludeFromCodeCoverage]
 	public class FailedStartUpMiddleware
 	{
 		internal static string StartupStep = "Initialized";

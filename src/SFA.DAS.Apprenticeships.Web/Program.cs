@@ -31,32 +31,14 @@ namespace SFA.DAS.Apprenticeships.Web
 				builder.Services.AddMvc();
 				var app = builder.Build();
 
-                if(ex.InnerException != null)
-                {
-					var logger = app.Services.GetService<ILogger>();
-					logger?.LogError(ex.InnerException, "Failed to start application");
-				}
-
-                Exception? innerException = null;
-
 				if (ex is StartUpException startUpException)
                 {
                     FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
-					if (startUpException.InnerException != null)
-					{
-						innerException = startUpException.InnerException;
-					}
+
 				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
-                    innerException = ex;
-				}
-
-				if (innerException != null)
-				{
-					var logger = app.Services.GetService<ILogger<FailedStartUpMiddleware>>();
-					logger?.LogError(ex.InnerException, "Failed to start application");
 				}
 
 				app.UseMiddleware<FailedStartUpMiddleware>();

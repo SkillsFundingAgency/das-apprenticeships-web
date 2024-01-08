@@ -1,5 +1,8 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Exceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SFA.DAS.Apprenticeships.Web.Exceptions
 {
+	[ExcludeFromCodeCoverage]
 	public class StartUpException : Exception
 	{
         public string UiSafeMessage { get; set; }
