@@ -1,5 +1,8 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.AppStart;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace SFA.DAS.Apprenticeships.Web.AppStart;
+
+[ExcludeFromCodeCoverage]
 public static class ApplicationBuilderExtensions
 {
 	public static IApplicationBuilder UseContentSecurityPolicy(this IApplicationBuilder app)
