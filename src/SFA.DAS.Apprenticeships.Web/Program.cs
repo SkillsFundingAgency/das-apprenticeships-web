@@ -1,22 +1,18 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
+using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
+using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
-using System.Net;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Builder;
-using SFA.DAS.Apprenticeships.Web.Middleware;
-using SFA.DAS.Apprenticeships.Web.Exceptions;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
-    [ExcludeFromCodeCoverage]
+	[ExcludeFromCodeCoverage]
     public static class Program
     {
         public static void Main(string[] args)
@@ -140,7 +136,8 @@ namespace SFA.DAS.Apprenticeships.Web
                 app.CreateHealthCheckEndpoints();
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
-            }
+                app.UseContentSecurityPolicy(config);
+			}
 
 			FailedStartUpMiddleware.StartupStep = "Closing steps";
 			app.UseHttpsRedirection();
