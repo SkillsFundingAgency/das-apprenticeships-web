@@ -100,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[HttpGet]
 		[SetNavigationSection(NavigationSection.ManageApprentices)]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-		public async Task<IActionResult> GetViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
+		public async Task<IActionResult> GetViewPendingPriceChangePageProvider(long ukprn, string apprenticeshipHashedId)
 		{
 			var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
 			if (apprenticeshipKey == default(Guid))
@@ -137,7 +137,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return NotFound();
             }
 
-            return View(EmployerViewPendingViewName, new EmployerViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, employerAccountId));
+            return View(EmployerViewPendingViewName, new EmployerViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, employerAccountId, pendingPriceChange.ProviderName));
         }
 
         [HttpPost]
