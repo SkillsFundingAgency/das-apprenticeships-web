@@ -12,6 +12,7 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
+using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 
@@ -65,7 +66,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
                 .Returns(_expectedProviderCommitmentsUrl);
 
             _mockCacheService = new Mock<ICacheService>();
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
             
             AddProviderInitiatedRouteValues(controller, _fixture.Create<long>(), apprenticeshipHashedId);
 
@@ -84,7 +85,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             // Arrange
             var apprenticeshipHashedId = _fixture.Create<string>();
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
 
             // Act
             var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
@@ -103,7 +104,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
 
             // Act
             var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
@@ -118,7 +119,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             // Arrange
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
             controller.ModelState.AddModelError("anyKey", "anyErrorMessage");
             AddProviderInitiatedRouteValues(controller, _fixture.Create<long>(), "anyApprenticeshipId");
 
@@ -135,7 +136,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 		{
 			// Arrange
 			var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
-			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
 			AddProviderInitiatedRouteValues(controller, _fixture.Create<long>(), "anyApprenticeshipId");
 
 			// Act
@@ -151,7 +152,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 		{
 			// Arrange
 			var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
-			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
 
 			// Act
 			var result = controller.GetProviderInitiatedEditPage(createChangeOfPriceModel);
@@ -166,7 +167,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             // Arrange
             var createChangeOfPriceModel = _fixture.Create<CreateChangeOfPriceModel>();
-            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, Mock.Of<UrlBuilder>());
             AddProviderInitiatedRouteValues(controller, _fixture.Create<long>(), "anyApprenticeshipId");
             var expectedUrl = _fixture.Create<string>();
             _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
