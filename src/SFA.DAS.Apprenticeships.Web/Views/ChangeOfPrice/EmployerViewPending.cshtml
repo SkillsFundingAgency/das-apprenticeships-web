@@ -18,7 +18,7 @@
 
             @await Html.PartialAsync("_pendingSummary", Model)
             
-            @*TODO <form method="post" action="*/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending*"> *@
+            @*TODO Populate action in approve/reject user stories *@
             <form method="post" action="/">
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.ApprenticeshipKey)
