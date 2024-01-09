@@ -8,6 +8,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 	{
 		public static void AddMiddleware(this WebApplication webApplication)
 		{
+			FailedStartUpMiddleware.StartupStep = "AddMiddleware";
 			webApplication.UseMiddleware<CacheMiddleware>();		
 		}
 	}
