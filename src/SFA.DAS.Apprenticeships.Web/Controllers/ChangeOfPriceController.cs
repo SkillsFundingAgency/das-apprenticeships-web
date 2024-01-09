@@ -22,7 +22,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly ICacheService _cache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
         public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
-        public const string ViewPendingPriceViewName = "ViewPending";
+        public const string ProviderViewPendingViewName = "ProviderViewPending";
+        public const string EmployerViewPendingViewName = "EmployerViewPending";
 
         public ChangeOfPriceController(
             ILogger<ChangeOfPriceController> logger, 
@@ -115,8 +116,29 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 				return NotFound();
 			}
 
-			return View(ViewPendingPriceViewName, new ViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, ukprn, pendingPriceChange.PendingPriceChange));
+			return View(ProviderViewPendingViewName, new ProviderViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, ukprn));
 		}
+
+        [HttpGet]
+        [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+        public async Task<IActionResult> GetViewPendingPriceChangePageEmployer(long employerAccountId, string apprenticeshipHashedId)
+        {
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            if (apprenticeshipKey == default(Guid))
+            {
+                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+                return NotFound();
+            }
+
+            var pendingPriceChange = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipKey);
+            if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
+            {
+                _logger.LogWarning($"Pending Apprenticeship Price not found for apprenticeshipKey {apprenticeshipKey}");
+                return NotFound();
+            }
+
+            return View(EmployerViewPendingViewName, new EmployerViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, employerAccountId));
+        }
 
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
