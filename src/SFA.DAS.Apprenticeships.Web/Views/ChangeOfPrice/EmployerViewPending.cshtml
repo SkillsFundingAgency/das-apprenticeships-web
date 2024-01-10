@@ -5,11 +5,9 @@
 
 <div class="govuk-width-container ">
     
-    @*TODO this needs to go back to the correct page in employer commitments*@
-    @*Renders href as href="https://approvals.{domain}/{ProviderReferenceNumber}/apprentices/{ApprenticeshipHashedId}" *@
-    @* <a class="govuk-back-link" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprentices" asp-external-action="@Model.ApprenticeshipHashedId">
+    <a class="govuk-back-link" href="@Model.BackLinkUrl">
         Back
-    </a> *@
+    </a>
 
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-two-thirds">
