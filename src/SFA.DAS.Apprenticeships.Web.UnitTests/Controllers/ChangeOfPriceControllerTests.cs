@@ -90,7 +90,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
 
             // Assert
-            var viewResult = result.ShouldBeOfType<NotFoundResult>();
+            result.ShouldBeOfType<NotFoundResult>();
             _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
         }
 
@@ -109,7 +109,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
 
             // Assert
-            var viewResult = result.ShouldBeOfType<NotFoundResult>();
+            result.ShouldBeOfType<NotFoundResult>();
             _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
         }
         
@@ -193,7 +193,115 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             ((RedirectResult)result).Url.Should().Be(expectedUrl);
 		}
 
-		private void AddProviderInitiatedRouteValues(ChangeOfPriceController controller, long providerReferenceNumber, string apprenticeshipHashedId)
+        [Test]
+        public async Task GetViewPendingPriceChangePageProvider_ReturnsCorrectView()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var apprenticeshipKey = Guid.NewGuid();
+            var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+
+            _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
+                .ReturnsAsync(apprenticeshipKey);
+
+            _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipKey))
+                .ReturnsAsync(pendingPriceChange);
+
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act
+            var result = await controller.GetViewPendingPriceChangePageProvider(ukprn, apprenticeshipHashedId);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<ViewResult>();
+            viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderViewPendingViewName);
+            viewResult.Model.ShouldBeOfType<ProviderViewPendingPriceChangeModel>();
+        }
+
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(false, false)]
+        public async Task GetViewPendingPriceChangePageProvider_ReturnsNotFoundWhenMissingApprenticeshipOrPriceChange(bool returnValidKey, bool returnValidPriceChange)
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var apprenticeshipKey = Guid.NewGuid();
+            var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+
+            if(returnValidKey)
+                _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
+                    .ReturnsAsync(apprenticeshipKey);
+
+            if(returnValidPriceChange)
+                _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipKey))
+                    .ReturnsAsync(pendingPriceChange);
+
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act
+            var result = await controller.GetViewPendingPriceChangePageProvider(ukprn, apprenticeshipHashedId);
+
+            // Assert
+            result.ShouldBeOfType<NotFoundResult>();
+        }
+
+        [Test]
+        public async Task GetViewPendingPriceChangePageEmployer_ReturnsCorrectView()
+        {
+            // Arrange
+            var accountId = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var apprenticeshipKey = Guid.NewGuid();
+            var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+
+            _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
+                .ReturnsAsync(apprenticeshipKey);
+
+            _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipKey))
+                .ReturnsAsync(pendingPriceChange);
+
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act
+            var result = await controller.GetViewPendingPriceChangePageEmployer(accountId, apprenticeshipHashedId);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<ViewResult>();
+            viewResult.ViewName.Should().Be(ChangeOfPriceController.EmployerViewPendingViewName);
+            viewResult.Model.ShouldBeOfType<EmployerViewPendingPriceChangeModel>();
+        }
+
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(false, false)]
+        public async Task GetViewPendingPriceChangePageEmployer_ReturnsNotFoundWhenMissingApprenticeshipOrPriceChange(bool returnValidKey, bool returnValidPriceChange)
+        {
+            // Arrange
+            var accountId = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var apprenticeshipKey = Guid.NewGuid();
+            var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+
+            if (returnValidKey)
+                _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
+                    .ReturnsAsync(apprenticeshipKey);
+
+            if (returnValidPriceChange)
+                _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipKey))
+                    .ReturnsAsync(pendingPriceChange);
+
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act
+            var result = await controller.GetViewPendingPriceChangePageEmployer(accountId, apprenticeshipHashedId);
+
+            // Assert
+            result.ShouldBeOfType<NotFoundResult>();
+        }
+
+        private void AddProviderInitiatedRouteValues(ChangeOfPriceController controller, long providerReferenceNumber, string apprenticeshipHashedId)
         {
             if(controller.HttpContext == null)
             {
