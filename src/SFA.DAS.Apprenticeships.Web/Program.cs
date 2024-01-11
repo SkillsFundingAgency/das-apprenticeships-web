@@ -55,7 +55,6 @@ namespace SFA.DAS.Apprenticeships.Web
 			builder.Services.AddApplicationInsightsTelemetry();
 
 			// Config
-			config.AddJsonFile("local.settings.json", optional: true);
 			builder.ConfigureAzureTableStorage(config);
 			config.ValidateConfiguration();
 			builder.AddDistributedCache(config);
