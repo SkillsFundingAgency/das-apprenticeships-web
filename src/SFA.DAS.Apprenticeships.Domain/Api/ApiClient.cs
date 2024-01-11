@@ -63,6 +63,19 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             return await ProcessResponse<TResponse>(response);
         }
 
+        public async Task<ApiResponse<TResponse>> Patch<TResponse>(IPatchApiRequest request)
+        {
+            var stringContent = request.Data != null ? new StringContent(JsonConvert.SerializeObject(request.Data), Encoding.UTF8, "application/json") : null;
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Patch, request.PatchUrl);
+            requestMessage.Content = stringContent;
+            AddAuthenticationHeader(requestMessage);
+
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+            return await ProcessResponse<TResponse>(response);
+        }
+
         private void AddAuthenticationHeader(HttpRequestMessage httpRequestMessage)
         {
             httpRequestMessage.Headers.Add("Ocp-Apim-Subscription-Key", _config.Key);

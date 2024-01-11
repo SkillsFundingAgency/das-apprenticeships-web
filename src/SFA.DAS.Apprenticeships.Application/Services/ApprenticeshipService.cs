@@ -36,6 +36,11 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             await _apiClient.Delete<object>(new CancelPendingPriceChangeRequest(apprenticeshipKey));
         }
 
+        public async Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason)
+        {
+            await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));
+        }
+
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
             long? providerId,
