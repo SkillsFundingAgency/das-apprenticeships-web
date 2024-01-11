@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Configuration.AzureTableStorage;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
@@ -10,11 +11,10 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     {
         public static void AddConfigurationOptions(
             this WebApplicationBuilder builder, 
-            ConfigurationManager config,
-            AuthenticationType? authenticationType)
+            ConfigurationManager config)
         {
-            //TODO establish if authenticationType-specific config is necessary?
-            builder.Services.Configure<ApprenticeshipsWeb>(config.GetSection(nameof(ApprenticeshipsWeb)));
+			FailedStartUpMiddleware.StartupStep = "AddConfigurationOptions";
+			builder.Services.Configure<ApprenticeshipsWeb>(config.GetSection(nameof(ApprenticeshipsWeb)));
             builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsWeb>>()!.Value);
 
             builder.Services.Configure<ApprenticeshipsOuterApi>(config.GetSection(nameof(ApprenticeshipsOuterApi)));
@@ -26,7 +26,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
         public static void ConfigureAzureTableStorage(this WebApplicationBuilder builder, ConfigurationManager config)
         {
-            config.AddAzureTableStorage(options =>
+			FailedStartUpMiddleware.StartupStep = "ConfigureAzureTableStorage";
+			config.AddAzureTableStorage(options =>
             {
                 var (names, connectionString, environment) = builder.BaseConfigurationValues();
                 options.ConfigurationKeys = names.Split(",");
@@ -44,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             (
                 config["ConfigNames"],
                 config["ConfigurationStorageConnectionString"],
-                config["EnvironmentName"]
+                config["ResourceEnvironmentName"].ToUpper()
             );
         }
     }

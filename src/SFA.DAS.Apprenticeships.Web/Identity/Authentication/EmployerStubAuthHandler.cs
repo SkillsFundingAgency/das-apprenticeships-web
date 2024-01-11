@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -6,8 +7,9 @@ using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 
-namespace SFA.DAS.Apprenticeships.Web.AppStart
+namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication
 {
+	[ExcludeFromCodeCoverage]
     public class EmployerStubAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
 

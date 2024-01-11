@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -11,7 +12,8 @@ using SFA.DAS.Provider.Shared.UI.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-	public class ChangeOfPriceController : Controller
+    [Authorize]
+    public class ChangeOfPriceController : Controller
     {
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
@@ -87,7 +89,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
 		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
 		{
-            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, "todo FLP-473", model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
 
             var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
                 { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });

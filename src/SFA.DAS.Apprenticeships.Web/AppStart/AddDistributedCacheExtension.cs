@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using SFA.DAS.Apprenticeships.Web.Middleware;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
@@ -9,6 +10,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 	{
 		public static void AddDistributedCache(this WebApplicationBuilder builder, ConfigurationManager config)
 		{
+			FailedStartUpMiddleware.StartupStep = "AddDistributedCache";
 #if DEBUG
 			builder.Services.AddDistributedMemoryCache();
 #else

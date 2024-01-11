@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.DfESignIn.Auth.AppStart;
 using SFA.DAS.DfESignIn.Auth.Enums;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.AppStart;
-using SFA.DAS.Provider.Shared.UI.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
@@ -12,9 +13,10 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     [ExcludeFromCodeCoverage]
     public static class AuthenticationExtension
     {
+        private const string ProviderCookieAuthName = "SFA.DAS.ProviderApprenticeshipService";
         public static void SetUpProviderAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
-            if (config.UseLocalStubAuth())
+            if (config.UseStubAuth())
             {
                 services.AddProviderStubAuthentication();
             }
@@ -23,17 +25,17 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                 // Use DfESignIn OpenIdConnect
                 services.AddAndConfigureDfESignInAuthentication(
                     config,
-                    "SFA.DAS.ProviderApprenticeshipService",
+                    ProviderCookieAuthName,
                     typeof(CustomServiceRole),
                     ClientName.ProviderRoatp,
-                    "/signout",
-                    "");
+                    "/signout", // This will set the cookie signout route value (note: naming is misleading in the nuget package)
+                    ""); // This will redirect the user to the PAS home page after being signed out
             }
         }
 
         public static void SetUpEmployerAuthentication(this IServiceCollection services, ConfigurationManager config, ServiceParameters serviceParameters)
         {
-            if (config.UseLocalStubAuth())
+            if (config.UseStubAuth())
             {
                 services.AddEmployerStubAuthentication();    
                 services.AddAuthenticationCookie(serviceParameters.AuthenticationType);
@@ -43,11 +45,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             {
                 // Use GovSignIn OpenIdConnect
                 services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
-                //TODO NEEDED?
                 services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, config["ResourceEnvironmentName"]);
             }
-            //TODO NEEDED?
-            services.AddSingleton(new ProviderSharedUIConfiguration()); 
         }
         private static void AddAuthenticationCookie(this IServiceCollection services,
             AuthenticationType? serviceParametersAuthenticationType)
@@ -62,6 +61,22 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.CookieManager = new ChunkingCookieManager { ChunkSize = 3000 };
             });
+        }
+
+        private static void AddProviderStubAuthentication(this IServiceCollection services)
+        {
+            services
+                .AddAuthentication("Provider-stub")
+                .AddScheme<AuthenticationSchemeOptions, ProviderStubAuthHandler>(
+                "Provider-stub",
+                options => { });
+        }
+
+        private static void AddEmployerStubAuthentication(this IServiceCollection services)
+        {
+            services.AddAuthentication("Employer-stub").AddScheme<AuthenticationSchemeOptions, EmployerStubAuthHandler>(
+                "Employer-stub",
+                options => { });
         }
     }
 }

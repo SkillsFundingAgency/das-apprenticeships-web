@@ -85,7 +85,7 @@
         "employerAuthType": "Employer",
         "providersAppServiceName": "[concat(variables('resourceNamePrefix'), '-prv-as')]",
         "providerAuthType": "Provider",
-        "configNames": "SFA.DAS.Apprenticeships.Web"
+        "configNames": "SFA.DAS.Apprenticeships.Web,SFA.DAS.Provider.DfeSignIn,SFA.DAS.Employer.GovSignIn"
     },
     "resources": [
         {
@@ -179,6 +179,10 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
@@ -207,7 +211,7 @@
                                     "value": "[parameters('cdnUrl')]"
                                 },
                                 {
-                                    "name": "AuthType",
+                                    "name": "ApprenticeshipsWeb:AuthType",
                                     "value": "[variables('employerAuthType')]"
                                 }
                             ]
@@ -335,6 +339,10 @@
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
@@ -363,7 +371,7 @@
                                     "value": "[parameters('cdnUrl')]"
                                 },
                                 {
-                                    "name": "AuthType",
+                                    "name": "ApprenticeshipsWeb:AuthType",
                                     "value": "[variables('providerAuthType')]"
                                 }
                             ]
