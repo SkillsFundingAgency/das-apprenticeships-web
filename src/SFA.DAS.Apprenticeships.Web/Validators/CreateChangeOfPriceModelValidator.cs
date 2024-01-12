@@ -95,10 +95,10 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
 		{
             if (!model.EarliestEffectiveDate.HasValue)
             {
-                throw new InvalidOperationException("HardCloseDate must be set");
+                throw new InvalidOperationException("EarliestEffectiveDate must be set");//This should come from api call to get Apprenticeship Price
             }
 
-			if (model.EffectiveFromDate.Date <= model.EarliestEffectiveDate)
+			if (model.EffectiveFromDate.Date < model.EarliestEffectiveDate)
 			{
 				return false;
 			}

@@ -57,7 +57,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
         [TestCase("The date entered must be before the planned end date", 1, 5, 2027)]
         [TestCase("The date entered must be before the planned end date", 1, 6, 2026)]
 		[TestCase("You cannot enter a date in a previous academic year. The earliest date you can enter is 17/10/2025.", 10, 9, 2025)]
-		[TestCase("You cannot enter a date in a previous academic year. The earliest date you can enter is 17/10/2025.", 17, 10, 2025)]
+		[TestCase("You cannot enter a date in a previous academic year. The earliest date you can enter is 17/10/2025.", 16, 10, 2025)]
 		public void CreateChangeOfPriceModelValidator_EffectiveFromDate_ReturnsExpectedErrorMessage(
             string expectedMessage, int day, int month, int year)
         {
