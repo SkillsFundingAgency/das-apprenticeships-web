@@ -4,7 +4,6 @@ using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.DfESignIn.Auth.AppStart;
 using SFA.DAS.DfESignIn.Auth.Enums;
-using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.AppStart;
 using System.Diagnostics.CodeAnalysis;
 
@@ -39,13 +38,11 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             {
                 services.AddEmployerStubAuthentication();    
                 services.AddAuthenticationCookie(serviceParameters.AuthenticationType);
-                services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, identityClientId: "no-auth-id", config["ResourceEnvironmentName"]);
             }
             else if (config.UseGovSignIn())
             {
                 // Use GovSignIn OpenIdConnect
                 services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/SignIn-Stub");
-                services.AddMaMenuConfiguration(RouteNames.EmployerSignOut, config["ResourceEnvironmentName"]);
             }
         }
         private static void AddAuthenticationCookie(this IServiceCollection services,

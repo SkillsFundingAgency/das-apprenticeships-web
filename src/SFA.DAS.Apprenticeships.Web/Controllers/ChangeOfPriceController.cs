@@ -167,7 +167,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
         [HttpPost]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-        public async Task<IActionResult> PostViewPendingPriceChangePageEmployer(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges)
+        public async Task<IActionResult> PostViewPendingPriceChangePageEmployer(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
         {
             if (ApproveChanges != "0")
             {
@@ -181,7 +181,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return NotFound();
             }
 
-            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, "TODO");
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason);
             return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeRejected=true");
         }
 

@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
+using SFA.DAS.Apprenticeships.Web.Filters;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
@@ -64,6 +65,8 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Authentication & Authorization
             var serviceParameters = config.GetServiceParameters();
+            Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
+            Try(() => builder.Services.AddMaMenuConfiguration(RouteNames.SignOut, config["ResourceEnvironmentName"]), "AddMaMenuConfiguration");
             switch (serviceParameters.AuthenticationType)
             {
 	            case AuthenticationType.Employer:
@@ -73,7 +76,6 @@ namespace SFA.DAS.Apprenticeships.Web
 					break;
 	            case AuthenticationType.Provider:
 					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
-					Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
 					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
                     Try(() => builder.Services.SetUpProviderAuthentication(config), "SetUpProviderAuthentication");
                     break;
@@ -106,6 +108,7 @@ namespace SFA.DAS.Apprenticeships.Web
                 })
                 .AddMvc(options =>
                 {
+                    options.Filters.Add(new AnalyticsFilterAttribute());
                     if (!config.IsEnvironmentLocal())
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());

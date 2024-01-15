@@ -9,15 +9,14 @@
         Back
     </a>
 
-	<div class="govuk-grid-row">
-		<div class="govuk-grid-column-two-thirds">
-			<h1 class="govuk-heading-l">Review Changes</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Review Changes</h1>
             <h2 class="govuk-heading-m">@Model.ProviderName has requested these changes</h2>
 
             @await Html.PartialAsync("_pendingSummary", Model)
             
-            @*TODO Populate action in approve/reject user stories *@
-            <form method="post" action="/">
+            <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending">
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.ApprenticeshipKey)
                 <div class="govuk-form-group">
@@ -27,19 +26,46 @@
 
                     <div class="govuk-radios">
                         <div class="govuk-radios__item" id="radio-item-yes">
-                            <input class="govuk-radios__input" type="radio" id="option-yes" name="ApproveChanges" value="1">
+                            <input class="govuk-radios__input" type="radio" id="option-yes" name="ApproveChanges" value="1" onchange="javascript: showHideRejectReason()">
                             <label class="govuk-label govuk-radios__label" for="option-yes">Yes, approve these changes</label>
                         </div>
                         <div class="govuk-radios__item" id="radio-item-no">
-                            <input class="govuk-radios__input" type="radio" id="option-no" name="ApproveChanges" value="0">
+                            <input class="govuk-radios__input" type="radio" id="option-no" name="ApproveChanges" value="0" onchange="javascript: showHideRejectReason()">
                             <label class="govuk-label govuk-radios__label" for="option-no">No, reject these changes</label>
                         </div>
+                    </div>
+                    
+                    <div id="rejectReasonContainer">
+                        <fieldset class="govuk-fieldset" role="group" aria-describedby="ReasonForChangeOfPriceRejection-hint">
+                            <br/>
+                            <div>
+                                <div class="govuk-form-group" id="ReasonForChangeOfPriceRejectionGroup">
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" for="ReasonForChangeOfPriceRejection">
+                                        Why do you want to reject these changes?
+                                    </legend>
+                                    @Html.TextArea("rejectReason", new {@class = $"govuk-textarea", rows = "5", aria_describedby = "reason-for-rejection-hint"})
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
                 <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
                     Send
                 </button>
             </form>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
+
+<script type="text/javascript">
+    function showHideRejectReason() {
+        console.log(document.getElementById("option-no").checked);
+        if (!document.getElementById("option-no").checked) {
+            document.getElementById("rejectReasonContainer").style.display = "none";
+        } else {
+            document.getElementById("rejectReasonContainer").style.display = "block";
+        }
+    }
+
+    showHideRejectReason();
+</script>
