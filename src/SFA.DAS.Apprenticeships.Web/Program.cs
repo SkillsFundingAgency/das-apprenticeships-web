@@ -81,6 +81,9 @@ namespace SFA.DAS.Apprenticeships.Web
             }
             builder.Services.AddAuthorizationPolicies();
 
+            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
+            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
+
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
 
