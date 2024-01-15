@@ -8,6 +8,7 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
@@ -73,7 +74,8 @@ namespace SFA.DAS.Apprenticeships.Web
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
 					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
-					break;
+                    Try(() => builder.Services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(), "StubAuthenticationService");
+                    break;
 	            case AuthenticationType.Provider:
 					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
 					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
@@ -108,7 +110,6 @@ namespace SFA.DAS.Apprenticeships.Web
                 })
                 .AddMvc(options =>
                 {
-                    options.Filters.Add(new AnalyticsFilterAttribute());
                     if (!config.IsEnvironmentLocal())
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());

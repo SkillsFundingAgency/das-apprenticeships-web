@@ -1,0 +1,18 @@
+@using SFA.DAS.Apprenticeships.Web.Infrastructure
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_EmployerLayout";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
+            You've signed in
+        </h1>
+
+        <p>Id: @User.Claims.FirstOrDefault(c=>c.Type.Equals(EmployerClaims.IdamsUserIdClaimTypeIdentifier))?.Value</p>
+        <p>Email: @User.Claims.FirstOrDefault(c => c.Type.Equals(EmployerClaims.EmployerEmailClaimsTypeIdentifier))?.Value</p>
+   
+    </div>
+</div>

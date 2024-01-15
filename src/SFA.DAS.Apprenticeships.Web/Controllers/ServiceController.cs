@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.GovUK.Auth.Models;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers;
 
@@ -12,10 +14,12 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers;
 public class ServiceController : Controller
 {
     private readonly IConfiguration _configuration;
+    private readonly IStubAuthenticationService _stubAuthenticationService;
 
-    public ServiceController(IConfiguration configuration)
+    public ServiceController(IConfiguration configuration, IStubAuthenticationService stubAuthenticationService)
     {
         _configuration = configuration;
+        _stubAuthenticationService = stubAuthenticationService;
     }
     
     [Route("signout", Name = RouteNames.SignOut)]
@@ -49,4 +53,38 @@ public class ServiceController : Controller
     {
         return View("SignedOut", new SignedOutViewModel(_configuration["ResourceEnvironmentName"]));
     }
+
+#if DEBUG
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("SignIn-Stub")]
+    public IActionResult SigninStub()
+    {
+        return View("SigninStub", new List<string> { _configuration["ApprenticeshipsWeb:StubId"], _configuration["ApprenticeshipsWeb:StubEmail"] });
+    }
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("SignIn-Stub")]
+    public async Task<IActionResult> SigninStubPost()
+    {
+        var claims = await _stubAuthenticationService.GetStubSignInClaims(new StubAuthUserDetails
+        {
+            Email = _configuration["ApprenticeshipsWeb:StubEmail"],
+            Id = _configuration["ApprenticeshipsWeb:StubId"]
+        });
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims,
+            new AuthenticationProperties());
+
+        return RedirectToRoute("Signed-in-stub");
+    }
+
+    [Authorize]
+    [HttpGet]
+    [Route("signed-in-stub", Name = "Signed-in-stub")]
+    public IActionResult SignedInStub()
+    {
+        return View();
+    }
+#endif
 }
