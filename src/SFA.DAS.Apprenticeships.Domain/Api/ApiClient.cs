@@ -95,7 +95,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             }
             else
             {
-                responseBody = JsonSerializer.Deserialize<TResponse>(json);
+                responseBody = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
 
             var apiResponse = new ApiResponse<TResponse>(responseBody, response.StatusCode, errorContent);
