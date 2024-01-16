@@ -215,7 +215,7 @@ namespace SFA.DAS.Apprenticeships.Web
 				builder.Services.AddApplicationInsightsTelemetry();
 				var serviceProvider = builder.Services.BuildServiceProvider();
 				var logger = serviceProvider.GetService<ILogger<FailedStartUpMiddleware>>();
-				logger?.LogInformation(message);
+				logger?.LogError(message);
 			}
 			catch
             {
