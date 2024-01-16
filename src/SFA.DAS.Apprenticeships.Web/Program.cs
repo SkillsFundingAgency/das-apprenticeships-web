@@ -208,7 +208,6 @@ namespace SFA.DAS.Apprenticeships.Web
 			}
 		}
 
-        //  Method trys to get a logger from the builder, if it can't it will create a new one and log the message
         private static void TryLog(this WebApplicationBuilder builder, string message)
         {
 			try
