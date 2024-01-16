@@ -37,6 +37,8 @@ namespace SFA.DAS.Apprenticeships.Web
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
 				}
 
+                builder.TryLog(FailedStartUpMiddleware.ErrorMessage);
+
 				app.UseMiddleware<FailedStartUpMiddleware>();
 				app.UseRouting();
 
@@ -189,7 +191,7 @@ namespace SFA.DAS.Apprenticeships.Web
             return builder;
         }
 
-		public static void Try(Action action, string uiSafeMessage)
+		private static void Try(Action action, string uiSafeMessage)
 		{
 			try
 			{
@@ -203,6 +205,22 @@ namespace SFA.DAS.Apprenticeships.Web
 				}
 
 				throw new StartUpException(uiSafeMessage, ex);
+			}
+		}
+
+        //  Method trys to get a logger from the builder, if it can't it will create a new one and log the message
+        private static void TryLog(this WebApplicationBuilder builder, string message)
+        {
+			try
+            {
+				builder.Services.AddApplicationInsightsTelemetry();
+				var serviceProvider = builder.Services.BuildServiceProvider();
+				var logger = serviceProvider.GetService<ILogger<FailedStartUpMiddleware>>();
+				logger?.LogInformation(message);
+			}
+			catch
+            {
+				Console.WriteLine(message);
 			}
 		}
 	}
