@@ -30,14 +30,13 @@ namespace SFA.DAS.Apprenticeships.Web
 				if (ex is StartUpException startUpException)
                 {
                     FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
-
 				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
 				}
 
-                builder.TryLog(FailedStartUpMiddleware.ErrorMessage);
+				Console.WriteLine($"{FailedStartUpMiddleware.ErrorMessage} ExceptionMessage:{ex.Message} InnerExceptionMessage:{ex.InnerException?.Message}");
 
 				app.UseMiddleware<FailedStartUpMiddleware>();
 				app.UseRouting();
@@ -205,21 +204,6 @@ namespace SFA.DAS.Apprenticeships.Web
 				}
 
 				throw new StartUpException(uiSafeMessage, ex);
-			}
-		}
-
-        private static void TryLog(this WebApplicationBuilder builder, string message)
-        {
-			try
-            {
-				builder.Services.AddApplicationInsightsTelemetry();
-				var serviceProvider = builder.Services.BuildServiceProvider();
-				var logger = serviceProvider.GetService<ILogger<FailedStartUpMiddleware>>();
-				logger?.LogError(message);
-			}
-			catch
-            {
-				Console.WriteLine(message);
 			}
 		}
 	}
