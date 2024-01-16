@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.GovUK.Auth.Models;
@@ -79,12 +82,26 @@ public class ServiceController : Controller
         return RedirectToRoute("Signed-in-stub");
     }
 
-    [Authorize]
+    [Authorize(Policy = nameof(PolicyNames.IsAuthenticated))]
     [HttpGet]
     [Route("signed-in-stub", Name = "Signed-in-stub")]
-    public IActionResult SignedInStub()
+    public IActionResult SignedInStub([FromQuery] string returnUrl)
     {
-        return View();
+        if (_configuration["ResourceEnvironmentName"].ToUpper() == "PRD")
+        {
+            return NotFound();
+        }
+        var viewModel = new AccountStubViewModel
+        {
+            Email = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value,
+            Id = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value,
+            Accounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(
+                    User.Claims.FirstOrDefault(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier))?.Value)
+                .Select(c => c.Value)
+                .ToList(),
+            ReturnUrl = returnUrl
+        };
+        return View(viewModel);
     }
 #endif
 }
