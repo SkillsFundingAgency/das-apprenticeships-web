@@ -1,9 +1,11 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
+using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Models;
@@ -80,6 +82,7 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+            BearerTokenProvider.SetSigningKey(config["UserBearerTokenSigningKey"]);
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);

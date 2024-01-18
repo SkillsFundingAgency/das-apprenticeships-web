@@ -1,8 +1,11 @@
+using System.Net.Http;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Apprenticeships.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.Domain.Api
 {
@@ -10,13 +13,16 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
     {
         private readonly HttpClient _httpClient;
         private readonly ApprenticeshipsOuterApi _config;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApiClient (HttpClient httpClient, IOptions<ApprenticeshipsOuterApi> config)
+        public ApiClient (HttpClient httpClient, IOptions<ApprenticeshipsOuterApi> config, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
             _config = config.Value;
             _httpClient.BaseAddress = new Uri(config.Value.BaseUrl);
+            _httpContextAccessor = httpContextAccessor;
         }
+
         public async Task<ApiResponse<TResponse>> Get<TResponse>(IGetApiRequest request)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, request.GetUrl);
@@ -67,6 +73,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
         {
             httpRequestMessage.Headers.Add("Ocp-Apim-Subscription-Key", _config.Key);
             httpRequestMessage.Headers.Add("X-Version", "1");
+
+            var token = _httpContextAccessor.HttpContext.GetBearerToken();
+            httpRequestMessage.Headers.Add("Authorization", $"Bearer {token}");
         }
 
         private static async Task<ApiResponse<TResponse>> ProcessResponse<TResponse>(HttpResponseMessage response)
