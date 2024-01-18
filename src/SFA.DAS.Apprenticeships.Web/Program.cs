@@ -30,12 +30,13 @@ namespace SFA.DAS.Apprenticeships.Web
 				if (ex is StartUpException startUpException)
                 {
                     FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
-
 				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
 				}
+
+				Console.WriteLine($"{FailedStartUpMiddleware.ErrorMessage} ExceptionMessage:{ex.Message} InnerExceptionMessage:{ex.InnerException?.Message}");
 
 				app.UseMiddleware<FailedStartUpMiddleware>();
 				app.UseRouting();
@@ -189,7 +190,7 @@ namespace SFA.DAS.Apprenticeships.Web
             return builder;
         }
 
-		public static void Try(Action action, string uiSafeMessage)
+		private static void Try(Action action, string uiSafeMessage)
 		{
 			try
 			{
