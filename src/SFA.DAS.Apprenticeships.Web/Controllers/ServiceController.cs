@@ -24,6 +24,12 @@ public class ServiceController : Controller
         _configuration = configuration;
         _stubAuthenticationService = stubAuthenticationService;
     }
+
+    [Route("provider-signout", Name = RouteNames.ProviderSignOut)]
+    public async Task<IActionResult> ProviderSignout()
+    {
+        return await SignOut();
+    }
     
     [Route("signout", Name = RouteNames.SignOut)]
     public async Task<IActionResult> SignOut()
