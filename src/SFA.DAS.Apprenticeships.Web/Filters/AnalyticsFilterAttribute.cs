@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 
 namespace SFA.DAS.Apprenticeships.Web.Filters
 {
+    [ExcludeFromCodeCoverage]
     public class AnalyticsFilterAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)

@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 
 namespace SFA.DAS.Apprenticeships.Web.Models;
 
+[ExcludeFromCodeCoverage]
 public class AccountStubViewModel
 {
     public string Id { get; set; }
