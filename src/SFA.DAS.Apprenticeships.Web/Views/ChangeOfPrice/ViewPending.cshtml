@@ -12,7 +12,9 @@
 
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-two-thirds">
-			<h1 class="govuk-heading-l">View change request</h1>
+            <h1 class="govuk-heading-l">View change request</h1>
+            <strong class="govuk-tag govuk-tag--yellow">Pending employer review</strong>
+            <br/><br/>
 			<h2 class="govuk-heading-m">Price changes you've requested</h2>
 			<table class="govuk-table">
 				<thead class="govuk-table__head">
@@ -66,9 +68,9 @@
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m=> m.ApprenticeshipKey)
                 <div class="govuk-form-group">
-                    <div id="cancel-request-hint" class="govuk-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Do you want to cancel this request?
-                    </div>
+                    </legend>
                     
                     <div class="govuk-radios">
                         <div class="govuk-radios__item" id="radio-item-yes">
