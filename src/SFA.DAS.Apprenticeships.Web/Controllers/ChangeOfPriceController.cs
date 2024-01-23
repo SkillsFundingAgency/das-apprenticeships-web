@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
@@ -89,7 +90,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
 		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
 		{
-            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, model.ReasonForChangeOfPrice, model.EffectiveFromDate.Date.GetValueOrDefault());
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
             var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
                 { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
