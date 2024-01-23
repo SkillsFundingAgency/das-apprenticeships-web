@@ -16,7 +16,7 @@ public static class ApplicationBuilderExtensions
                 "img-src 'self' https://*.azureedge.net *.google-analytics.com https://*.zdassets.com https://*.zendesk.com wss://*.zendesk.com wss://*.zopim.com https://*.rcrsv.io; " +
 				$"script-src 'self' 'unsafe-inline' {cdn} " +
                 "*.googletagmanager.com *.google-analytics.com *.googleapis.com https://*.zdassets.com https://*.zendesk.com wss://*.zendesk.com wss://*.zopim.com https://*.rcrsv.io; " +
-				$"font-src 'self' {cdn} data:;";
+				$"font-src 'self' {cdn} https://*.rcrsv.io data:;";
 			await next();
 
 		});
