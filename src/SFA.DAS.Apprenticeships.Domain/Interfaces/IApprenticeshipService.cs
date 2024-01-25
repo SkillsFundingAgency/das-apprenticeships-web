@@ -15,7 +15,11 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
             decimal? trainingPrice,
             decimal? assessmentPrice,
             decimal? totalPrice,
-            string reason,
+            string? reason,
             DateTime effectiveFromDate);
+
+        Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey);
+        Task CancelPendingPriceChange(Guid apprenticeshipKey);
+
     }
 }
