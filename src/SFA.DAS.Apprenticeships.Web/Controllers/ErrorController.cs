@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models.Error;
 using SFA.DAS.Provider.Shared.UI.Attributes;
@@ -19,6 +21,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("{statuscode?}")]
         public IActionResult Error(int? statusCode)
         {
+            if (statusCode == 401 || HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error is ApiUnauthorizedException) return View("401");
+
             switch (statusCode)
             {
                 case 403:

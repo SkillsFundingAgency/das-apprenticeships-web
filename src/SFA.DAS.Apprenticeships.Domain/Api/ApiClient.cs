@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -78,6 +79,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             
             if(!response.IsSuccessStatusCode)
             {
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    throw new ApiUnauthorizedException();
+                
                 errorContent = json;
             }
             else
@@ -90,4 +94,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             return apiResponse;
         }
     }
+
+    public class ApiUnauthorizedException : Exception { }
 }
