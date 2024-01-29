@@ -9,8 +9,6 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
