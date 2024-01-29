@@ -115,6 +115,22 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             VerifyRequest(_ExpectedUrl, HttpMethod.Delete);
         }
 
+        [Test]
+        public void UnauthorizedResponse_ThrowsCorrectException()
+        {
+            // Arrange
+            var request = new Mock<IGetApiRequest>();
+            request.Setup(m => m.GetUrl).Returns(_ExpectedUrl);
+
+            var expectedApiResponse = _fixture.Create<string>();
+            var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.Unauthorized, expectedApiResponse);
+            var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+
+            // Act & Assert
+            Assert.ThrowsAsync<ApiUnauthorizedException>(() => apiClient.Get<string>(request.Object));
+        }
+
         private HttpClient GetUnitTestHttpClient(HttpResponseMessage expectedResponse)
         {
             var httpClientHandler = new Mock<HttpMessageHandler>();
