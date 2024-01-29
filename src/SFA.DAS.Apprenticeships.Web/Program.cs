@@ -58,8 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web
 			builder.Services.AddApplicationInsightsTelemetry();
 
 			// Config
-            config.AddJsonFile("local.settings.json", optional: true);
-			builder.ConfigureAzureTableStorage(config);
+            builder.ConfigureAzureTableStorage(config);
 			config.ValidateConfiguration();
 			builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
@@ -85,6 +84,9 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+
+            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
+            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
