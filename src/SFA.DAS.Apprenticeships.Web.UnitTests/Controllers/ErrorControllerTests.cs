@@ -42,9 +42,21 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Assert
             result.ViewName.Should().Be("404");
         }
-        
+
+        [Test]
+        public void WhenStatusCodeIs401Then401ViewIsReturned()
+        {
+            // Arrange
+            var sut = CreateController();
+
+            // Act
+            var result = (ViewResult)sut.Error(401);
+
+            // Assert
+            result.ViewName.Should().Be("401");
+        }
+
         [TestCase(null)]
-        [TestCase(401)]
         [TestCase(503)]
         [TestCase(405)]
         public void WhenStatusCodeIsNotHandledThenGenericErrorViewIsReturned(int? errorCode)

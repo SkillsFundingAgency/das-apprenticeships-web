@@ -79,8 +79,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             
             if(!response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new ApiUnauthorizedException();
+                if (response.StatusCode == HttpStatusCode.Unauthorized) throw new ApiUnauthorizedException();
                 
                 errorContent = json;
             }

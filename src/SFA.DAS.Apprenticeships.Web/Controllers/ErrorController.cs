@@ -21,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("{statuscode?}")]
         public IActionResult Error(int? statusCode)
         {
-            if (statusCode == 401 || HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error is ApiUnauthorizedException) return View("401");
+            if (statusCode == 401 || HttpContext?.Features?.Get<IExceptionHandlerFeature>()?.Error is ApiUnauthorizedException) return View("401");
 
             switch (statusCode)
             {
