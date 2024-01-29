@@ -21,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("{statuscode?}")]
         public IActionResult Error(int? statusCode)
         {
-            if (statusCode == 401 || HttpContext?.Features?.Get<IExceptionHandlerFeature>()?.Error is ApiUnauthorizedException) return View("401");
+            if (HttpContext?.Features?.Get<IExceptionHandlerFeature>()?.Error is ApiUnauthorizedException) return View("401");
 
             switch (statusCode)
             {
@@ -33,6 +33,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                         $"https://{testPrefixForHelpPageLink}services.signin.education.gov.uk/approvals/select-organisation?action=request-service";
                     return View(statusCode.ToString(), new Error403ViewModel(dashboardLink, helpPageLink, useDfESignIn));
                 case 404:
+                case 401:
                     return View(statusCode.ToString());
                 default:
                     return View();
