@@ -9,7 +9,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers
 {
     public static class ControllerExtensions
     {
-        public static void SetupHttpContext(this ControllerBase controller, long? providerReferenceNumber = null, string apprenticeshipHashedId = null, string userName = null)
+        public static void SetupHttpContext(this ControllerBase controller, long? providerReferenceNumber = null, string? apprenticeshipHashedId = null, string? userName = null, string? employerAccountId = null)
         {
             if (controller.HttpContext == null)
             {
@@ -26,8 +26,14 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers
                 controller.ControllerContext.HttpContext = httpContext.Object;
             }
 
-            controller.HttpContext!.Request.RouteValues.Add(RouteValues.Ukprn, providerReferenceNumber.ToString());
-            controller.HttpContext.Request.RouteValues.Add(RouteValues.ApprenticeshipHashedId, apprenticeshipHashedId);
+            if (providerReferenceNumber.HasValue)
+                controller.HttpContext!.Request.RouteValues.Add(RouteValues.Ukprn, providerReferenceNumber.ToString());
+
+            if (employerAccountId != null)
+                controller.HttpContext!.Request.RouteValues.Add(RouteValues.EmployerAccountId, employerAccountId);
+
+            if(apprenticeshipHashedId != null)
+                controller.HttpContext!.Request.RouteValues.Add(RouteValues.ApprenticeshipHashedId, apprenticeshipHashedId);
         }
     }
 }
