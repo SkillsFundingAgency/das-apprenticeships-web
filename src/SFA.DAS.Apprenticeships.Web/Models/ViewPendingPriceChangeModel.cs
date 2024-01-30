@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿using System.Web;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 
 namespace SFA.DAS.Apprenticeships.Web.Models
 {
@@ -13,7 +14,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 			OriginalTrainingPrice = pendingPriceChange.OriginalTrainingPrice.Value;
 			OriginalEndPointAssessmentPrice = pendingPriceChange.OriginalAssessmentPrice.Value;
 			EffectiveFromDate = pendingPriceChange.EffectiveFrom;
-			ReasonForChangeOfPrice = pendingPriceChange.Reason;
+			ReasonForChangeOfPrice = HttpUtility.HtmlDecode(pendingPriceChange.Reason);
         }
 
 		public Guid ApprenticeshipKey { get; set; }

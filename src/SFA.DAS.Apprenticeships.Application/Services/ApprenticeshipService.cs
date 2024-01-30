@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             decimal? trainingPrice,
             decimal? assessmentPrice,
             decimal? totalPrice,
-            string reason,
+            string? reason,
             DateTime effectiveFromDate)
         {
             await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
