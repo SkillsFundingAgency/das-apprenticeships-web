@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
@@ -68,7 +69,8 @@ namespace SFA.DAS.Apprenticeships.Web
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
+                    Try(() => builder.Services.AddSingleton<IExternalUrlHelper, ExternalUrlHelper>(), "RegisterExternalUrlHelper");
+                    Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
 					break;
 	            case AuthenticationType.Provider:
