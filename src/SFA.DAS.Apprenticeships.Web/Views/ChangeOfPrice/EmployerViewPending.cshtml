@@ -1,0 +1,45 @@
+﻿@model EmployerViewPendingPriceChangeModel
+@{
+    ViewData["Title"] = "View change request - Manage apprenticeships";
+}
+
+<div class="govuk-width-container ">
+    
+    <a class="govuk-back-link" href="@Model.BackLinkUrl">
+        Back
+    </a>
+
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-two-thirds">
+			<h1 class="govuk-heading-l">Review Changes</h1>
+            <h2 class="govuk-heading-m">@Model.ProviderName has requested these changes</h2>
+
+            @await Html.PartialAsync("_pendingSummary", Model)
+            
+            @*TODO Populate action in approve/reject user stories *@
+            <form method="post" action="/">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ApprenticeshipKey)
+                <div class="govuk-form-group">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Do you want to approve these changes?
+                    </legend>
+
+                    <div class="govuk-radios">
+                        <div class="govuk-radios__item" id="radio-item-yes">
+                            <input class="govuk-radios__input" type="radio" id="option-yes" name="ApproveChanges" value="1">
+                            <label class="govuk-label govuk-radios__label" for="option-yes">Yes, approve these changes</label>
+                        </div>
+                        <div class="govuk-radios__item" id="radio-item-no">
+                            <input class="govuk-radios__input" type="radio" id="option-no" name="RejectChanges" value="0">
+                            <label class="govuk-label govuk-radios__label" for="option-no">No, reject these changes</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                    Send
+                </button>
+            </form>
+		</div>
+	</div>
+</div>

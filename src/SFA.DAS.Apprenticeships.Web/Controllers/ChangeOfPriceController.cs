@@ -6,10 +6,11 @@ using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Provider.Shared.UI;
+using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
+using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -19,24 +20,27 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper<CreateChangeOfPriceModel> _mapper;
-        private readonly IExternalUrlHelper _externalUrlHelper;
+        private readonly IExternalUrlHelper _externalProviderUrlHelper;
+        private readonly UrlBuilder _externalEmployerUrlHelper;
         private readonly ICacheService _cache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
         public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
-        public const string ViewPendingPriceViewName = "ViewPending";
+        public const string ProviderViewPendingViewName = "ProviderViewPending";
+        public const string EmployerViewPendingViewName = "EmployerViewPending";
 
         public ChangeOfPriceController(
             ILogger<ChangeOfPriceController> logger, 
             IApprenticeshipService apprenticeshipService, 
             IMapper<CreateChangeOfPriceModel> mapper,
 			ICacheService cache,
-            IExternalUrlHelper externalUrlHelper)
+            IExternalUrlHelper externalProviderUrlHelper, UrlBuilder externalEmployerUrlHelper)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
 			_cache = cache;
-            _externalUrlHelper = externalUrlHelper;
+            _externalProviderUrlHelper = externalProviderUrlHelper;
+            _externalEmployerUrlHelper = externalEmployerUrlHelper;
         }
         
         [HttpGet]
@@ -92,7 +96,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		{
             await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
-            var providerCommitmentsReturnUrl = _externalUrlHelper.GenerateUrl(new UrlParameters
+            var providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
                 { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
             return Redirect(providerCommitmentsReturnUrl);
 		}
@@ -100,7 +104,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[HttpGet]
 		[SetNavigationSection(NavigationSection.ManageApprentices)]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-		public async Task<IActionResult> GetViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
+		public async Task<IActionResult> GetViewPendingPriceChangePageProvider(long ukprn, string apprenticeshipHashedId)
 		{
 			var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
 			if (apprenticeshipKey == default(Guid))
@@ -116,8 +120,30 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 				return NotFound();
 			}
 
-			return View(ViewPendingPriceViewName, new ViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, ukprn, pendingPriceChange.PendingPriceChange));
+			return View(ProviderViewPendingViewName, new ProviderViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, ukprn));
 		}
+
+        [HttpGet]
+        [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+        public async Task<IActionResult> GetViewPendingPriceChangePageEmployer(string employerAccountId, string apprenticeshipHashedId)
+        {
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            if (apprenticeshipKey == default(Guid))
+            {
+                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+                return NotFound();
+            }
+
+            var pendingPriceChange = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipKey);
+            if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
+            {
+                _logger.LogWarning($"Pending Apprenticeship Price not found for apprenticeshipKey {apprenticeshipKey}");
+                return NotFound();
+            }
+
+            var backUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId);
+            return View(EmployerViewPendingViewName, new EmployerViewPendingPriceChangeModel(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, employerAccountId, pendingPriceChange.ProviderName, backUrl));
+        }
 
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
@@ -126,7 +152,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         {
             if (CancelRequest != "1")
             {
-                return Redirect(_externalUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
+                return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
             }
 
             var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
@@ -137,7 +163,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-            return Redirect(_externalUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}?showPriceChangeCancelled=true" }));
+            return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}?showPriceChangeCancelled=true" }));
         }
 
         //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel

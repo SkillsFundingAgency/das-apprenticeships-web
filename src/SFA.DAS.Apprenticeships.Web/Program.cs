@@ -1,3 +1,4 @@
+
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
@@ -6,6 +7,7 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
@@ -56,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web
 			builder.Services.AddApplicationInsightsTelemetry();
 
 			// Config
-			builder.ConfigureAzureTableStorage(config);
+            builder.ConfigureAzureTableStorage(config);
 			config.ValidateConfiguration();
 			builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
@@ -67,7 +69,8 @@ namespace SFA.DAS.Apprenticeships.Web
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
+                    Try(() => builder.Services.AddSingleton<IExternalUrlHelper, ExternalUrlHelper>(), "RegisterExternalUrlHelper");
+                    Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
 					break;
 	            case AuthenticationType.Provider:
@@ -80,6 +83,9 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+
+            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
+            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
