@@ -73,7 +73,6 @@ namespace SFA.DAS.Apprenticeships.Web
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-                    Try(() => builder.Services.AddSingleton<IExternalUrlHelper, ExternalUrlHelper>(), "RegisterExternalUrlHelper");
                     Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
                     Try(() => builder.Services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(), "StubAuthenticationService");
