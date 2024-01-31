@@ -3,10 +3,12 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
+using SFA.DAS.Apprenticeships.Web.Filters;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
@@ -65,17 +67,18 @@ namespace SFA.DAS.Apprenticeships.Web
 
             // Authentication & Authorization
             var serviceParameters = config.GetServiceParameters();
+            Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
+            Try(() => builder.Services.AddMaMenuConfiguration(RouteNames.SignOut, config["ResourceEnvironmentName"]), "AddMaMenuConfiguration");
             switch (serviceParameters.AuthenticationType)
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-                    Try(() => builder.Services.AddSingleton<IExternalUrlHelper, ExternalUrlHelper>(), "RegisterExternalUrlHelper");
                     Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
-					break;
+                    Try(() => builder.Services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(), "StubAuthenticationService");
+                    break;
 	            case AuthenticationType.Provider:
 					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
-					Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
 					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
                     Try(() => builder.Services.SetUpProviderAuthentication(config), "SetUpProviderAuthentication");
                     break;

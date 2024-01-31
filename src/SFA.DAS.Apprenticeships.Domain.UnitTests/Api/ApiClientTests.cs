@@ -115,6 +115,26 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             VerifyRequest(_ExpectedUrl, HttpMethod.Delete);
         }
 
+        [Test]
+        public async Task Patch_WithValidRequest_ReturnsApiResponse()
+        {
+            // Arrange
+            var request = new Mock<IPatchApiRequest>();
+            request.Setup(m => m.PatchUrl).Returns(_ExpectedUrl);
+
+            var expectedApiResponse = _fixture.Create<string>();
+            var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
+            var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+
+            // Act
+            var result = await apiClient.Patch<string>(request.Object);
+
+            // Assert
+            result.Body.Should().Be(expectedApiResponse);
+            VerifyRequest(_ExpectedUrl, HttpMethod.Patch);
+        }
+
         private HttpClient GetUnitTestHttpClient(HttpResponseMessage expectedResponse)
         {
             var httpClientHandler = new Mock<HttpMessageHandler>();

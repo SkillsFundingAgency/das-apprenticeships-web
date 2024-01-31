@@ -302,6 +302,71 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             result.ShouldBeOfType<NotFoundResult>();
         }
 
+        [Test]
+        public async Task ProviderCancelChange_CancelTrue_CancelsPriceHistoryAndRedirectsToProviderCommitments()
+        {
+            // Arrange
+            var providerReferenceNumber = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            AddProviderInitiatedRouteValues(controller, providerReferenceNumber, apprenticeshipHashedId);
+            var expectedUrl = _fixture.Create<string>();
+            _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+
+            // Act
+            var result = await controller.PostViewPendingPriceChangePage(providerReferenceNumber, apprenticeshipHashedId, "1");
+
+            // Assert
+            _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Once);
+            result.ShouldBeOfType<RedirectResult>();
+            ((RedirectResult)result).Url.Should().Be(expectedUrl);
+        }
+
+        [Test]
+        public async Task ProviderCancelChange_CancelFalse_DoesNotCancelPriceHistoryAndRedirectsToProviderCommitments()
+        {
+            // Arrange
+            var providerReferenceNumber = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            AddProviderInitiatedRouteValues(controller, providerReferenceNumber, apprenticeshipHashedId);
+            var expectedUrl = _fixture.Create<string>();
+            _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+
+            // Act
+            var result = await controller.PostViewPendingPriceChangePage(providerReferenceNumber, apprenticeshipHashedId, "0");
+
+            // Assert
+            _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Never);
+            result.ShouldBeOfType<RedirectResult>();
+            ((RedirectResult)result).Url.Should().Be(expectedUrl);
+        }
+
+        [Test]
+        public async Task EmployerRejectChange_ApproveFalse_RejectsPriceHistoryAndRedirectsToEmployerCommitments()
+        {
+            // Arrange
+            var employerAccountId = _fixture.Create<string>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+            var rejectReason = _fixture.Create<string>();
+
+            // Act
+            var result = await controller.PostViewPendingPriceChangePageEmployer(employerAccountId, apprenticeshipHashedId, "0", rejectReason);
+
+            // Assert
+            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, rejectReason), Times.Once);
+            result.ShouldBeOfType<RedirectResult>();
+            var redirectResult = ((RedirectResult)result);
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeRejected=true");
+        }
+
         private void AddProviderInitiatedRouteValues(ChangeOfPriceController controller, long providerReferenceNumber, string apprenticeshipHashedId)
         {
             if(controller.HttpContext == null)
@@ -320,7 +385,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 
         private UrlBuilder GetMockUrlBuilder()
         {
-            return new UrlBuilder("unit tests");
+            return new UrlBuilder("AT");
         }
     }
 }
