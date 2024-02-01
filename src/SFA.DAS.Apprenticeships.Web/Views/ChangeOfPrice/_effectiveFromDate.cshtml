@@ -1,0 +1,63 @@
+﻿@model IChangeOfPriceModel
+
+@Html.HiddenFor(m => m.ApprenticeshipActualStartDate)
+@Html.HiddenFor(m => m.ApprenticeshipPlannedEndDate)
+<div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.EffectiveFromDate))">
+    <br>
+    <fieldset class="govuk-fieldset" role="group" aria-describedby="EffectiveFromDate-hint">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            What date is this effective from?
+        </legend>
+        <div id="EffectiveFromDate-hint" class="govuk-hint">
+            For example, 05 12 2022
+            <br>
+            The date you enter must be after the training start date
+        </div>
+        @Html.ValidationMessageFor(m => m.EffectiveFromDate, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.EffectiveFromDate) })
+        <div class="govuk-date-input" id="EffectiveFromDate" name="EffectiveFromDate">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    @Html.LabelFor(m=>m.EffectiveFromDate.Day, new { @class = $"govuk-label govuk-date-input__label" })
+                    @Html.TextBoxFor(m => m.EffectiveFromDate.Day, new
+                    {
+                        @class = $"govuk-input govuk-date-input__input govuk-input--width-2 length-limit",
+                        @type = "number",
+                        @inputmode = "numeric",
+                        @pattern="[0-9]*",
+                        @maxlength=2,
+                        aria_describedby="EffectiveFromDate",
+                        onkeyup="enforceMaxLength(this)"
+                    })
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    @Html.LabelFor(m=>m.EffectiveFromDate.Month, new { @class = $"govuk-label govuk-date-input__label" })
+                    @Html.TextBoxFor(m => m.EffectiveFromDate.Month, new
+                    {
+                        @class = $"govuk-input govuk-date-input__input govuk-input--width-2 length-limit",
+                        @type = "number",
+                        @inputmode = "numeric",
+                        @pattern="[0-9]*",
+                        @maxlength=2,
+                        onkeyup="enforceMaxLength(this)"
+                    })
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    @Html.LabelFor(m=>m.EffectiveFromDate.Year, new { @class = $"govuk-label govuk-date-input__label" })
+                    @Html.TextBoxFor(m => m.EffectiveFromDate.Year, new
+                    {
+                        @class = $"govuk-input govuk-date-input__input govuk-input--width-4 length-limit",
+                        @type = "number",
+                        @inputmode = "numeric",
+                        @pattern="[0-9]*",
+                        @maxlength=4,
+                        onkeyup="enforceMaxLength(this)"
+                    })
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

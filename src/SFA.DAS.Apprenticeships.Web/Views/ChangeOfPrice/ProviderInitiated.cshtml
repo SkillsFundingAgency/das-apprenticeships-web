@@ -1,0 +1,87 @@
+﻿@model CreateChangeOfPriceModel
+@{
+    ViewData["Title"] = "Change the training price and/or the end-point assessment price - Manage apprenticeships";
+}
+
+@section Scripts {
+    <script src="/js/CreatePriceChangeRequest.js"></script>
+}
+
+<div class="govuk-width-container ">
+
+    @*Renders href as href="https://approvals.{domain}/{ProviderReferenceNumber}/apprentices/{ApprenticeshipHashedId}" *@
+    <a class="govuk-back-link" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprentices" asp-external-action="@Model.ApprenticeshipHashedId">
+        Back
+    </a>
+
+    @await Html.PartialAsync("_validationSummary")
+
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m=> m.CacheKey)
+            @Html.HiddenFor(m=> m.ApprenticeshipKey)
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-l">Change the training price and/or the end-point assessment price</h1>
+
+                    <div id="apprenticeship-price-hint" class="govuk-hint">
+                        The funding band maximum for this apprenticeship is @Model.FundingBandMaximum.FormatCurrency(). This is the highest amount the apprenticeship service
+                        will pay towards the training and end-point assessment.
+                        <br><br>
+                        If you raise the total price above the funding band maximum, this will need to be paid by the employer.
+                    </div>
+
+                    <div class="govuk-form-group govuk-!-margin-top-7 @ViewContext.DisplayFormGroupError(nameof(Model.ApprenticeshipTrainingPrice))">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                Training price
+                            </legend>
+                            <div id="apprenticeship-trainingprice-hint" class="govuk-hint">
+                                Do not include VAT. Enter price in whole pounds. For example, for £6,500 enter 6500.
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ApprenticeshipTrainingPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ApprenticeshipTrainingPrice) })
+                            <div class="govuk-input__wrapper">
+                                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                                @Html.TextBoxFor(m => m.ApprenticeshipTrainingPrice, new { @class = $"govuk-input govuk-input--width-5 {ViewContext.DisplayInputError(nameof(Model.ApprenticeshipTrainingPrice))}", @type = "text", @aria_describedby = "apprenticeship-trainingprice-hint", @inputmode = "numeric", onkeyup="calculateTotal()"})
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.ApprenticeshipEndPointAssessmentPrice))">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                End-point assessment price
+                            </legend>
+                            <div id="apprenticeship-assessmentprice-hint" class="govuk-hint">
+                                Do not include VAT. Enter price in whole pounds. For example, for £2,500 enter 2500. If the exact amount is unknown leave this field blank.
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ApprenticeshipEndPointAssessmentPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ApprenticeshipEndPointAssessmentPrice) })
+                            <div class="govuk-input__wrapper">
+                                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                                @Html.TextBoxFor(m => m.ApprenticeshipEndPointAssessmentPrice, new { @class = $"govuk-input govuk-input--width-5 {ViewContext.DisplayInputError(nameof(Model.ApprenticeshipEndPointAssessmentPrice))}", @type = "text", @aria_describedby = "apprenticeship-assessmentprice-hint", @inputmode = "numeric", onkeyup="calculateTotal()" })
+                            </div>
+                        </fieldset>
+
+                        <div class="govuk-inset-text" js-enabled-show hidden>
+                            The total price the employer will see is:
+                            <div class="@ViewContext.StyleAsError(nameof(Model.ApprenticeshipTotalPrice))" id="ApprenticeshipTotalPrice" name="ApprenticeshipTotalPrice">@((Model.ApprenticeshipTotalPrice).FormatCurrency())</div>
+                        </div>
+                    </div>
+
+                    @await Html.PartialAsync("_effectiveFromDate", Model)
+
+                    @await Html.PartialAsync("_reasonForPriceChange", Model)
+
+                </div>
+
+            </div>
+            <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                Continue
+            </button>
+
+        </form>
+    </main>
+</div>

@@ -1,34 +1,99 @@
-using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Provider.Shared.UI.Startup;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
+using SFA.DAS.Apprenticeships.Web.Exceptions;
+using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.Apprenticeships.Web.Middleware;
+using SFA.DAS.Apprenticeships.Web.Validators;
+using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Models;
-using SFA.DAS.Provider.Shared.UI;
+using SFA.DAS.Provider.Shared.UI.Startup;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
-    [ExcludeFromCodeCoverage]
+	[ExcludeFromCodeCoverage]
     public static class Program
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+			try
+			{
+                TryStartApp(args);
+			}
+			catch (Exception ex)
+			{
+				var builder = WebApplication.CreateBuilder(args);
+				builder.Services.AddMvc();
+				var app = builder.Build();
+
+				if (ex is StartUpException startUpException)
+                {
+                    FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
+				}
+                else
+                {
+					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
+				}
+
+				Console.WriteLine($"{FailedStartUpMiddleware.ErrorMessage} ExceptionMessage:{ex.Message} InnerExceptionMessage:{ex.InnerException?.Message}");
+
+				app.UseMiddleware<FailedStartUpMiddleware>();
+				app.UseRouting();
+
+				app.Run();
+			}
+		}
+
+        public static void TryStartApp(string[] args)
+        {
+			// Logging and initial config
+			var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            // Logging
-            builder.Services.AddApplicationInsightsTelemetry();
+			// Logging 
+			FailedStartUpMiddleware.StartupStep = "Logging";
+			builder.Services.AddApplicationInsightsTelemetry();
 
-            // Config
-            builder.ConfigureAzureTableStorage(config);
+			// Config
+			builder.ConfigureAzureTableStorage(config);
+			config.ValidateConfiguration();
+			builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
 
-            // Configure services and MVC
-            builder.Services.AddCustomServiceRegistration(config);
-            builder.Services
+            // Authentication & Authorization
+            var serviceParameters = config.GetServiceParameters();
+            switch (serviceParameters.AuthenticationType)
+            {
+	            case AuthenticationType.Employer:
+					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
+					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
+					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
+					break;
+	            case AuthenticationType.Provider:
+					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
+					Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
+					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
+                    Try(() => builder.Services.SetUpProviderAuthentication(config), "SetUpProviderAuthentication");
+                    break;
+                default:
+					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
+            }
+            builder.Services.AddAuthorizationPolicies();
+
+            // Configuration of other services and MVC
+            builder.Services.AddCustomServiceRegistration(serviceParameters);
+
+			FailedStartUpMiddleware.StartupStep = "Adding MVC builder";
+			builder.Services
                 .Configure<CookiePolicyOptions>(options =>
                 {
                     options.CheckConsentNeeded = context => true;
                     options.MinimumSameSitePolicy = SameSiteMode.None;
+                })
+                .Configure<IISServerOptions>(options => 
+                { 
+                    options.AutomaticAuthentication = false; 
                 })
                 .Configure<RouteOptions>(options => { options.LowercaseUrls = true; })
                 .AddSession(options =>
@@ -38,37 +103,45 @@ namespace SFA.DAS.Apprenticeships.Web
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.Cookie.IsEssential = true;
                 })
-                .AddMvc(options => 
+                .AddMvc(options =>
                 {
-                    if (!config.IsLocal())
+                    if (!config.IsEnvironmentLocal())
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
-                //.SetDefaultNavigationSection(NavigationSection.Home)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
+                .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
+                .SetDfESignInConfiguration(config.UseDfeSignIn())
                 .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
-            if (!config.IsLocal())
+			FailedStartUpMiddleware.StartupStep = "Adding Health Checks";
+			if (!config.IsEnvironmentLocal())
             {
                 builder.Services.AddHealthChecks();
             }
 
-            var app = builder.Build();
+			FailedStartUpMiddleware.StartupStep = "App Build";
+			var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
+            app.AddMiddleware();
+
+			FailedStartUpMiddleware.StartupStep = "Environment Specific app setup";
+			if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseHealthChecks("");
-
+                app.CreateHealthCheckEndpoints();
                 app.UseExceptionHandler("/Error/500");
                 app.UseHsts();
-            }
+                app.UseContentSecurityPolicy(config);
+			}
 
-            app.UseHttpsRedirection();
+			FailedStartUpMiddleware.StartupStep = "Closing steps";
+			app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -102,5 +175,36 @@ namespace SFA.DAS.Apprenticeships.Web
             context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
             await next();
         }
-    }
+
+        private static IMvcBuilder ConfigureNavigationSection(this IMvcBuilder builder, ServiceParameters serviceParameters)
+        {
+            switch (serviceParameters.AuthenticationType)
+            {
+                case AuthenticationType.Employer:
+                    builder.SetDefaultNavigationSection(Employer.Shared.UI.NavigationSection.ApprenticesHome);
+                    break;
+                case AuthenticationType.Provider:
+                    builder.SetDefaultNavigationSection(Provider.Shared.UI.NavigationSection.ManageApprentices);
+                    break;
+            }
+            return builder;
+        }
+
+		private static void Try(Action action, string uiSafeMessage)
+		{
+			try
+			{
+				action.Invoke();
+			}
+			catch(Exception ex)
+			{
+				if (ex is StartUpException)
+				{
+					throw;
+				}
+
+				throw new StartUpException(uiSafeMessage, ex);
+			}
+		}
+	}
 }
