@@ -365,21 +365,28 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeRejected=true");
         }
 
-        //private void AddProviderInitiatedRouteValues(ChangeOfPriceController controller, long providerReferenceNumber, string apprenticeshipHashedId)
-        //{
-        //    if(controller.HttpContext == null)
-        //    {
-        //        var httpContext = new Mock<HttpContext>();
-        //        var httpRequest = new Mock<HttpRequest>();
-        //        httpRequest.Setup(m => m.RouteValues).Returns(new RouteValueDictionary());
-        //        httpContext.Setup(m => m.Request).Returns(httpRequest.Object);
+        [Test]
+        public async Task EmployerApproveChange_ApprovePriceHistoryAndRedirectsToEmployerCommitments()
+        {
+            // Arrange
+            var employerAccountId = _fixture.Create<string>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+            var userId = _fixture.Create<string>();
+            controller.SetupHttpContext(null, null, userId);
 
-        //        controller.ControllerContext.HttpContext = httpContext.Object;
-        //    }
+            // Act
+            var result = await controller.PostViewPendingPriceChangePageEmployer(employerAccountId, apprenticeshipHashedId, "1", "");
 
-        //    controller.HttpContext!.Request.RouteValues.Add(RouteValues.Ukprn, providerReferenceNumber.ToString());
-        //    controller.HttpContext.Request.RouteValues.Add(RouteValues.ApprenticeshipHashedId, apprenticeshipHashedId);
-        //}
+            // Assert
+            _mockApprenticeshipService.Verify(x => x.ApprovePendingPriceChange(apprenticeshipKey, userId), Times.Once);
+            result.ShouldBeOfType<RedirectResult>();
+            var redirectResult = ((RedirectResult)result);
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details");
+        }
+
 
         private UrlBuilder GetMockUrlBuilder()
         {
