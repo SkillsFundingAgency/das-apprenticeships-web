@@ -96,30 +96,30 @@
             "tags": "[parameters('tags')]",
             "properties": {}
         },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('employersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultCertificateName": {
-                        "value": "[parameters('employersKeyVaultCertificateName')]"
-                    },
-                    "keyVaultName": {
-                        "value": "[parameters('sharedKeyVaultName')]"
-                    },
-                    "keyVaultResourceGroup": {
-                        "value": "[parameters('sharedManagementResourceGroup')]"
-                    }
-                }
-            }
-        },
+        // {
+        //     "apiVersion": "2021-04-01",
+        //     "name": "[concat(variables('employersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "keyVaultCertificateName": {
+        //                 "value": "[parameters('employersKeyVaultCertificateName')]"
+        //             },
+        //             "keyVaultName": {
+        //                 "value": "[parameters('sharedKeyVaultName')]"
+        //             },
+        //             "keyVaultResourceGroup": {
+        //                 "value": "[parameters('sharedManagementResourceGroup')]"
+        //             }
+        //         }
+        //     }
+        // },
         // {
         //     "apiVersion": "2021-04-01",
         //     "name": "[concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))]",
@@ -422,10 +422,10 @@
             "type": "string",
             "value": "[variables('resourceGroupName')]"
         },
-        "EmployersAppServiceName": {
-            "type": "string",
-            "value": "[variables('employersAppServiceName')]"
-        },
+        // "EmployersAppServiceName": {
+        //     "type": "string",
+        //     "value": "[variables('employersAppServiceName')]"
+        // },
         "ProvidersAppServiceName": {
             "type": "string",
             "value": "[variables('providersAppServiceName')]"
