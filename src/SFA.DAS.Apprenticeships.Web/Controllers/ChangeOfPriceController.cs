@@ -90,6 +90,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             await _cache.SetCacheModelAsync(model);
 			return View(ProviderInitiatedCheckDetailsViewName, model);
         }
+       
         [HttpPost]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
 		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
