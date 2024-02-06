@@ -7,7 +7,6 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public long? ProviderReferenceNumber { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
-		public DateTime? EarliestEffectiveDate { get; set; }
         public InitiatedBy InitiatedBy => InitiatedBy.Provider;
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 

@@ -6,6 +6,7 @@
         public Guid ApprenticeshipKey { get; set; }
         public string? ApprenticeshipHashedId { get; set; }
         public int FundingBandMaximum { get; set; }
+        public DateTime? EarliestEffectiveDate { get; set; }
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
         public DateField EffectiveFromDate { get; set; } = new DateField();

@@ -30,6 +30,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 ApprenticeshipTotalPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice + apprenticeshipPrice.AssessmentPrice),
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
+                EarliestEffectiveDate = apprenticeshipPrice.EarliestEffectiveDate,
                 ApprovingPartyName = apprenticeshipPrice.EmployerName
             };
 

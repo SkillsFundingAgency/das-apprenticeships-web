@@ -22,7 +22,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
             var model = new EmployerChangeOfPriceModel
             {
                 ApprenticeshipTotalPrice = totalPrice,
-                OriginalApprenticeshipTotalPrice = originalTotalPrice
+                OriginalApprenticeshipTotalPrice = originalTotalPrice,
+                EarliestEffectiveDate = new DateTime(2025, 10, 17)
             };
             var validator = new EmployerChangeOfPriceModelValidator();
 
@@ -53,7 +54,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 OriginalApprenticeshipTotalPrice = 5500,
                 EffectiveFromDate = new DateField { Day = day, Month = month, Year = year },
                 ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
-                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1)
+                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
+                EarliestEffectiveDate = new DateTime(2025, 10, 17)
             };
             var validator = new EmployerChangeOfPriceModelValidator();
 
@@ -78,7 +80,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
                 EffectiveFromDate = new DateField { Day = 15, Month = 7, Year = 2025 },
                 ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
                 ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
-                ReasonForChangeOfPrice = null
+                ReasonForChangeOfPrice = null,
+                EarliestEffectiveDate = new DateTime(2025, 10, 17)
             };
             var validator = new EmployerChangeOfPriceModelValidator();
 
