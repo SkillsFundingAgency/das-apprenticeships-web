@@ -2,18 +2,15 @@
 {
     public class Error403ViewModel
     {
-        private readonly string _integrationUrlPart = string.Empty;
-
-        public Error403ViewModel(string environment)
+        public Error403ViewModel(string dashboardLink, string helpPageLink, bool useDfESign)
         {
-            if (!string.IsNullOrEmpty(environment) && !environment.Equals("prd", StringComparison.CurrentCultureIgnoreCase))
-            {
-                _integrationUrlPart = "test-";
-            }
+            DashboardLink = dashboardLink;
+            HelpPageLink = helpPageLink;
+            UseDfESignIn = useDfESign;
         }
 
         public bool UseDfESignIn { get; set; }
-        public string HelpPageLink => $"https://{_integrationUrlPart}services.signin.education.gov.uk/approvals/select-organisation?action=request-service";
-        public string HomePageLink { get; set; }
+        public string HelpPageLink { get; set; }
+        public string DashboardLink { get; set; }
     }
 }

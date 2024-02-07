@@ -1,1 +1,33 @@
-﻿@* TODO: Finish configuring this*@
+﻿@using SFA.DAS.Provider.Shared.UI.Extensions
+@{
+    ViewData.GetZenDeskSectionId();
+    var sectionId = ViewData.GetZenDeskSectionId();
+    var snippetKey = ViewData.GetZenDeskSnippetKey();
+    var coBrowsingSnippetKey = ViewData.GetCobrowsingSnippetKey();
+    
+}
+
+<script type="text/javascript">
+    window.zESettings = {
+        webWidget: {
+            contactForm: {
+                attachments: false
+            },
+            chat: {
+                menuOptions: {
+                    emailTranscript: false
+                }
+            },
+            helpCenter: {
+                filter: {
+                    section: @sectionId
+                }
+            }
+        }
+    };
+</script>
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=@snippetKey"></script>
+<script id="co-snippet" src="https://embed-euw1.rcrsv.io/@coBrowsingSnippetKey?zwwi=1"></script>
+<script type="text/javascript">
+    @Html.SetZenDeskLabels($"{ViewBag.Title}")
+</script>
