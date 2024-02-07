@@ -45,7 +45,7 @@ Most of the application configuration is taken from the [das-employer-config rep
 
 ## 🔗 External Dependencies
 
-The UI should only be dependant on the Apprenticeships Outer API.  If you want to run the application locally you will need to make sure the Outer API is running locally or the configuration is pointing to a deployed instance.
+The UI should only be dependant on the Apprenticeships Outer API.  If you want to run the application locally you will need to make sure the Outer API is running locally (along with it's dependencies, including the Apprenticeships Inner) or the configuration is pointing to a deployed instance.
 
 ## Running Locally
 
