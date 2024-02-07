@@ -148,7 +148,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> PostViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId, string CancelRequest)
@@ -170,6 +169,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> PostViewPendingPriceChangePageEmployer(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
         {
