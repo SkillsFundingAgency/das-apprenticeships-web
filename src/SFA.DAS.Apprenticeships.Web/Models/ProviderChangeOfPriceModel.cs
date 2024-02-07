@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Apprenticeships.Web.Models
 {
-    public class CreateChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPriceModel, ICacheModel
+    public class ProviderChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPriceModel, ICacheModel
 	{
         public long? ProviderReferenceNumber { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
@@ -21,9 +21,9 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public int OriginalEndPointAssessmentPrice { get; set; }
     }
 
-    public class CreateChangeOfPriceModelMapper : IMapper<CreateChangeOfPriceModel>
+    public class CreateChangeOfPriceModelMapper : IMapper<ProviderChangeOfPriceModel>
     {
-        public CreateChangeOfPriceModel Map(object sourceObject)
+        public ProviderChangeOfPriceModel Map(object sourceObject)
         {
             if(sourceObject is ApprenticeshipPrice apprenticeshipPrice)
             {
@@ -33,10 +33,10 @@ namespace SFA.DAS.Apprenticeships.Web.Models
             throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
         }
 
-        private static CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
+        private static ProviderChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
         {
-            var model = new CreateChangeOfPriceModel
-            {
+            var model = new ProviderChangeOfPriceModel
+			{
                 FundingBandMaximum = Convert.ToInt32(apprenticeshipPrice.FundingBandMaximum),
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),

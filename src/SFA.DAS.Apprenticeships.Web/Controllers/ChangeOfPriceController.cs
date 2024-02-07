@@ -28,7 +28,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         public const string ProviderInitiatedViewName = "ProviderInitiated";
         public const string EmployerInitiatedViewName = "EmployerInitiated";
         public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
-        public const string ProviderViewPendingViewName = "ProviderViewPending";
+		public const string EmployerInitiatedCheckDetailsViewName = "EmployerInitiatedCheckDetails";
+		public const string ProviderViewPendingViewName = "ProviderViewPending";
         public const string EmployerViewPendingViewName = "EmployerViewPending";
 
         public ChangeOfPriceController(
@@ -57,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return NotFound();
             }
 
-            var model = _mapper.Map<CreateChangeOfPriceModel>(apprenticeshipPrice);
+            var model = _mapper.Map<ProviderChangeOfPriceModel>(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
             await _cache.SetCacheModelAsync(model);
             return View(ProviderInitiatedViewName, model);
@@ -82,7 +83,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
         [HttpGet]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
-        public IActionResult GetProviderInitiatedEditPage(CreateChangeOfPriceModel model)
+        public IActionResult GetProviderInitiatedEditPage(ProviderChangeOfPriceModel model)
         {
             return View(ProviderInitiatedViewName, model);
         }
@@ -90,7 +91,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(CreateChangeOfPriceModel model)
+        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(ProviderChangeOfPriceModel model)
         {
 			PopulateProviderInitiatedRouteValues(model);
 			if (!ModelState.IsValid)
@@ -102,7 +103,14 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 			return View(ProviderInitiatedCheckDetailsViewName, model);
         }
 
-        [HttpPost]
+		[HttpGet]
+		[Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
+		public IActionResult GetEmployerInitiatedEditPage(EmployerChangeOfPriceModel model)
+		{
+			return View(EmployerInitiatedViewName, model);
+		}
+
+		[HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public async Task<IActionResult> EmployerInitiatedCheckDetailsPage(EmployerChangeOfPriceModel model)
@@ -113,12 +121,12 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             await _cache.SetCacheModelAsync(model);
-            throw new NotImplementedException("FLP-393");
-        }
+			return View(EmployerInitiatedCheckDetailsViewName, model);
+		}
 
         [HttpPost]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
-		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
+		public async Task<IActionResult> ProviderInitiatedSubmitChange(ProviderChangeOfPriceModel model)
 		{
             await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
@@ -235,7 +243,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         //  If other provider endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-        private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
+        private void PopulateProviderInitiatedRouteValues(ProviderChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber =  long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));
