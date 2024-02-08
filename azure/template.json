@@ -96,166 +96,166 @@
             "tags": "[parameters('tags')]",
             "properties": {}
         },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('employersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultCertificateName": {
-                        "value": "[parameters('employersKeyVaultCertificateName')]"
-                    },
-                    "keyVaultName": {
-                        "value": "[parameters('sharedKeyVaultName')]"
-                    },
-                    "keyVaultResourceGroup": {
-                        "value": "[parameters('sharedManagementResourceGroup')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('employersAppServiceName')]"
-                    },
-                    "attachedService": {
-                        "value": "[variables('employersAppServiceName')]"
-                    },
-                    "logAnalyticsWorkspaceId": {
-                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('employersAppServiceName'), '-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-v2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServiceName": {
-                        "value": "[variables('employersAppServiceName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('sharedFrontEndAppServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedEnvResourceGroup')]"
-                    },
-                    "subnetResourceId": {
-                        "value": "[parameters('sharedFrontEndSubnetResourceId')]"
-                    },
-                    "appServiceAppSettings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "EnvironmentName",
-                                    "value": "[parameters('environmentName')]"
-                                },
-                                {
-                                    "name": "ResourceEnvironmentName",
-                                    "value": "[parameters('resourceEnvironmentName')]"
-                                },
-                                {
-                                    "name": "ConfigurationStorageConnectionString",
-                                    "value": "[parameters('configurationStorageConnectionString')]"
-                                },
-                                {
-                                    "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
-                                },
-                                {
-                                    "name": "Version",
-                                    "value": "1.0"
-                                },
-                                {
-                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                                    "value": "[reference(concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
-                                },
-                                {
-                                    "name": "LoggingRedisConnectionString",
-                                    "value": "[parameters('loggingRedisConnectionString')]"
-                                },
-                                {
-                                    "name": "LoggingRedisKey",
-                                    "value": "[parameters('loggingRedisKey')]"
-                                },
-                                {
-                                    "name": "Cdn:Url",
-                                    "value": "[parameters('cdnUrl')]"
-                                },
-                                {
-                                    "name": "ApprenticeshipsWeb:AuthType",
-                                    "value": "[variables('employerAuthType')]"
-                                }
-                            ]
-                        }
-                    },
-                    "customHostName": {
-                        "value": "[parameters('employersCustomHostName')]"
-                    },
-                    "certificateThumbprint": {
-                        "value": "[reference(concat(variables('employersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
-                    },
-                    "ipSecurityRestrictions": {
-                        "value": "[parameters('frontEndAccessRestrictions')]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('employersAppServiceName'), '-apim-subscription-', parameters('utcValue'))]",
-            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "apimName": {
-                        "value": "[parameters('sharedApimName')]"
-                    },
-                    "subscriptionName": {
-                        "value": "[variables('employersAppServiceName')]"
-                    },
-                    "subscriptionScope": {
-                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ApprenticeshipsOuterApi')]"
-                    }
-                }
-            }
-        },
+        // {
+        //     "apiVersion": "2021-04-01",
+        //     "name": "[concat(variables('employersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "keyVaultCertificateName": {
+        //                 "value": "[parameters('employersKeyVaultCertificateName')]"
+        //             },
+        //             "keyVaultName": {
+        //                 "value": "[parameters('sharedKeyVaultName')]"
+        //             },
+        //             "keyVaultResourceGroup": {
+        //                 "value": "[parameters('sharedManagementResourceGroup')]"
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "apiVersion": "2021-04-01",
+        //     "name": "[concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "resourceGroup": "[variables('resourceGroupName')]",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "appInsightsName": {
+        //                 "value": "[variables('employersAppServiceName')]"
+        //             },
+        //             "attachedService": {
+        //                 "value": "[variables('employersAppServiceName')]"
+        //             },
+        //             "logAnalyticsWorkspaceId": {
+        //                 "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
+        //             }
+        //         }
+        //     },
+        //     "dependsOn": [
+        //         "[variables('resourceGroupName')]"
+        //     ]
+        // },
+        // {
+        //     "apiVersion": "2021-04-01",
+        //     "name": "[concat(variables('employersAppServiceName'), '-', parameters('utcValue'))]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "resourceGroup": "[variables('resourceGroupName')]",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(variables('deploymentUrlBase'),'app-service-v2.json')]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "appServiceName": {
+        //                 "value": "[variables('employersAppServiceName')]"
+        //             },
+        //             "appServicePlanName": {
+        //                 "value": "[parameters('sharedFrontEndAppServicePlanName')]"
+        //             },
+        //             "appServicePlanResourceGroup": {
+        //                 "value": "[parameters('sharedEnvResourceGroup')]"
+        //             },
+        //             "subnetResourceId": {
+        //                 "value": "[parameters('sharedFrontEndSubnetResourceId')]"
+        //             },
+        //             "appServiceAppSettings": {
+        //                 "value": {
+        //                     "array": [
+        //                         {
+        //                             "name": "EnvironmentName",
+        //                             "value": "[parameters('environmentName')]"
+        //                         },
+        //                         {
+        //                             "name": "ResourceEnvironmentName",
+        //                             "value": "[parameters('resourceEnvironmentName')]"
+        //                         },
+        //                         {
+        //                             "name": "ConfigurationStorageConnectionString",
+        //                             "value": "[parameters('configurationStorageConnectionString')]"
+        //                         },
+        //                         {
+        //                             "name": "ConfigNames",
+        //                             "value": "[variables('configNames')]"
+        //                         },
+        //                         {
+        //                             "name": "Version",
+        //                             "value": "1.0"
+        //                         },
+        //                         {
+        //                             "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        //                             "value": "[reference(concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
+        //                         },
+        //                         {
+        //                             "name": "LoggingRedisConnectionString",
+        //                             "value": "[parameters('loggingRedisConnectionString')]"
+        //                         },
+        //                         {
+        //                             "name": "LoggingRedisKey",
+        //                             "value": "[parameters('loggingRedisKey')]"
+        //                         },
+        //                         {
+        //                             "name": "Cdn:Url",
+        //                             "value": "[parameters('cdnUrl')]"
+        //                         },
+        //                         {
+        //                             "name": "ApprenticeshipsWeb:AuthType",
+        //                             "value": "[variables('employerAuthType')]"
+        //                         }
+        //                     ]
+        //                 }
+        //             },
+        //             "customHostName": {
+        //                 "value": "[parameters('employersCustomHostName')]"
+        //             },
+        //             "certificateThumbprint": {
+        //                 "value": "[reference(concat(variables('employersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
+        //             },
+        //             "ipSecurityRestrictions": {
+        //                 "value": "[parameters('frontEndAccessRestrictions')]"
+        //             }
+        //         }
+        //     },
+        //     "dependsOn": [
+        //         "[variables('resourceGroupName')]"
+        //     ]
+        // },
+        // {
+        //     "apiVersion": "2021-04-01",
+        //     "name": "[concat(variables('employersAppServiceName'), '-apim-subscription-', parameters('utcValue'))]",
+        //     "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "apimName": {
+        //                 "value": "[parameters('sharedApimName')]"
+        //             },
+        //             "subscriptionName": {
+        //                 "value": "[variables('employersAppServiceName')]"
+        //             },
+        //             "subscriptionScope": {
+        //                 "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ApprenticeshipsOuterApi')]"
+        //             }
+        //         }
+        //     }
+        // },
         {
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('providersAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
@@ -422,10 +422,10 @@
             "type": "string",
             "value": "[variables('resourceGroupName')]"
         },
-        "EmployersAppServiceName": {
-            "type": "string",
-            "value": "[variables('employersAppServiceName')]"
-        },
+        // "EmployersAppServiceName": {
+        //     "type": "string",
+        //     "value": "[variables('employersAppServiceName')]"
+        // },
         "ProvidersAppServiceName": {
             "type": "string",
             "value": "[variables('providersAppServiceName')]"
