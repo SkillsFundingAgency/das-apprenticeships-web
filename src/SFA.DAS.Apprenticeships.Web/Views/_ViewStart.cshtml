@@ -4,21 +4,15 @@
 @{
     var currentClaimsPrincipal = ClaimsPrincipal.Current;
 
-    if(currentClaimsPrincipal == null)
+    //TODO THIS IS A TEMPORARY FIX TO ALLOW 6.3/6.4 RELEASE TO USE A VALID LAYOUT, WHEN MERGING TAKE THE VERSION FROM 6.5 WHICH USES THE LATEST AUTH CODE
+    if (currentClaimsPrincipal != null && currentClaimsPrincipal.HasClaim(x =>
+        x.Type == UserClaims.AuthenticationType &&
+        x.Value == AuthenticationType.Provider.ToString()))
     {
-        Layout = "_Layout";
+        Layout = "_ProviderLayout";
     }
     else
     {
-        if (currentClaimsPrincipal.HasClaim(x =>
-            x.Type == UserClaims.AuthenticationType &&
-            x.Value == AuthenticationType.Provider.ToString()))
-        {
-            Layout = "_ProviderLayout";
-        }
-        else
-        {
-            Layout = "_EmployerLayout";
-        }
+        Layout = "_EmployerLayout";
     }
 }
