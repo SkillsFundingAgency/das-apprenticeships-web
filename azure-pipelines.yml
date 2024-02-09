@@ -16,7 +16,6 @@ variables:
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
 
-
 resources:
   repositories:
   - repository: self
@@ -57,6 +56,20 @@ stages:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: AT
+      SolutionBaseName: $(SolutionBaseName)
+      ServiceConnection: SFA-DAS-DevTest-ARM
+
+- stage: Deploy_DEMO
+  dependsOn: Build
+  displayName: Deploy to DEMO
+  variables:
+  - group: DevTest Management Resources
+  - group: DEMO DevTest Shared Resources
+  - group: DEMO das-apprenticeships-web
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: DEMO
       SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DAS-DevTest-ARM
 
@@ -106,47 +119,32 @@ stages:
       SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DIG-PreProd-ARM
 
-# - stage: Deploy_PROD
-#   dependsOn: Build
-#   displayName: Deploy to PROD
-#   variables:
-#   - group: RELEASE Management Resources
-#   - group: PROD Management Resources
-#   - group: PROD Shared Resources
-#   - group: PROD das-apprenticeships-web
-#   jobs:
-#   - template: pipeline-templates/job/deploy.yml
-#     parameters:
-#       Environment: PROD
-#       SolutionBaseName: $(SolutionBaseName)
-#       ServiceConnection: SFA-DIG-Prod-ARM
-
-# - stage: Deploy_MO
-#   dependsOn: Build
-#   displayName: Deploy to MO
-#   variables:
-#   - group: RELEASE Management Resources
-#   - group: MO Management Resources
-#   - group: MO Shared Resources
-#   - group: MO das-apprenticeships-web
-#   jobs:
-#   - template: pipeline-templates/job/deploy.yml
-#     parameters:
-#       Environment: MO
-#       SolutionBaseName: $(SolutionBaseName)
-#       ServiceConnection: SFA-ASM-ModelOffice-ARM
-
-- stage: Deploy_DEMO
+- stage: Deploy_PROD
   dependsOn: Build
-  displayName: Deploy to DEMO
+  displayName: Deploy to PROD
   variables:
   - group: RELEASE Management Resources
-  - group: DevTest Management Resources
-  - group: DEMO DevTest Shared Resources
-  - group: DEMO das-apprenticeships-web
+  - group: PROD Management Resources
+  - group: PROD Shared Resources
+  - group: PROD das-apprenticeships-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
-      Environment: DEMO
+      Environment: PROD
       SolutionBaseName: $(SolutionBaseName)
-      ServiceConnection: SFA-DAS-DevTest-ARM
+      ServiceConnection: SFA-DIG-Prod-ARM
+
+- stage: Deploy_MO
+  dependsOn: Build
+  displayName: Deploy to MO
+  variables:
+  - group: RELEASE Management Resources
+  - group: MO Management Resources
+  - group: MO Shared Resources
+  - group: MO das-apprenticeships-web
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: MO
+      SolutionBaseName: $(SolutionBaseName)
+      ServiceConnection: SFA-ASM-ModelOffice-ARM
