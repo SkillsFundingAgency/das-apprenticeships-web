@@ -86,6 +86,7 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+            Try(() => builder.Services.AddDataProtection(config, builder.Environment), "Setup DataProtection");
 
             //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
             builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
