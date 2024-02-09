@@ -11,10 +11,10 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">Review Changes</h1>
+            <h1 class="govuk-heading-l">Review changes</h1>
             <h2 class="govuk-heading-m">@Model.ProviderName has requested these changes</h2>
 
-            @await Html.PartialAsync("_pendingSummary", Model)
+            @await Html.PartialAsync("_pendingSummary", Model, new ViewDataDictionary(ViewData) { { "ShowAllPriceDetails", false } })
             
             <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending">
                 @Html.AntiForgeryToken()

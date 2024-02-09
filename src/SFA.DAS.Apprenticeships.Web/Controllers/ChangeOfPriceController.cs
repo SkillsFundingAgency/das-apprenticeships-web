@@ -185,7 +185,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return NotFound();
             }
 
-            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason);
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason));
             return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeRejected=true");
         }
 
