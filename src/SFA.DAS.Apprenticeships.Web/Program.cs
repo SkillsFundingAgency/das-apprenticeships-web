@@ -1,9 +1,7 @@
-
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
-using SFA.DAS.Apprenticeships.Web.Filters;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
@@ -16,7 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
-	[ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage]
     public static class Program
     {
         public static void Main(string[] args)
@@ -158,7 +156,7 @@ namespace SFA.DAS.Apprenticeships.Web
             app.Use(async (context, next) =>
             {
                 await EnsurePagesCanBeEmbedded(context, next);
-                await Ensure404ResponsesRedirectToErrorPage(context, next);
+                await NotFoundHandlerMiddleware.Ensure404ResponsesRedirectToErrorPage(context, next);
             });
 
             app.UseRouting();
@@ -167,17 +165,6 @@ namespace SFA.DAS.Apprenticeships.Web
             app.UseAuthorization();
 
             app.Run();
-        }
-
-        private static async Task Ensure404ResponsesRedirectToErrorPage(HttpContext context, Func<Task> next)
-        {
-            if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
-            {
-                var originalPath = context.Request.Path.Value;
-                context.Items["originalPath"] = originalPath;
-                context.Request.Path = "/error/404";
-                await next();
-            }
         }
 
         private static async Task EnsurePagesCanBeEmbedded(HttpContext context, Func<Task> next)
