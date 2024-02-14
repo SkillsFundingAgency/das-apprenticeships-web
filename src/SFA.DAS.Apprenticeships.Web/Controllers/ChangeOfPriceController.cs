@@ -185,7 +185,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             {
                 var userId = HttpContext.User.GetUserId();
                 await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
-                return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId));
+                return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeApproved=true");
             }
 
             await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason));

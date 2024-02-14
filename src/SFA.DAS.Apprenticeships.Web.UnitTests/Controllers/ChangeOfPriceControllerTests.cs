@@ -384,7 +384,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockApprenticeshipService.Verify(x => x.ApprovePendingPriceChange(apprenticeshipKey, userId), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
             var redirectResult = ((RedirectResult)result);
-            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details");
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeApproved=true");
         }
 
 
