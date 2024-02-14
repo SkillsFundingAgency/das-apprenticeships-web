@@ -93,7 +93,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             {
                 errorContent = json;
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(json))
             {
                 responseBody = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }

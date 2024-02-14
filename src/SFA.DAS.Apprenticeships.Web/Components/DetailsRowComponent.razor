@@ -28,7 +28,7 @@
     case DetailsRowType.DescriptionList:
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@Label</dt>
-			<dd class="govuk-summary-list__value govuk-!-width-one-quarter" style="padding-left:10px;">@Value</dd>
+			<dd class="govuk-summary-list__value govuk-!-width-one-quarter" style="padding-left:10px;" id="@Id">@Value</dd>
 			<dd class="govuk-summary-list__actions">
 				@if (!string.IsNullOrEmpty(Url))
 				{

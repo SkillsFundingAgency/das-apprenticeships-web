@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
@@ -89,11 +90,12 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             await _cache.SetCacheModelAsync(model);
 			return View(ProviderInitiatedCheckDetailsViewName, model);
         }
+       
         [HttpPost]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
 		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
 		{
-            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, "todo FLP-354", model.EffectiveFromDate.Date.GetValueOrDefault());
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
             var providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
                 { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
@@ -146,7 +148,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> PostViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId, string CancelRequest)
@@ -169,6 +170,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> PostViewPendingPriceChangePageEmployer(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
         {
@@ -186,7 +188,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId));
             }
 
-            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason);
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason));
             return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeRejected=true");
         }
 

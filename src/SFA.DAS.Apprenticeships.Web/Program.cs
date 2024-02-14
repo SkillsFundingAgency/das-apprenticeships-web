@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.Services;
+using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
@@ -33,12 +34,13 @@ namespace SFA.DAS.Apprenticeships.Web
 				if (ex is StartUpException startUpException)
                 {
                     FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}: {startUpException.UiSafeMessage}";
-
 				}
                 else
                 {
 					FailedStartUpMiddleware.ErrorMessage = $"Failed in startup step: {FailedStartUpMiddleware.StartupStep}";
 				}
+
+				Console.WriteLine($"{FailedStartUpMiddleware.ErrorMessage} ExceptionMessage:{ex.Message} InnerExceptionMessage:{ex.InnerException?.Message}");
 
 				app.UseMiddleware<FailedStartUpMiddleware>();
 				app.UseRouting();
@@ -71,7 +73,7 @@ namespace SFA.DAS.Apprenticeships.Web
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
+                    Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
                     Try(() => builder.Services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(), "StubAuthenticationService");
                     break;
@@ -84,6 +86,10 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+            Try(() => builder.Services.AddDataProtection(config, builder.Environment), "Setup DataProtection");
+
+            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
+            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
 
             //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
             builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
@@ -197,7 +203,7 @@ namespace SFA.DAS.Apprenticeships.Web
             return builder;
         }
 
-		public static void Try(Action action, string uiSafeMessage)
+		private static void Try(Action action, string uiSafeMessage)
 		{
 			try
 			{
