@@ -12,7 +12,9 @@
 
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-two-thirds">
-			<h1 class="govuk-heading-l">View change request</h1>
+            <h1 class="govuk-heading-l">View change request</h1>
+            <strong class="govuk-tag govuk-tag--yellow">Pending employer review</strong>
+            <br /><br />
             <h2 class="govuk-heading-m">Price changes you've requested</h2>
 
             @await Html.PartialAsync("_pendingSummary", Model, new ViewDataDictionary(ViewData) { { "ShowAllPriceDetails", true } })
