@@ -135,7 +135,17 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             return Redirect(providerCommitmentsReturnUrl);
 		}
 
-		[HttpGet]
+        [HttpPost]
+        [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
+        public async Task<IActionResult> EmployerInitiatedSubmitChange(EmployerChangeOfPriceModel model)
+        {
+            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, null, long.Parse(model.EmployerAccountId), HttpContext.User.Identity?.Name!, null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
+
+            var employerCommitmentsReturnUrl = $"{_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId)}?showChangeOfPriceRequestSent=true";
+            return Redirect(employerCommitmentsReturnUrl);
+        }
+
+        [HttpGet]
 		[SetNavigationSection(NavigationSection.ManageApprentices)]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
 		public async Task<IActionResult> GetViewPendingPriceChangePageProvider(long ukprn, string apprenticeshipHashedId)
