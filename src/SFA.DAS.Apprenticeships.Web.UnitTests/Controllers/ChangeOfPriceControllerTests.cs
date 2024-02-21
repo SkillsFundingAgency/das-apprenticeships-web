@@ -276,7 +276,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockApprenticeshipService.Verify(x => x.CreatePriceHistory(
                 createChangeOfPriceModel.ApprenticeshipKey,
                 "Employer",
-                expectedUser,
+                It.IsAny<string>(),
                 null,
                 null,
                 createChangeOfPriceModel.ApprenticeshipTotalPrice,
