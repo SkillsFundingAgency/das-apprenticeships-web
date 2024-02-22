@@ -21,6 +21,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey);
         Task CancelPendingPriceChange(Guid apprenticeshipKey);
         Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason);
+        Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId);
 
     }
 }
