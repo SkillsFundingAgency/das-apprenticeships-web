@@ -2,9 +2,9 @@
 
 namespace SFA.DAS.Apprenticeships.Web.Models
 {
-    public class EmployerChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPriceModel, ICacheModel
-    {
-        public string? EmployerAccountId { get; set; }
+    public class EmployerChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPriceModel, ICacheModel, IEmployerRouteValues
+	{
+        public string EmployerAccountId { get; set; }
         public int ApprenticeshipTotalPrice { get; set; }
         public int OriginalApprenticeshipTotalPrice { get; set; }
         public InitiatedBy InitiatedBy => InitiatedBy.Employer;

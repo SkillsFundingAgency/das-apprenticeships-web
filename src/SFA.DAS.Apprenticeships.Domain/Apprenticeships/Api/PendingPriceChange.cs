@@ -10,5 +10,32 @@
 		public decimal PendingTotalPrice { get; set; }
 		public DateTime EffectiveFrom { get; set; }
 		public string Reason { get; set; }
+        public Guid ApprenticeshipKey { get; set; }
+        public DateTime? ProviderApprovedDate { get; set; }
+		public DateTime? EmployerApprovedDate { get; set; }
+	}
+
+	public enum InitiatedBy
+	{
+		Provider,
+		Employer
+	}
+
+	public static class PendingPriceChangeExtensions
+	{
+		public static InitiatedBy PriceChangeInitiatedBy(this PendingPriceChange pendingPriceChange)
+		{
+			if(pendingPriceChange.ProviderApprovedDate.HasValue && !pendingPriceChange.EmployerApprovedDate.HasValue) 
+			{ 
+				return InitiatedBy.Provider;
+			}
+
+			if (!pendingPriceChange.ProviderApprovedDate.HasValue && pendingPriceChange.EmployerApprovedDate.HasValue)
+			{
+				return InitiatedBy.Employer;
+			}
+
+			throw new ArgumentOutOfRangeException("Could not resolve PriceChange Initiator, expected at least one approval date to be populated");
+		}
 	}
 }

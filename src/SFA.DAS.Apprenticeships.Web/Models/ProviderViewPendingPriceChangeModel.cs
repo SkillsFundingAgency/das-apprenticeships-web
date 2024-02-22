@@ -4,8 +4,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models;
 
 public class ProviderViewPendingPriceChangeModel : ViewPendingPriceChangeModel
 {
-    public ProviderViewPendingPriceChangeModel(Guid apprenticeshipKey, string apprenticeshipHashedId,
-        PendingPriceChange pendingPriceChange, long providerReferenceNumber) : base(apprenticeshipKey, apprenticeshipHashedId, pendingPriceChange)
+    public ProviderViewPendingPriceChangeModel(string apprenticeshipHashedId,
+        PendingPriceChange pendingPriceChange, long providerReferenceNumber) : base(apprenticeshipHashedId, pendingPriceChange)
     {
         ProviderReferenceNumber = providerReferenceNumber;
     }

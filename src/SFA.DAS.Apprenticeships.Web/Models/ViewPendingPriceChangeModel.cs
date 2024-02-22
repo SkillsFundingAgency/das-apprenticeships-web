@@ -5,13 +5,17 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 {
     public class ViewPendingPriceChangeModel
 	{
-		public ViewPendingPriceChangeModel(Guid apprenticeshipKey, string apprenticeshipHashedId, PendingPriceChange pendingPriceChange)
+        public ViewPendingPriceChangeModel()
         {
-            ApprenticeshipKey = apprenticeshipKey;
+            
+        }
+        public ViewPendingPriceChangeModel(string apprenticeshipHashedId, PendingPriceChange pendingPriceChange)
+        {
+            ApprenticeshipKey = pendingPriceChange.ApprenticeshipKey;
             ApprenticeshipHashedId = apprenticeshipHashedId;
-            ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice.Value;
+            ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice.HasValue ? pendingPriceChange.PendingTrainingPrice!.Value : 0;
 			ApprenticeshipEndPointAssessmentPrice = pendingPriceChange.PendingAssessmentPrice.Value;
-			OriginalTrainingPrice = pendingPriceChange.OriginalTrainingPrice.Value;
+			OriginalTrainingPrice = pendingPriceChange.OriginalTrainingPrice.HasValue ? pendingPriceChange.OriginalTrainingPrice.Value : 0;
 			OriginalEndPointAssessmentPrice = pendingPriceChange.OriginalAssessmentPrice.Value;
 			EffectiveFromDate = pendingPriceChange.EffectiveFrom;
 			ReasonForChangeOfPrice = HttpUtility.HtmlDecode(pendingPriceChange.Reason);
@@ -26,5 +30,6 @@ namespace SFA.DAS.Apprenticeships.Web.Models
 		public decimal ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 		public decimal OriginalTrainingPrice { get; set; }
 		public decimal OriginalEndPointAssessmentPrice { get; set; }
+		public decimal OriginalTotalPrice => OriginalTrainingPrice + OriginalEndPointAssessmentPrice;
     }
 }
