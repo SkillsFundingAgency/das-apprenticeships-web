@@ -181,7 +181,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> PostViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId, string CancelRequest)
@@ -204,14 +203,10 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> PostViewPendingPriceChangePageEmployer(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
         {
-            if (ApproveChanges != "0")
-            {
-                return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId));
-            }
-
             var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
             if (apprenticeshipKey == default(Guid))
             {
@@ -219,7 +214,14 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return NotFound();
             }
 
-            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason);
+            if (ApproveChanges != "0")
+            {
+                var userId = HttpContext.User.GetUserId();
+                await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
+                return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeApproved=true");
+            }
+
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason));
             return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeRejected=true");
         }
 

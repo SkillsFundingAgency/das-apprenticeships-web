@@ -20,6 +20,12 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers
                 httpContext.Setup(m => m.Request).Returns(httpRequest.Object);
 
                 var claimsPrincipalMock = new Mock<ClaimsPrincipal>();
+
+                if (userName != null)
+                {
+                    claimsPrincipalMock.Setup(x => x.FindFirst(EmployerClaims.IdamsUserIdClaimTypeIdentifier)).Returns(new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, userName));
+                }
+                
                 claimsPrincipalMock.Setup(x => x.Identity!.Name).Returns(userName);
                 httpContext.Setup(ctx => ctx.User).Returns(claimsPrincipalMock.Object);
 
