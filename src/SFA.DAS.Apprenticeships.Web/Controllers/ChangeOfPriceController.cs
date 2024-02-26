@@ -1,7 +1,9 @@
 ﻿using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
@@ -19,19 +21,21 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
     {
         private readonly ILogger<ChangeOfPriceController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
-        private readonly IMapper<CreateChangeOfPriceModel> _mapper;
+        private readonly IMapper _mapper;
         private readonly IExternalUrlHelper _externalProviderUrlHelper;
         private readonly UrlBuilder _externalEmployerUrlHelper;
         private readonly ICacheService _cache;
         public const string ProviderInitiatedViewName = "ProviderInitiated";
+        public const string EmployerInitiatedViewName = "EmployerInitiated";
         public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
-        public const string ProviderViewPendingViewName = "ProviderViewPending";
+		public const string EmployerInitiatedCheckDetailsViewName = "EmployerInitiatedCheckDetails";
+		public const string ProviderViewPendingViewName = "ProviderViewPending";
         public const string EmployerViewPendingViewName = "EmployerViewPending";
 
         public ChangeOfPriceController(
             ILogger<ChangeOfPriceController> logger, 
             IApprenticeshipService apprenticeshipService, 
-            IMapper<CreateChangeOfPriceModel> mapper,
+            IMapper mapper,
 			ICacheService cache,
             IExternalUrlHelper externalProviderUrlHelper, UrlBuilder externalEmployerUrlHelper)
         {
@@ -48,30 +52,38 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
         public async Task<IActionResult> GetProviderInitiatedPage(string apprenticeshipHashedId)
         {
-            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-            if(apprenticeshipKey == default(Guid))
+            var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
+            if (apprenticeshipPrice == null)
             {
-                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
                 return NotFound();
             }
 
-            var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipKey);
-            if (apprenticeshipPrice == null || apprenticeshipPrice.ApprenticeshipKey != apprenticeshipKey)
-            {
-                _logger.LogWarning($"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
-                return NotFound();
-            }
-
-            var model = _mapper.Map(apprenticeshipPrice);
-            model.ApprenticeshipKey = apprenticeshipKey;
+            var model = _mapper.Map<ProviderChangeOfPriceModel>(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
             await _cache.SetCacheModelAsync(model);
             return View(ProviderInitiatedViewName, model);
         }
 
         [HttpGet]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
+        [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
+        public async Task<IActionResult> GetEmployerInitiatedPage(string apprenticeshipHashedId)
+        {
+            var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
+            if (apprenticeshipPrice == null)
+            {
+                return NotFound();
+            }
+
+            var model = _mapper.Map<EmployerChangeOfPriceModel>(apprenticeshipPrice);
+            PopulateEmployerInitiatedRouteValues(model);
+            await _cache.SetCacheModelAsync(model);
+            return View(EmployerInitiatedViewName, model);
+        }
+
+        [HttpGet]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
-        public IActionResult GetProviderInitiatedEditPage(CreateChangeOfPriceModel model)
+        public IActionResult GetProviderInitiatedEditPage(ProviderChangeOfPriceModel model)
         {
             return View(ProviderInitiatedViewName, model);
         }
@@ -79,7 +91,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(CreateChangeOfPriceModel model)
+        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(ProviderChangeOfPriceModel model)
         {
 			PopulateProviderInitiatedRouteValues(model);
 			if (!ModelState.IsValid)
@@ -90,10 +102,31 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             await _cache.SetCacheModelAsync(model);
 			return View(ProviderInitiatedCheckDetailsViewName, model);
         }
-       
+
+		[HttpGet]
+		[Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
+		public IActionResult GetEmployerInitiatedEditPage(EmployerChangeOfPriceModel model)
+		{
+			return View(EmployerInitiatedViewName, model);
+		}
+
+		[HttpPost]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
+        [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
+        public async Task<IActionResult> EmployerInitiatedCheckDetailsPage(EmployerChangeOfPriceModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(EmployerInitiatedViewName, model);
+            }
+
+            await _cache.SetCacheModelAsync(model);
+			return View(EmployerInitiatedCheckDetailsViewName, model);
+		}
+
         [HttpPost]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
-		public async Task<IActionResult> ProviderInitiatedSubmitChange(CreateChangeOfPriceModel model)
+		public async Task<IActionResult> ProviderInitiatedSubmitChange(ProviderChangeOfPriceModel model)
 		{
             await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, model.ProviderReferenceNumber, null, HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
@@ -192,11 +225,37 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId) + "?showPriceChangeRejected=true");
         }
 
-        //  If other endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-        private void PopulateProviderInitiatedRouteValues(CreateChangeOfPriceModel model)
+        private async Task<ApprenticeshipPrice?> GetApprenticeshipPrice(string apprenticeshipHashedId)
+        {
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            if (apprenticeshipKey == default(Guid))
+            {
+                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+                return null;
+            }
+
+            var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipKey);
+            if (apprenticeshipPrice == null || apprenticeshipPrice.ApprenticeshipKey != apprenticeshipKey)
+            {
+                _logger.LogWarning($"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
+                return null;
+            }
+
+            return apprenticeshipPrice;
+        }
+
+        //  If other provider endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
+        private void PopulateProviderInitiatedRouteValues(ProviderChangeOfPriceModel model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber =  long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));
+        }
+
+        //  If other employer endpoints use the same route values, this could be refactored to take an interface/abstract class instead of EmployerChangeOfPriceModel
+        private void PopulateEmployerInitiatedRouteValues(EmployerChangeOfPriceModel model)
+        {
+            model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
+            model.EmployerAccountId = HttpContext.GetRouteValueString(RouteValues.EmployerAccountId);
         }
     }
 }

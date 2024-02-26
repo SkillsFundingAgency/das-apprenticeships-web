@@ -2,22 +2,12 @@
 
 namespace SFA.DAS.Apprenticeships.Web.Models
 {
-    public class CreateChangeOfPriceModel : IChangeOfPriceModel, ICacheModel
+    public class ProviderChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPriceModel, ICacheModel
 	{
-        public string? CacheKey { get; set; }
-        public Guid ApprenticeshipKey { get; set; }
-        public string? ApprenticeshipHashedId { get; set; }
         public long? ProviderReferenceNumber { get; set; }
-        public int FundingBandMaximum { get; set; }
         public int ApprenticeshipTrainingPrice { get; set; }
         public int ApprenticeshipEndPointAssessmentPrice { get; set; }
-        public DateField EffectiveFromDate { get; set; } = new DateField();
-        public string? ReasonForChangeOfPrice { get; set; }
-        public DateTime? ApprenticeshipActualStartDate { get; set; }
-        public DateTime? ApprenticeshipPlannedEndDate { get; set; }
-		public DateTime? EarliestEffectiveDate { get; set; }
-		public string? ApprovingPartyName { get; set; }
-        public InitiatedBy InitiatedBy { get; set; }
+        public InitiatedBy InitiatedBy => InitiatedBy.Provider;
         public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
 
         /// <summary>
@@ -31,9 +21,9 @@ namespace SFA.DAS.Apprenticeships.Web.Models
         public int OriginalEndPointAssessmentPrice { get; set; }
     }
 
-    public class CreateChangeOfPriceModelMapper : IMapper<CreateChangeOfPriceModel>
+    public class CreateChangeOfPriceModelMapper : IMapper<ProviderChangeOfPriceModel>
     {
-        public CreateChangeOfPriceModel Map(object sourceObject)
+        public ProviderChangeOfPriceModel Map(object sourceObject)
         {
             if(sourceObject is ApprenticeshipPrice apprenticeshipPrice)
             {
@@ -43,17 +33,18 @@ namespace SFA.DAS.Apprenticeships.Web.Models
             throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
         }
 
-        private static CreateChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
+        private static ProviderChangeOfPriceModel FromApprenticeshipPrice(ApprenticeshipPrice apprenticeshipPrice)
         {
-            var model = new CreateChangeOfPriceModel
-            {
+            var model = new ProviderChangeOfPriceModel
+			{
                 FundingBandMaximum = Convert.ToInt32(apprenticeshipPrice.FundingBandMaximum),
                 ApprenticeshipTrainingPrice = Convert.ToInt32(apprenticeshipPrice.TrainingPrice),
                 ApprenticeshipEndPointAssessmentPrice = Convert.ToInt32(apprenticeshipPrice.AssessmentPrice),
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
 				EarliestEffectiveDate = apprenticeshipPrice.EarliestEffectiveDate,
-				ApprovingPartyName = apprenticeshipPrice.EmployerName
+                ApprovingPartyName = apprenticeshipPrice.EmployerName,
+                ApprenticeshipKey = apprenticeshipPrice.ApprenticeshipKey
             };
 
             model.OriginalTrainingPrice = model.ApprenticeshipTrainingPrice;
