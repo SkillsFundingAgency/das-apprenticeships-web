@@ -9,8 +9,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
 
         Task CreatePriceHistory(
             Guid apprenticeshipKey,
-            long? providerId,
-            long? employerId,
+            string requester,
             string userId,
             decimal? trainingPrice,
             decimal? assessmentPrice,

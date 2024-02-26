@@ -31,7 +31,8 @@ namespace SFA.DAS.Apprenticeships.Web.Models
                 ApprenticeshipActualStartDate = apprenticeshipPrice.ApprenticeshipActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeshipPrice.ApprenticeshipPlannedEndDate,
                 EarliestEffectiveDate = apprenticeshipPrice.EarliestEffectiveDate,
-                ApprovingPartyName = apprenticeshipPrice.EmployerName
+                ApprovingPartyName = apprenticeshipPrice.EmployerName,
+                ApprenticeshipKey = apprenticeshipPrice.ApprenticeshipKey
             };
 
             model.OriginalApprenticeshipTotalPrice = model.ApprenticeshipTotalPrice;

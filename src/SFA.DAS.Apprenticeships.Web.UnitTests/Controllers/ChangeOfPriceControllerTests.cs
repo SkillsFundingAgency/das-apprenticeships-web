@@ -247,8 +247,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Assert
             _mockApprenticeshipService.Verify(x => x.CreatePriceHistory(
                 createChangeOfPriceModel.ApprenticeshipKey, 
-                createChangeOfPriceModel.ProviderReferenceNumber, 
-                null,
+                "Provider",
                 expectedUser,
                 createChangeOfPriceModel.ApprenticeshipTrainingPrice,
                 createChangeOfPriceModel.ApprenticeshipEndPointAssessmentPrice,
@@ -258,6 +257,34 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             result.ShouldBeOfType<RedirectResult>();
             ((RedirectResult)result).Url.Should().Be(expectedUrl);
 		}
+
+        [Test]
+        public async Task EmployerInitiatedSubmitChange_ValidModel_CreatesPriceHistoryAndRedirectsToEmployerCommitments()
+        {
+            // Arrange
+            var expectedUser = _fixture.Create<string>();
+
+            var createChangeOfPriceModel = _fixture.Create<EmployerChangeOfPriceModel>();
+            var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            controller.SetupHttpContext(_fixture.Create<long>(), "anyApprenticeshipId", expectedUser);
+
+
+            // Act
+            var result = await controller.EmployerInitiatedSubmitChange(createChangeOfPriceModel);
+
+            // Assert
+            _mockApprenticeshipService.Verify(x => x.CreatePriceHistory(
+                createChangeOfPriceModel.ApprenticeshipKey,
+                "Employer",
+                It.IsAny<string>(),
+                null,
+                null,
+                createChangeOfPriceModel.ApprenticeshipTotalPrice,
+                It.IsAny<string>(),
+                createChangeOfPriceModel.EffectiveFromDate.Date.GetValueOrDefault()));
+            result.ShouldBeOfType<RedirectResult>();
+            ((RedirectResult)result).Url.Should().EndWith("?showChangeOfPriceRequestSent=true");
+        }
 
         [Test]
         public async Task GetViewPendingPriceChangePageProvider_ReturnsCorrectView()
