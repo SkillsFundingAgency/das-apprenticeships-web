@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
-using System.Configuration.Provider;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models;

@@ -173,21 +173,25 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                 return NotFound();
             }
 
-            var view = "";
+            var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId);
+
             switch (response.PendingPriceChange.PriceChangeInitiatedBy())
             {
                 case PriceChangeInitiatedBy.Employer:
-                    view = EmployerInitiatedEmployerViewPendingViewName;
-					break;
+					var employerInitiateViewModel = _mapper.Map<EmployerInitiatedEmployerViewPendingPriceChangeModel>(response);
+					PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
+					employerInitiateViewModel.BackLinkUrl = backLink;
+					return View(EmployerInitiatedEmployerViewPendingViewName, employerInitiateViewModel);
 
-                case PriceChangeInitiatedBy.Provider:
-                    view = EmployerViewPendingViewName;
-					break;
+				case PriceChangeInitiatedBy.Provider:
+					var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
+					PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
+					providerInitiateViewModel.BackLinkUrl = backLink;
+					return View(EmployerViewPendingViewName, providerInitiateViewModel);
+
             }
 
-            var viewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
-            viewModel.BackLinkUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId);
-            return View(view, viewModel);
+            throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiatedBy");
         }
 
         [HttpPost]
