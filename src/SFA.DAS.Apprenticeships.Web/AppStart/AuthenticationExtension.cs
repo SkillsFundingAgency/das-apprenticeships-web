@@ -15,11 +15,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
         private const string ProviderCookieAuthName = "SFA.DAS.ProviderApprenticeshipService";
         public static void SetUpProviderAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
-            if (config.UseStubAuth())
-            {
-                services.AddProviderStubAuthentication();
-            }
-            else if (config.UseDfeSignIn())
+            if (config.UseDfeSignIn())
             {
                 // Use DfESignIn OpenIdConnect
                 services.AddAndConfigureDfESignInAuthentication(
@@ -29,6 +25,10 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                     ClientName.ProviderRoatp,
                     "/service/signout", // This will set the cookie signout route value (note: naming is misleading in the nuget package)
                     ""); // This will redirect the user to the PAS home page after being signed out
+            }
+            else
+            {
+                services.AddProviderStubAuthentication();
             }
         }
 

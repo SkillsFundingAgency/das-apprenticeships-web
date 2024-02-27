@@ -81,7 +81,9 @@ namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
         {
             // Arrange
             var apprenticeshipKey = _fixture.Create<Guid>();
-            
+            var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "");
+            _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
+
             // Act
             await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
 
