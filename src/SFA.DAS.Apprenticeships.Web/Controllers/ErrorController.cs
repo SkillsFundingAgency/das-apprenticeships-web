@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Polly;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models.Error;
 using SFA.DAS.Provider.Shared.UI.Attributes;
@@ -29,6 +30,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
                         $"https://{testPrefixForHelpPageLink}services.signin.education.gov.uk/approvals/select-organisation?action=request-service";
                     return View(statusCode.ToString(), new Error403ViewModel(dashboardLink, helpPageLink, useDfESignIn));
                 case 404:
+                    HttpContext.Items["404ViewReturned"] = "true";
                     return View(statusCode.ToString());
                 default:
                     return View();
