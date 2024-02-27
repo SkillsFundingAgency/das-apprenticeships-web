@@ -68,7 +68,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
 
             // Act
-            var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
+            var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
@@ -85,7 +85,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
 
             // Act
-            var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
+            var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
 
             // Assert
             result.ShouldBeOfType<NotFoundResult>();
@@ -104,7 +104,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
 
             // Act
-            var result = await controller.GetProviderInitiatedPage(apprenticeshipHashedId);
+            var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
 
             // Assert
             result.ShouldBeOfType<NotFoundResult>();
@@ -137,7 +137,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             controller.SetupHttpContext(null, apprenticeshipHashedId,null, employerAccountId);
 
             // Act
-            var result = await controller.GetEmployerInitiatedPage(apprenticeshipHashedId);
+            var result = await controller.GetEmployerEnterChangeDetails(apprenticeshipHashedId);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
@@ -154,7 +154,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
 
             // Act
-            var result = await controller.GetEmployerInitiatedPage(apprenticeshipHashedId);
+            var result = await controller.GetEmployerEnterChangeDetails(apprenticeshipHashedId);
 
             // Assert
             result.ShouldBeOfType<NotFoundResult>();
@@ -173,7 +173,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
 
             // Act
-            var result = await controller.GetEmployerInitiatedPage(apprenticeshipHashedId);
+            var result = await controller.GetEmployerEnterChangeDetails(apprenticeshipHashedId);
 
             // Assert
             result.ShouldBeOfType<NotFoundResult>();
@@ -190,11 +190,11 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             controller.SetupHttpContext(_fixture.Create<long>(), "anyApprenticeshipId");
 
             // Act
-            var result = await controller.ProviderInitiatedCheckDetailsPage(createChangeOfPriceModel);
+            var result = await controller.ProviderCheckDetails(createChangeOfPriceModel);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
-            viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderInitiatedViewName);
+            viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderEnterChangeDetailsViewName);
         }
 
 		[Test]
@@ -206,11 +206,11 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             controller.SetupHttpContext(_fixture.Create<long>(), "anyApprenticeshipId");
 
             // Act
-            var result = await controller.ProviderInitiatedCheckDetailsPage(createChangeOfPriceModel);
+            var result = await controller.ProviderCheckDetails(createChangeOfPriceModel);
 
 			// Assert
 			var viewResult = result.ShouldBeOfType<ViewResult>();
-			viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderInitiatedCheckDetailsViewName);
+			viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderCheckDetailsViewName);
 		}
 
 		[Test]
@@ -221,11 +221,11 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 			var controller = new ChangeOfPriceController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
 
 			// Act
-			var result = controller.GetProviderInitiatedEditPage(createChangeOfPriceModel);
+			var result = controller.GetProviderEditChangeDetails(createChangeOfPriceModel);
 
 			// Assert
 			var viewResult = result.ShouldBeOfType<ViewResult>();
-			viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderInitiatedViewName);
+			viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderEnterChangeDetailsViewName);
         }
         
         [Test]
@@ -308,7 +308,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
-            viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderViewPendingViewName);
+            viewResult.ViewName.Should().Be(ChangeOfPriceController.ProviderCancelPendingChangeViewName);
             viewResult.Model.ShouldBeOfType<ProviderViewPendingPriceChangeModel>();
         }
 
@@ -362,7 +362,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
-            viewResult.ViewName.Should().Be(ChangeOfPriceController.EmployerViewPendingViewName);
+            viewResult.ViewName.Should().Be(ChangeOfPriceController.EmployerApproveProviderChangeOfPriceViewName);
             viewResult.Model.ShouldBeOfType<EmployerViewPendingPriceChangeModel>();
         }
 

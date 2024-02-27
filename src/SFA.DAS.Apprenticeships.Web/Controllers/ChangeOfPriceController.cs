@@ -1,9 +1,7 @@
-﻿using System.Web;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
@@ -12,6 +10,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
+using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiatedBy = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.InitiatedBy;
 
@@ -26,13 +25,13 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         private readonly IExternalUrlHelper _externalProviderUrlHelper;
         private readonly UrlBuilder _externalEmployerUrlHelper;
         private readonly ICacheService _cache;
-        public const string ProviderInitiatedViewName = "ProviderInitiated";
-        public const string EmployerInitiatedViewName = "EmployerInitiated";
-        public const string ProviderInitiatedCheckDetailsViewName = "ProviderInitiatedCheckDetails";
-		public const string EmployerInitiatedCheckDetailsViewName = "EmployerInitiatedCheckDetails";
-		public const string ProviderViewPendingViewName = "ProviderViewPending";
-        public const string EmployerViewPendingViewName = "EmployerViewPending";
-        public const string EmployerInitiatedEmployerViewPendingViewName = "EmployerInitiatedEmployerViewPending";
+        public const string ProviderEnterChangeDetailsViewName = "Provider/EnterChangeDetails";
+        public const string EmployerEnterChangeDetailsViewName = "Employer/EnterChangeDetails";
+        public const string ProviderCheckDetailsViewName = "Provider/CheckDetails";
+		public const string EmployerCheckDetailsViewName = "Employer/CheckDetails";
+		public const string ProviderCancelPendingChangeViewName = "Provider/CancelPendingChange";
+        public const string EmployerCancelPendingChangeViewName = "Employer/CancelPendingChange";
+        public const string EmployerApproveProviderChangeOfPriceViewName = "Employer/ApproveProviderChangeOfPrice";
 
 
 		public ChangeOfPriceController(
@@ -53,7 +52,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> GetProviderInitiatedPage(string apprenticeshipHashedId)
+        public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
         {
             var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
             if (apprenticeshipPrice == null)
@@ -64,13 +63,13 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             var model = _mapper.Map<ProviderChangeOfPriceModel>(apprenticeshipPrice);
             PopulateProviderInitiatedRouteValues(model);
             await _cache.SetCacheModelAsync(model);
-            return View(ProviderInitiatedViewName, model);
+            return View(ProviderEnterChangeDetailsViewName, model);
         }
 
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> GetEmployerInitiatedPage(string apprenticeshipHashedId)
+        public async Task<IActionResult> GetEmployerEnterChangeDetails(string apprenticeshipHashedId)
         {
             var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
             if (apprenticeshipPrice == null)
@@ -81,50 +80,50 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             var model = _mapper.Map<EmployerChangeOfPriceModel>(apprenticeshipPrice);
             PopulateEmployerInitiatedRouteValues(model);
             await _cache.SetCacheModelAsync(model);
-            return View(EmployerInitiatedViewName, model);
+            return View(EmployerEnterChangeDetailsViewName, model);
         }
 
         [HttpGet]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
-        public IActionResult GetProviderInitiatedEditPage(ProviderChangeOfPriceModel model)
+        public IActionResult GetProviderEditChangeDetails(ProviderChangeOfPriceModel model)
         {
-            return View(ProviderInitiatedViewName, model);
+            return View(ProviderEnterChangeDetailsViewName, model);
         }
 
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> ProviderInitiatedCheckDetailsPage(ProviderChangeOfPriceModel model)
+        public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfPriceModel model)
         {
 			PopulateProviderInitiatedRouteValues(model);
 			if (!ModelState.IsValid)
             {
-                return View(ProviderInitiatedViewName, model);
+                return View(ProviderEnterChangeDetailsViewName, model);
             }
 
             await _cache.SetCacheModelAsync(model);
-			return View(ProviderInitiatedCheckDetailsViewName, model);
+			return View(ProviderCheckDetailsViewName, model);
         }
 
 		[HttpGet]
 		[Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
-		public IActionResult GetEmployerInitiatedEditPage(EmployerChangeOfPriceModel model)
+		public IActionResult GetEmployerEditChangeDetails(EmployerChangeOfPriceModel model)
 		{
-			return View(EmployerInitiatedViewName, model);
+			return View(EmployerEnterChangeDetailsViewName, model);
 		}
 
 		[HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
-        public async Task<IActionResult> EmployerInitiatedCheckDetailsPage(EmployerChangeOfPriceModel model)
+        public async Task<IActionResult> EmployerCheckDetails(EmployerChangeOfPriceModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(EmployerInitiatedViewName, model);
+                return View(EmployerEnterChangeDetailsViewName, model);
             }
 
             await _cache.SetCacheModelAsync(model);
-			return View(EmployerInitiatedCheckDetailsViewName, model);
+			return View(EmployerCheckDetailsViewName, model);
 		}
 
         [HttpPost]
@@ -159,7 +158,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 				return NotFound();
 			}
 
-			return View(ProviderViewPendingViewName, new ProviderViewPendingPriceChangeModel(apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, ukprn));
+			return View(ProviderCancelPendingChangeViewName, new ProviderViewPendingPriceChangeModel(apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, ukprn));
 		}
 
         [HttpGet]
@@ -181,13 +180,13 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 					var employerInitiateViewModel = _mapper.Map<EmployerInitiatedEmployerViewPendingPriceChangeModel>(response);
 					PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
 					employerInitiateViewModel.BackLinkUrl = backLink;
-					return View(EmployerInitiatedEmployerViewPendingViewName, employerInitiateViewModel);
+					return View(EmployerCancelPendingChangeViewName, employerInitiateViewModel);
 
 				case PriceChangeInitiatedBy.Provider:
 					var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
 					PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
 					providerInitiateViewModel.BackLinkUrl = backLink;
-					return View(EmployerViewPendingViewName, providerInitiateViewModel);
+					return View(EmployerApproveProviderChangeOfPriceViewName, providerInitiateViewModel);
 
             }
 
