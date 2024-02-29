@@ -3,9 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.Services;
 
@@ -15,58 +13,47 @@ namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 {
     private readonly IEmployerAccountService _accountsSvc;
-    private readonly IConfiguration _configuration;
 
-    public EmployerAccountPostAuthenticationClaimsHandler(IEmployerAccountService accountsSvc, IConfiguration configuration)
+    public EmployerAccountPostAuthenticationClaimsHandler(IEmployerAccountService accountsSvc)
     {
         _accountsSvc = accountsSvc;
-        _configuration = configuration;
     }
 
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
-        var claims = new List<Claim>()
-        {
-            new(UserClaims.AuthenticationType, AuthenticationType.Employer.ToString())
-        };
-
-        if (_configuration.UseStubAuth())
-        {
-            var accountClaims = new Dictionary<string, EmployerUserAccountItem>();
-            accountClaims.Add("", new EmployerUserAccountItem
-            {
-                Role = "Owner",
-                AccountId = "ABC123",
-                EmployerName = "Stub Employer"
-            });
-            claims.Add(new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonConvert.SerializeObject(accountClaims)));
-            claims.Add(new Claim(EmployerClaims.EmployerEmailClaimsTypeIdentifier, _configuration["NoAuthEmail"]));
-
-            return claims.ToList();
-        }
-        
-        var returnClaims = new List<Claim>();
-        if (tokenValidatedContext.Principal == null)
-        {
-	        return returnClaims;
-        }
-
+        var claims = new List<Claim>();
         var userId = tokenValidatedContext.Principal.Claims
-	        .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-	        .Value;
+            .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+            .Value;
         var email = tokenValidatedContext.Principal.Claims
-	        .First(c => c.Type.Equals(ClaimTypes.Email))
-	        .Value;
-        
+            .First(c => c.Type.Equals(ClaimTypes.Email))
+            .Value;
+
         var result = await _accountsSvc.GetUserAccounts(userId, email);
+
+        var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
+        var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
 
         if (result.IsSuspended)
         {
-	        returnClaims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));
+            claims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));
+        }
+        if (!string.IsNullOrEmpty(result.FirstName) && !string.IsNullOrEmpty(result.LastName))
+        {
+            claims.Add(new Claim(EmployerClaims.GivenName, result.FirstName));
+            claims.Add(new Claim(EmployerClaims.FamilyName, result.LastName));
+            claims.Add(new Claim(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier, result.FirstName + " " + result.LastName));
         }
 
-        var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
-        returnClaims.Add(new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json));
-        return returnClaims;
+        claims.Add(new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, result.EmployerUserId));
+        claims.Add(new Claim(EmployerClaims.EmployerEmailClaimsTypeIdentifier, email));
+
+        result.EmployerAccounts
+            .Where(c => c.Role.Equals("owner", StringComparison.CurrentCultureIgnoreCase) || c.Role.Equals("transactor", StringComparison.CurrentCultureIgnoreCase))
+            .ToList().ForEach(u => claims.Add(new Claim(EmployerClaims.Account, u.AccountId)));
+
+        claims.Add(associatedAccountsClaim);
+
+        return claims;
     }
 }

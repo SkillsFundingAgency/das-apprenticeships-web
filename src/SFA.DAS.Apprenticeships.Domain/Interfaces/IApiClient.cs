@@ -8,5 +8,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task<ApiResponse<TResponse>> Post<TResponse>(IPostApiRequest request);
         Task<ApiResponse<TResponse>> Put<TResponse>(IPutApiRequest request);
         Task<ApiResponse<TResponse>> Delete<TResponse>(IDeleteApiRequest request);
+        Task<ApiResponse<TResponse>> Patch<TResponse>(IPatchApiRequest request);
     }
 }
