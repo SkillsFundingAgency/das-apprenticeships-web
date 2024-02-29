@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿using SFA.DAS.Apprenticeships.Application.Exceptions;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
@@ -33,8 +34,22 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 
         public async Task CancelPendingPriceChange(Guid apprenticeshipKey)
         {
-            await _apiClient.Delete<object>(new CancelPendingPriceChangeRequest(apprenticeshipKey));
+            var response = await _apiClient.Delete<object>(new CancelPendingPriceChangeRequest(apprenticeshipKey));
+            if (!string.IsNullOrEmpty(response.ErrorContent))
+            {
+                throw new ServiceException(response.ErrorContent);
+            }
         }
+
+        public async Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason)
+        {
+            await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));
+        }
+
+        public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId)
+        {
+			await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId }));
+		}
 
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,

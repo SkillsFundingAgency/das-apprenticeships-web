@@ -30,6 +30,10 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 			FailedStartUpMiddleware.StartupStep = "AddAuthorizationPolicies";
 			services.AddAuthorization(options =>
             {
+                options.AddPolicy(PolicyNames.IsAuthenticated, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                });
                 options.AddPolicy(
                     PolicyNames
                         .HasEmployerAccount
