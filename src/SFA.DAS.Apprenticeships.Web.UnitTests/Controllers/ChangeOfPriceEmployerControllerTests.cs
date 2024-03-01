@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Controllers;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
@@ -64,7 +65,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
                 .Returns(_expectedProviderCommitmentsUrl);
 
             _mockCacheService = new Mock<ICacheService>();
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
 
             controller.SetupHttpContext(null, apprenticeshipHashedId,null, employerAccountId);
 
@@ -83,7 +84,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             // Arrange
             var apprenticeshipHashedId = _fixture.Create<string>();
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
 
             // Act
             var result = await controller.GetEmployerEnterChangeDetails(apprenticeshipHashedId);
@@ -102,7 +103,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
 
             // Act
             var result = await controller.GetEmployerEnterChangeDetails(apprenticeshipHashedId);
@@ -119,7 +120,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var expectedUser = _fixture.Create<string>();
 
             var createChangeOfPriceModel = _fixture.Create<EmployerChangeOfPriceModel>();
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
             controller.SetupHttpContext(_fixture.Create<long>(), "anyApprenticeshipId", expectedUser);
 
 
@@ -149,7 +150,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var employerAccountId = _fixture.Create<string>();
             var apprenticeshipKey = Guid.NewGuid();
             var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
-            var viewModel = _fixture.Create<EmployerInitiatedEmployerViewPendingPriceChangeModel>();
+            var viewModel = _fixture.Create<EmployerCancelPriceChangeModel>();
             pendingPriceChange.PendingPriceChange.ProviderApprovedDate = null;
 
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
@@ -158,19 +159,19 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipKey))
                 .ReturnsAsync(pendingPriceChange);
 
-            _mockMapper.Setup(x => x.Map<EmployerInitiatedEmployerViewPendingPriceChangeModel>(pendingPriceChange))
+            _mockMapper.Setup(x => x.Map<EmployerCancelPriceChangeModel>(pendingPriceChange))
                 .Returns(viewModel);
 
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
             controller.SetupHttpContext(null, apprenticeshipHashedId, null, employerAccountId);
 
             // Act
-            var result = await controller.GetViewPendingPriceChangePageEmployer(accountId, apprenticeshipHashedId);
+            var result = await controller.ViewPendingPriceChangePage(accountId, apprenticeshipHashedId);
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
             viewResult.ViewName.Should().Be(ChangeOfPriceEmployerController.CancelPendingChangeViewName);
-            viewResult.Model.ShouldBeOfType<EmployerInitiatedEmployerViewPendingPriceChangeModel>();
+            viewResult.Model.ShouldBeOfType<EmployerCancelPriceChangeModel>();
         }
 
         [TestCase(true, false)]
@@ -192,10 +193,10 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
                 _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipKey))
                     .ReturnsAsync(pendingPriceChange);
 
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
 
             // Act
-            var result = await controller.GetViewPendingPriceChangePageEmployer(accountId, apprenticeshipHashedId);
+            var result = await controller.ViewPendingPriceChangePage(accountId, apprenticeshipHashedId);
 
             // Assert
             result.ShouldBeOfType<NotFoundResult>();
@@ -207,13 +208,13 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Arrange
             var employerAccountId = _fixture.Create<string>();
             var apprenticeshipHashedId = _fixture.Create<string>();
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
             var rejectReason = _fixture.Create<string>();
 
             // Act
-            var result = await controller.PostViewPendingPriceChangePageEmployer(employerAccountId, apprenticeshipHashedId, "0", rejectReason);
+            var result = await controller.ApproveOrRejectPriceChangePage(employerAccountId, apprenticeshipHashedId, "0", rejectReason);
 
             // Assert
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, rejectReason), Times.Once);
@@ -228,13 +229,13 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Arrange
             var employerAccountId = _fixture.Create<string>();
             var apprenticeshipHashedId = _fixture.Create<string>();
-            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object, GetMockUrlBuilder());
+            var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetMockUrlBuilder());
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
             var userId = _fixture.Create<string>();
             controller.SetupHttpContext(null, null, userId);
             // Act
-            var result = await controller.PostViewPendingPriceChangePageEmployer(employerAccountId, apprenticeshipHashedId, "1", "");
+            var result = await controller.ApproveOrRejectPriceChangePage(employerAccountId, apprenticeshipHashedId, "1", "");
 
             // Assert
             _mockApprenticeshipService.Verify(x => x.ApprovePendingPriceChange(apprenticeshipKey, userId), Times.Once);

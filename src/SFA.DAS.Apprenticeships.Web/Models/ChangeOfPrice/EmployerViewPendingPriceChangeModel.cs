@@ -1,9 +1,9 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using System.Web;
 
-namespace SFA.DAS.Apprenticeships.Web.Models;
+namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
-public class EmployerViewPendingPriceChangeModel : ViewPendingPriceChangeModel, IEmployerRouteValues
+public class EmployerViewPendingPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesEmployer
 {
     public string EmployerAccountId { get; set; }
     public string ProviderName { get; set; }

@@ -10,5 +10,6 @@
         public DateTime? ApprenticeshipActualStartDate { get; set; }
         public DateTime? ApprenticeshipPlannedEndDate { get; set; }
 		public string? EmployerName { get; set; }
+        public string? ProviderName { get; set; }
     }
 }

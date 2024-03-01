@@ -1,33 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
-using PriceChangeInitiatedBy = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.InitiatedBy;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-    [Authorize]
+	[Authorize]
     public class ChangeOfPriceProviderController : Controller
     {
         private readonly ILogger<ChangeOfPriceProviderController> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IMapper _mapper;
         private readonly IExternalUrlHelper _externalProviderUrlHelper;
-        private readonly UrlBuilder _externalEmployerUrlHelper;
         private readonly ICacheService _cache;
-        public const string ProviderEnterChangeDetailsViewName = "Provider/EnterChangeDetails";
-        public const string ProviderCheckDetailsViewName = "Provider/CheckDetails";
-		public const string ProviderCancelPendingChangeViewName = "Provider/CancelPendingChange";
+        public const string ProviderEnterChangeDetailsViewName = "~/Views/ChangeOfPrice/Provider/EnterChangeDetails.cshtml";
+        public const string ProviderCheckDetailsViewName = "~/Views/ChangeOfPrice/Provider/CheckDetails.cshtml";
+		public const string ProviderCancelPendingChangeViewName = "~/Views/ChangeOfPrice/Provider/CancelPendingChange.cshtml";
 
 
 		public ChangeOfPriceProviderController(
@@ -35,14 +34,13 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             IApprenticeshipService apprenticeshipService, 
             IMapper mapper,
 			ICacheService cache,
-            IExternalUrlHelper externalProviderUrlHelper, UrlBuilder externalEmployerUrlHelper)
+            IExternalUrlHelper externalProviderUrlHelper)
         {
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _mapper = mapper;
 			_cache = cache;
             _externalProviderUrlHelper = externalProviderUrlHelper;
-            _externalEmployerUrlHelper = externalEmployerUrlHelper;
         }
         
         [HttpGet]
@@ -98,25 +96,27 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpGet]
 		[SetNavigationSection(NavigationSection.ManageApprentices)]
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-		public async Task<IActionResult> GetViewPendingPriceChangePageProvider(long ukprn, string apprenticeshipHashedId)
+		public async Task<IActionResult> ViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
 		{
 			var pendingPriceChange = await GetPendingPriceChange(apprenticeshipHashedId);
 			if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
 			{
 				return NotFound();
-			}
+            }
 
-			return View(ProviderCancelPendingChangeViewName, new ProviderViewPendingPriceChangeModel(apprenticeshipHashedId, pendingPriceChange.PendingPriceChange, ukprn));
+            var viewModel = _mapper.Map<ProviderCancelPriceChangeModel>(pendingPriceChange);
+            PopulateProviderInitiatedRouteValues(viewModel);
+
+            return View(ProviderCancelPendingChangeViewName, viewModel);
 		}
 
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-        public async Task<IActionResult> PostViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+        public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
         {
             if (CancelRequest != "1")
             {
-                await _apprenticeshipService.ApprovePendingPriceChange(await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId), HttpContext.User.Identity?.Name!);
                 return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
             }
 
@@ -176,7 +176,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		}
 
 		//  If other provider endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-		private void PopulateProviderInitiatedRouteValues(ProviderChangeOfPriceModel model)
+		private void PopulateProviderInitiatedRouteValues(IRouteValuesProvider model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber =  long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));
