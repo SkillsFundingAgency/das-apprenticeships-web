@@ -25,7 +25,7 @@
 
 	public static class PendingPriceChangeExtensions
 	{
-		public static InitiatedBy PriceChangeInitiatedBy(this PendingPriceChange pendingPriceChange)
+		public static InitiatedBy GetPriceChangeInitiatedBy(this PendingPriceChange pendingPriceChange)
 		{
 			if(pendingPriceChange.ProviderApprovedDate.HasValue && !pendingPriceChange.EmployerApprovedDate.HasValue) 
 			{ 

@@ -105,7 +105,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
             var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId);
 
-            switch (response.PendingPriceChange.PriceChangeInitiatedBy())
+            switch (response.PendingPriceChange.GetPriceChangeInitiatedBy())
             {
                 case PriceChangeInitiatedBy.Employer:
 					var employerInitiateViewModel = _mapper.Map<EmployerCancelPriceChangeModel>(response);
