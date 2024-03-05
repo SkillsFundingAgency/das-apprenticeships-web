@@ -10,6 +10,10 @@ namespace SFA.DAS.Apprenticeships.Web.Extensions
             CultureInfo cultureInfo = new CultureInfo("en-GB");
             return value.ToString("C0", cultureInfo);
         }
+        public static string FormatCurrency(this decimal? value)
+        {
+            return value.HasValue ? FormatCurrency(value.Value) : FormatCurrency(0);
+        }
 
         public static string FormatCurrency(this decimal value)
         {

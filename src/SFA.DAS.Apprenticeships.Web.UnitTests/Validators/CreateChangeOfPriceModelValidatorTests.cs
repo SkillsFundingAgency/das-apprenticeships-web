@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Validators;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
