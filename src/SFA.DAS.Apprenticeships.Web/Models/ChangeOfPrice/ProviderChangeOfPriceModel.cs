@@ -21,7 +21,7 @@ public class ProviderChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPrice
     public int OriginalEndPointAssessmentPrice { get; set; }
 }
 
-public class CreateChangeOfPriceModelMapper : IMapper<ProviderChangeOfPriceModel>
+public class ProviderChangeOfPriceModelMapper : IMapper<ProviderChangeOfPriceModel>
 {
     public ProviderChangeOfPriceModel Map(object sourceObject)
     {

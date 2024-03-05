@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
     {
         public static void AddMappers(this IServiceCollection services)
         {
-            services.AddTransient<IMapper<ProviderChangeOfPriceModel>, CreateChangeOfPriceModelMapper>();
+            services.AddTransient<IMapper<ProviderChangeOfPriceModel>, ProviderChangeOfPriceModelMapper>();
             services.AddTransient<IMapper<EmployerChangeOfPriceModel>, EmployerChangeOfPriceModelMapper>();
 			services.AddTransient<IMapper<EmployerViewPendingPriceChangeModel>, EmployerViewPendingPriceChangeModelMapper>();
 			services.AddTransient<IMapper<EmployerCancelPriceChangeModel>, EmployerCancelPriceChangeModelMapper>();
