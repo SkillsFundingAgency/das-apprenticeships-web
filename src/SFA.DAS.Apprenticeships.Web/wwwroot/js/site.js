@@ -26,3 +26,11 @@ document.addEventListener("DOMContentLoaded", function(){
     showHideJavascriptDependantElements();
 });
 
+// Forces input[type="number"] to only accept numeric input
+$('input[inputmode="numeric"]').keypress(function (e) {
+    var charCode = (e.which) ? e.which : e.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+});
