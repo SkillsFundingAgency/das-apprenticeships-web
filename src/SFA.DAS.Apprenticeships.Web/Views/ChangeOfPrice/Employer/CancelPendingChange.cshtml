@@ -82,7 +82,7 @@
 				</dl>
 
 
-				<form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending">
+				<form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
 					@Html.AntiForgeryToken()
 					@Html.HiddenFor(m => m.ApprenticeshipKey)
 					<fieldset class="govuk-fieldset">
@@ -95,17 +95,11 @@
 
 								<div class="govuk-radios" data-module="govuk-radios">
 									<div class="govuk-radios__item">
-										<input class="govuk-radios__input" type="radio" id="option-yes" name="CancelRequest" value="1" onchange="javascript: showHideRejectReason()">
+										<input class="govuk-radios__input" type="radio" id="option-yes" name="CancelRequest" value="1">
 										<label class="govuk-label govuk-radios__label" for="option-yes">Yes, cancel the request</label>
 									</div>
-									<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="rejectReasonContainer">
-										<div class="govuk-form-group">
-											<label class="govuk-label" for="rejectReason">Why do you want to cancel this request?</label>
-											@Html.TextArea("rejectReason", new { @class = $"govuk-textarea", rows = "5" })
-										</div>
-									</div>
 									<div class="govuk-radios__item" id="radio-item-no">
-										<input class="govuk-radios__input" type="radio" id="option-no" name="CancelRequest" value="0" onchange="javascript: showHideRejectReason()">
+										<input class="govuk-radios__input" type="radio" id="option-no" name="CancelRequest" value="0">
 										<label class="govuk-label govuk-radios__label" for="option-no">No, keep the request</label>
 									</div>
 								</div>
@@ -123,15 +117,3 @@
 
 	</main>
 </div>
-
-<script type="text/javascript">
-	function showHideRejectReason() {
-		if (!document.getElementById("option-yes").checked) {
-			document.getElementById("rejectReasonContainer").style.display = "none";
-		} else {
-			document.getElementById("rejectReasonContainer").style.display = "block";
-		}
-	}
-
-	showHideRejectReason();
-</script>

@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
@@ -16,7 +15,7 @@ using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-	[Authorize]
+    [Authorize]
     public class ChangeOfPriceProviderController : Controller
     {
         private readonly ILogger<ChangeOfPriceProviderController> _logger;
