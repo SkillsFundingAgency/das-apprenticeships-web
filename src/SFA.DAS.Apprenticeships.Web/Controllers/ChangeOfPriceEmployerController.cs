@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
+using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiatedBy = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.InitiatedBy;
@@ -127,12 +128,27 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[HttpPost]
 		[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 		[Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/cancel")]
-		public async Task<IActionResult> CancelPriceChange(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
-		{
-			throw new NotImplementedException();
+		public async Task<IActionResult> CancelPriceChange(string employerAccountId, string apprenticeshipHashedId, string cancelRequest)
+        {
+            var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId);
+            if (cancelRequest != "1")
+            {
+                return Redirect(redirectUrl);
+            }
+
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            if (apprenticeshipKey == default(Guid))
+            {
+                _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+                return NotFound();
+            }
+
+            await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
+            redirectUrl+= "?showPriceChangeCancelled=true";
+            return Redirect(redirectUrl);
         }
 
-		[HttpPost]
+        [HttpPost]
         [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
         [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
         public async Task<IActionResult> ApproveOrRejectPriceChangePage(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
