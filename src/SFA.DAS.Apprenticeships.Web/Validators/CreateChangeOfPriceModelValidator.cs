@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators
 {
-    public class CreateChangeOfPriceModelValidator : AbstractValidator<CreateChangeOfPriceModel>
+    public class CreateChangeOfPriceModelValidator : AbstractValidator<ProviderChangeOfPriceModel>
     {
         public CreateChangeOfPriceModelValidator()
         {
@@ -32,20 +33,25 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
 
             RuleFor(x => x)
                 .Must(MustBeAfterTrainingStartDate)
-                .WithName(nameof(CreateChangeOfPriceModel.EffectiveFromDate))
+                .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
                 .WithMessage("Enter a date that is after the training start date");
 
             RuleFor(x => x)
                 .Must(MustBeBeforePlannedEndDate)
-                .WithName(nameof(CreateChangeOfPriceModel.EffectiveFromDate))
+                .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
                 .WithMessage("The date entered must be before the planned end date");
 
-            RuleFor(x => x.ReasonForChangeOfPrice)
+			RuleFor(x => x)
+	            .Must(MustBeAfterEarliestValidDate)
+	            .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
+	            .WithMessage(x => $"You cannot enter a date in a previous academic year. The earliest date you can enter is {x.EarliestEffectiveDate!.Value.ToString("dd/MM/yyyy")}.");
+
+			RuleFor(x => x.ReasonForChangeOfPrice)
                 .NotEmpty()
                 .WithMessage("You must enter a reason for requesting a price change. This will help the employer when they review your request.");
         }
 
-        private bool HavePriceChange(CreateChangeOfPriceModel model)
+        private bool HavePriceChange(ProviderChangeOfPriceModel model)
         {
             if(model.OriginalTrainingPrice == model.ApprenticeshipTrainingPrice && 
                 model.OriginalEndPointAssessmentPrice == model.ApprenticeshipEndPointAssessmentPrice)
@@ -66,7 +72,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
             return true;
         }
 
-        private bool MustBeAfterTrainingStartDate(CreateChangeOfPriceModel model)
+        private bool MustBeAfterTrainingStartDate(ProviderChangeOfPriceModel model)
         {
             if(model.ApprenticeshipActualStartDate.HasValue && model.EffectiveFromDate.Date <= model.ApprenticeshipActualStartDate)
             {
@@ -76,7 +82,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
             return true;
         }
 
-        private bool MustBeBeforePlannedEndDate(CreateChangeOfPriceModel model)
+        private bool MustBeBeforePlannedEndDate(ProviderChangeOfPriceModel model)
         {
             if (model.ApprenticeshipPlannedEndDate.HasValue && model.EffectiveFromDate.Date >= model.ApprenticeshipPlannedEndDate)
             {
@@ -85,5 +91,20 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
 
             return true;
         }
-    }
+
+		private bool MustBeAfterEarliestValidDate(ProviderChangeOfPriceModel model)
+		{
+            if (!model.EarliestEffectiveDate.HasValue)
+            {
+                throw new InvalidOperationException("EarliestEffectiveDate must be set");//This should come from api call to get Apprenticeship Price
+            }
+
+			if (model.EffectiveFromDate.Date < model.EarliestEffectiveDate)
+			{
+				return false;
+			}
+
+			return true;
+		}
+	}
 }

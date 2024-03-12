@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿using SFA.DAS.Apprenticeships.Application.Exceptions;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
@@ -25,22 +26,45 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             return result.Body;
         }
 
+        public async Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey)
+        {
+	        var result = await _apiClient.Get<GetPendingPriceChangeResponse>(new GetPendingPriceChangeRequest(apprenticeshipKey));
+	        return result.Body;
+        }
+
+        public async Task CancelPendingPriceChange(Guid apprenticeshipKey)
+        {
+            var response = await _apiClient.Delete<object>(new CancelPendingPriceChangeRequest(apprenticeshipKey));
+            if (!string.IsNullOrEmpty(response.ErrorContent))
+            {
+                throw new ServiceException(response.ErrorContent);
+            }
+        }
+
+        public async Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason)
+        {
+            await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));
+        }
+
+        public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId)
+        {
+			await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId }));
+		}
+
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
-            long? providerId,
-            long? employerId,
+            string requester,
             string userId,
             decimal? trainingPrice,
             decimal? assessmentPrice,
             decimal? totalPrice,
-            string reason,
+            string? reason,
             DateTime effectiveFromDate)
         {
-            await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
+			var response = await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
                 new CreateApprenticeshipPriceHistoryData
                 {
-                    ProviderId = providerId,
-                    EmployerId = employerId,
+                    Requester = requester,
                     UserId = userId,
                     TrainingPrice = trainingPrice,
                     AssessmentPrice = assessmentPrice,
@@ -48,11 +72,16 @@ namespace SFA.DAS.Apprenticeships.Application.Services
                     Reason = reason,
                     EffectiveFromDate = effectiveFromDate
                 }));
-        }
 
-        public async Task<ApprenticeshipPrice> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
+			if (!string.IsNullOrEmpty(response.ErrorContent))
+			{
+				throw new ServiceException(response.ErrorContent);
+			}
+		}
+
+        public async Task<GetPendingPriceChangeResponse> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
         {
-            var result = await _apiClient.Get<ApprenticeshipPrice>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
+            var result = await _apiClient.Get<GetPendingPriceChangeResponse>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
             return result.Body;
         }
     }

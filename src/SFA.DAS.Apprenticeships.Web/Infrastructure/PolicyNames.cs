@@ -7,5 +7,6 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
     {
         public static string HasEmployerAccount => nameof(HasEmployerAccount);
         public static string HasProviderAccount => nameof(HasProviderAccount);
+        public static string IsAuthenticated => nameof(IsAuthenticated);
     }
 }

@@ -9,13 +9,18 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
 
         Task CreatePriceHistory(
             Guid apprenticeshipKey,
-            long? providerId,
-            long? employerId,
+            string requester,
             string userId,
             decimal? trainingPrice,
             decimal? assessmentPrice,
             decimal? totalPrice,
-            string reason,
+            string? reason,
             DateTime effectiveFromDate);
+
+        Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey);
+        Task CancelPendingPriceChange(Guid apprenticeshipKey);
+        Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason);
+        Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId);
+
     }
 }

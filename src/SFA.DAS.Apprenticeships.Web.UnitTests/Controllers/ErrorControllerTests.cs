@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using SFA.DAS.Apprenticeships.Web.Controllers;
 using SFA.DAS.Apprenticeships.Web.Models.Error;
 using Moq;
+using Microsoft.AspNetCore.Http;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 {
@@ -62,7 +63,14 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         private static ErrorController CreateController()
         {
             var mockConfiguration = new Mock<IConfiguration>();
-            return new ErrorController(mockConfiguration.Object);
+            var controller = new ErrorController(mockConfiguration.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            return controller;
         }
 
         private static ErrorController CreateControllerWithCustomConfig(string env, bool useDfESignIn)

@@ -1,0 +1,69 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice
+@using SFA.DAS.Employer.Shared.UI;
+@model EmployerChangeOfPriceModel
+@inject UrlBuilder _externalEmployerUrlHelper
+
+@{
+    ViewData["Title"] = "Change the training price and/or the end-point assessment price - Manage apprenticeships";
+    var backUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", Model.EmployerAccountId, Model.ApprenticeshipHashedId);
+}
+
+<div class="govuk-width-container ">
+
+    <a class="govuk-back-link" href="@backUrl">
+        Back
+    </a>
+
+    @await Html.PartialAsync("_validationSummary")
+
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+        <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m=> m.CacheKey)
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-l">Change the total price</h1>
+
+                    <div id="apprenticeship-price-hint" class="govuk-hint">
+                        The funding band maximum for this apprenticeship is @Model.FundingBandMaximum.FormatCurrency(). This is the highest amount the apprenticeship service
+                        will pay.
+                        <br><br>
+                        If you raise the training price above the funding band maximum, you will need to pay the training provider directly.
+                        <div class="govuk-inset-text">
+                            The current total price is @Model.ApprenticeshipTotalPrice.FormatCurrency().
+                        </div>
+                    </div>
+
+                    <div class="govuk-form-group govuk-!-margin-top-7 @ViewContext.DisplayFormGroupError(nameof(Model.ApprenticeshipTotalPrice))">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                Total price
+                            </legend>
+                            <div id="apprenticeship-totalprice-hint" class="govuk-hint">
+                                Do not include VAT. Enter price in whole pounds. For example, for £6,500 enter 6500.
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ApprenticeshipTotalPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ApprenticeshipTotalPrice) })
+
+                            <div class="govuk-input__wrapper">
+                                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                                @Html.TextBoxFor(m => m.ApprenticeshipTotalPrice, new { @class = $"govuk-input govuk-input--width-5 {ViewContext.DisplayInputError(nameof(Model.ApprenticeshipTotalPrice))}", @type = "text", @aria_describedby = "apprenticeship-totalprice-hint", @inputmode = "numeric"})
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    @await Html.PartialAsync("~/Views/ChangeOfPrice/_effectiveFromDate.cshtml", Model)
+
+                    @await Html.PartialAsync("~/Views/ChangeOfPrice/_reasonForPriceChange.cshtml", Model)
+
+                </div>
+
+            </div>
+            <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                Continue
+            </button>
+
+        </form>
+    </main>
+</div>
