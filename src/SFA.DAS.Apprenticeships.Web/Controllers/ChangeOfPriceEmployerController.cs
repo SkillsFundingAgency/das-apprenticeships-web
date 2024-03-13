@@ -9,14 +9,13 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
-using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiatedBy = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.InitiatedBy;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
-	[Authorize]
+    [Authorize]
     public class ChangeOfPriceEmployerController : Controller
     {
         private readonly ILogger<ChangeOfPriceEmployerController> _logger;

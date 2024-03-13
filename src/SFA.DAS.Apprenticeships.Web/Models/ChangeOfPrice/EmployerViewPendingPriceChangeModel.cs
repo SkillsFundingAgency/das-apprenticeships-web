@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Web.Extensions;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
@@ -24,17 +25,21 @@ public class EmployerViewPendingPriceChangeModelMapper : IMapper<EmployerViewPen
 
 	private static EmployerViewPendingPriceChangeModel FromGetPendingPriceChangeResponse(GetPendingPriceChangeResponse getPendingPriceChangeResponse)
 	{
+		var pendingPriceChange = getPendingPriceChangeResponse.PendingPriceChange;
+
 		var model = new EmployerViewPendingPriceChangeModel
 		{
-			ApprenticeshipKey = getPendingPriceChangeResponse.PendingPriceChange.ApprenticeshipKey,
-			ApprenticeshipTrainingPrice = getPendingPriceChangeResponse.PendingPriceChange.PendingTrainingPrice.HasValue ? getPendingPriceChangeResponse.PendingPriceChange.PendingTrainingPrice!.Value : 0,
-			ApprenticeshipEndPointAssessmentPrice = getPendingPriceChangeResponse.PendingPriceChange.PendingAssessmentPrice.Value,
-			OriginalTrainingPrice = getPendingPriceChangeResponse.PendingPriceChange.OriginalTrainingPrice.HasValue ? getPendingPriceChangeResponse.PendingPriceChange.OriginalTrainingPrice.Value : 0,
-			OriginalEndPointAssessmentPrice = getPendingPriceChangeResponse.PendingPriceChange.OriginalAssessmentPrice.Value,
-			EffectiveFromDate = getPendingPriceChangeResponse.PendingPriceChange.EffectiveFrom,
-			ReasonForChangeOfPrice = HttpUtility.HtmlDecode(getPendingPriceChangeResponse.PendingPriceChange.Reason),
-			ProviderName = getPendingPriceChangeResponse.ProviderName
-		};
+			ApprenticeshipKey = pendingPriceChange.ApprenticeshipKey,
+			ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice.ValueOrSubstitute(0),
+			ApprenticeshipEndPointAssessmentPrice = pendingPriceChange.PendingAssessmentPrice.ValueOrSubstitute(0),
+			OriginalTrainingPrice = pendingPriceChange.OriginalTrainingPrice.ValueOrSubstitute(0),
+			OriginalEndPointAssessmentPrice = pendingPriceChange.OriginalAssessmentPrice.ValueOrSubstitute(0),
+			EffectiveFromDate = pendingPriceChange.EffectiveFrom,
+			ReasonForChangeOfPrice = HttpUtility.HtmlDecode(pendingPriceChange.Reason),
+			ProviderName = getPendingPriceChangeResponse.ProviderName.ValueOrSubstitute("The Provider")
+        };
+
+		model.ApprenticeshipTotalPrice = model.ApprenticeshipTrainingPrice + model.ApprenticeshipEndPointAssessmentPrice;
 
 		return model;
 	}
