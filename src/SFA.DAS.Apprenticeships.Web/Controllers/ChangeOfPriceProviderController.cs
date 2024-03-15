@@ -13,7 +13,7 @@ using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
-using PriceChangeInitiatedBy = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.InitiatedBy;
+using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -106,21 +106,21 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 				return NotFound();
             }
 
-            switch (response.PendingPriceChange.GetPriceChangeInitiatedBy())
+            switch (response.PendingPriceChange.GetPriceChangeInitiator())
             {
-                case PriceChangeInitiatedBy.Employer:
+                case PriceChangeInitiator.Employer:
                     var employerInitiateViewModel = _mapper.Map<ProviderViewPendingPriceChangeModel>(response);
                     PopulateRouteValues(employerInitiateViewModel);
                     return View(ApproveEmployerChangeOfPriceViewName, employerInitiateViewModel);
 
-                case PriceChangeInitiatedBy.Provider:
+                case PriceChangeInitiator.Provider:
                     var providerInitiateViewModel = _mapper.Map<ProviderCancelPriceChangeModel>(response);
                     PopulateRouteValues(providerInitiateViewModel);
                     return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
 
             }
 
-            throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiatedBy");
+            throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
         }
 
         [HttpPost]

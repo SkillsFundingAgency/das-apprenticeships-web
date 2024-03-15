@@ -11,7 +11,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
 using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
-using PriceChangeInitiatedBy = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.InitiatedBy;
+using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers
 {
@@ -105,15 +105,15 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
             var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId);
 
-            switch (response.PendingPriceChange.GetPriceChangeInitiatedBy())
+            switch (response.PendingPriceChange.GetPriceChangeInitiator())
             {
-                case PriceChangeInitiatedBy.Employer:
+                case PriceChangeInitiator.Employer:
 					var employerInitiateViewModel = _mapper.Map<EmployerCancelPriceChangeModel>(response);
 					PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
 					employerInitiateViewModel.BackLinkUrl = backLink;
 					return View(CancelPendingChangeViewName, employerInitiateViewModel);
 
-				case PriceChangeInitiatedBy.Provider:
+				case PriceChangeInitiator.Provider:
 					var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
 					PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
 					providerInitiateViewModel.BackLinkUrl = backLink;
@@ -121,7 +121,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
             }
 
-            throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiatedBy");
+            throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
         }
 
 		[HttpPost]

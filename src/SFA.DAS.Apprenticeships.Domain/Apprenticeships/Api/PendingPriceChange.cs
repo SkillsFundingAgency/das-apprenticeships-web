@@ -18,17 +18,17 @@
         public string? Initiator { get; set; }
     }
 
-	public enum InitiatedBy
-	{
+	public enum Initiator
+    {
 		Provider,
 		Employer
 	}
 
 	public static class PendingPriceChangeExtensions
 	{
-		public static InitiatedBy GetPriceChangeInitiatedBy(this PendingPriceChange pendingPriceChange)
+		public static Initiator GetPriceChangeInitiator(this PendingPriceChange pendingPriceChange)
 		{
-			if(Enum.TryParse<InitiatedBy>(pendingPriceChange.Initiator, out var initiatedBy)) 
+			if(Enum.TryParse<Initiator>(pendingPriceChange.Initiator, out var initiatedBy)) 
 			{ 
 				return initiatedBy;
 			}
