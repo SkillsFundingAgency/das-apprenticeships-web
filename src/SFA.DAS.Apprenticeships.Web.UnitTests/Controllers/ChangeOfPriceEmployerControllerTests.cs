@@ -151,7 +151,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipKey = Guid.NewGuid();
             var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
             var viewModel = _fixture.Create<EmployerCancelPriceChangeModel>();
-            pendingPriceChange.PendingPriceChange.ProviderApprovedDate = null;
+            pendingPriceChange.PendingPriceChange.Initiator = "Employer";
 
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
                 .ReturnsAsync(apprenticeshipKey);
@@ -243,8 +243,6 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var redirectResult = ((RedirectResult)result);
             redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeApproved=true");
         }
-
-
 
         [Test]
         public async Task CancelPriceChange_CancelTrue_CancelsPriceHistoryAndRedirectsToProviderCommitments()

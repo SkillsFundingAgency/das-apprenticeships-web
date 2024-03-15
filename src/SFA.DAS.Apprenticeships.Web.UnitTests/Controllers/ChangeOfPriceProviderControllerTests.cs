@@ -197,7 +197,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipHashedId = _fixture.Create<string>();
             var apprenticeshipKey = Guid.NewGuid();
             var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
-            pendingPriceChange.PendingPriceChange.EmployerApprovedDate = null;
+            pendingPriceChange.PendingPriceChange.Initiator = "Provider";
 
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
                 .ReturnsAsync(apprenticeshipKey);
