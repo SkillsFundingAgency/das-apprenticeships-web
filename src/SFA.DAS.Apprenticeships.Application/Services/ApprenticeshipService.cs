@@ -53,7 +53,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
-            string requester,
+            string initiator,
             string userId,
             decimal? trainingPrice,
             decimal? assessmentPrice,
@@ -64,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 			var response = await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
                 new CreateApprenticeshipPriceHistoryData
                 {
-                    Requester = requester,
+                    Initiator = initiator,
                     UserId = userId,
                     TrainingPrice = trainingPrice,
                     AssessmentPrice = assessmentPrice,
