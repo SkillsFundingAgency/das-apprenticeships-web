@@ -1,5 +1,6 @@
-﻿@using SFA.DAS.Apprenticeships.Web.Controllers;
-@model CreateChangeOfPriceModel
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice
+@using SFA.DAS.Apprenticeships.Web.Controllers;
+@model ProviderChangeOfPriceModel
 @{
 	ViewData["Title"] = "Check your changes before sending to the employer - Manage apprenticeships";
 	var editPage = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfPrice/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}";

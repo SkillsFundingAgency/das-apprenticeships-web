@@ -53,8 +53,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
-            long? providerId,
-            long? employerId,
+            string requester,
             string userId,
             decimal? trainingPrice,
             decimal? assessmentPrice,
@@ -62,11 +61,10 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             string? reason,
             DateTime effectiveFromDate)
         {
-            await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
+			var response = await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
                 new CreateApprenticeshipPriceHistoryData
                 {
-                    ProviderId = providerId,
-                    EmployerId = employerId,
+                    Requester = requester,
                     UserId = userId,
                     TrainingPrice = trainingPrice,
                     AssessmentPrice = assessmentPrice,
@@ -74,7 +72,12 @@ namespace SFA.DAS.Apprenticeships.Application.Services
                     Reason = reason,
                     EffectiveFromDate = effectiveFromDate
                 }));
-        }
+
+			if (!string.IsNullOrEmpty(response.ErrorContent))
+			{
+				throw new ServiceException(response.ErrorContent);
+			}
+		}
 
         public async Task<GetPendingPriceChangeResponse> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
         {

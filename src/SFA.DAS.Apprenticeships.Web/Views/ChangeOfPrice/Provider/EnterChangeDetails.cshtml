@@ -1,4 +1,5 @@
-﻿@model CreateChangeOfPriceModel
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice
+@model ProviderChangeOfPriceModel
 @{
     ViewData["Title"] = "Change the training price and/or the end-point assessment price - Manage apprenticeships";
 }
@@ -71,9 +72,9 @@
                         </div>
                     </div>
 
-                    @await Html.PartialAsync("_effectiveFromDate", Model)
+                    @await Html.PartialAsync("~/Views/ChangeOfPrice/_effectiveFromDate.cshtml", Model)
 
-                    @await Html.PartialAsync("_reasonForPriceChange", Model)
+                    @await Html.PartialAsync("~/Views/ChangeOfPrice/_reasonForPriceChange.cshtml", Model)
 
                 </div>
 

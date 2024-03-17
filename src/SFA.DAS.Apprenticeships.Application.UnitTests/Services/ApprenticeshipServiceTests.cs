@@ -103,5 +103,18 @@ namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
             // Assert
             _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>()), Times.Once);
         }
-    }
+
+		[Test]
+		public async Task ApprovePendingPriceChange_WhenCalled_PatchesPendingPriceChange()
+		{
+			// Arrange
+			var apprenticeshipKey = _fixture.Create<Guid>();
+
+			// Act
+			await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
+
+			// Assert
+			_apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
+		}
+	}
 }

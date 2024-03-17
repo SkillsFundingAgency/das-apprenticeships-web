@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Validators;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
@@ -8,9 +9,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
     public class CreateChangeOfPriceModelValidatorTests
     {
         private const string _skipPropertyCheck = "";
-        private const string _trainingPriceProperty = nameof(CreateChangeOfPriceModel.ApprenticeshipTrainingPrice);
-        private const string _endPointAssessmentPriceProperty = nameof(CreateChangeOfPriceModel.ApprenticeshipEndPointAssessmentPrice);
-        private const string _totalPriceProperty = nameof(CreateChangeOfPriceModel.ApprenticeshipTotalPrice);
+        private const string _trainingPriceProperty = nameof(ProviderChangeOfPriceModel.ApprenticeshipTrainingPrice);
+        private const string _endPointAssessmentPriceProperty = nameof(ProviderChangeOfPriceModel.ApprenticeshipEndPointAssessmentPrice);
+        private const string _totalPriceProperty = nameof(ProviderChangeOfPriceModel.ApprenticeshipTotalPrice);
         private const string _noChangeMessage = "You must change the training price and/or the end-point assessment price";
         private const string _trainingPriceMessage = "The training price must be a whole number between 1 - 100,000";
         private const string _endPointAssessmentPriceMessage = "The end-point assessment price must be a whole number between 1 - 100,000";
@@ -26,8 +27,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
             string expectedMessage, string expectedProperty, int trainingPrice, int assessmentPrice, int originalTrainingPrice, int originalAssessmentPrice)
         {
             // Arrange
-            var model = new CreateChangeOfPriceModel
-            {
+            var model = new ProviderChangeOfPriceModel
+			{
                 ApprenticeshipTrainingPrice = trainingPrice,
                 ApprenticeshipEndPointAssessmentPrice = assessmentPrice,
                 OriginalTrainingPrice = originalTrainingPrice,
@@ -62,8 +63,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
             string expectedMessage, int day, int month, int year)
         {
             // Arrange
-            var model = new CreateChangeOfPriceModel
-            {
+            var model = new ProviderChangeOfPriceModel
+			{
                 ApprenticeshipTrainingPrice = 5500,
                 ApprenticeshipEndPointAssessmentPrice = 500,
                 OriginalTrainingPrice = 5000,
@@ -81,7 +82,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
             // Assert
             result.IsValid.Should().BeFalse();
             result.Errors.Should().Contain(x => x.ErrorMessage == expectedMessage);
-            result.Errors.Should().Contain(x => x.PropertyName == nameof(CreateChangeOfPriceModel.EffectiveFromDate));
+            result.Errors.Should().Contain(x => x.PropertyName == nameof(ProviderChangeOfPriceModel.EffectiveFromDate));
 
         }
 
@@ -89,8 +90,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
         public void CreateChangeOfPriceModelValidator_ReasonForChangeOfPrice_ReturnsExpectedErrorMessage()
         {
             // Arrange
-            var model = new CreateChangeOfPriceModel
-            {
+            var model = new ProviderChangeOfPriceModel
+			{
                 ApprenticeshipTrainingPrice = 5500,
                 ApprenticeshipEndPointAssessmentPrice = 500,
                 OriginalTrainingPrice = 5000,
@@ -109,7 +110,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators
             // Assert
             result.IsValid.Should().BeFalse();
             result.Errors.Should().Contain(x => x.ErrorMessage == "You must enter a reason for requesting a price change. This will help the employer when they review your request.");
-            result.Errors.Should().Contain(x => x.PropertyName == nameof(CreateChangeOfPriceModel.ReasonForChangeOfPrice));
+            result.Errors.Should().Contain(x => x.PropertyName == nameof(ProviderChangeOfPriceModel.ReasonForChangeOfPrice));
 
         }
     }
