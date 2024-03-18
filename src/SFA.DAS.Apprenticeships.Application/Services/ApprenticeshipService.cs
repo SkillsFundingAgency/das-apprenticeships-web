@@ -51,6 +51,11 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 			await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId }));
 		}
 
+        public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId, decimal trainingPrice, decimal endPointAssessmentPrice)
+        {
+            await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId, TrainingPrice = trainingPrice, AssessmentPrice = endPointAssessmentPrice }));
+        }
+
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
             string requester,
