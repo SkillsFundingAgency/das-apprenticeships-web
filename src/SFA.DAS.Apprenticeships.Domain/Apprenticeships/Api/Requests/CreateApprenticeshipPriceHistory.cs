@@ -18,8 +18,8 @@ public class CreateApprenticeshipPriceHistoryRequest : IPostApiRequest
 
 public class CreateApprenticeshipPriceHistoryData
 {
-    public string Requester { get; set; }
-    public string UserId { get; set; }
+    public string Initiator { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
     public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }
     public decimal? TotalPrice { get; set; }
