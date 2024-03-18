@@ -15,7 +15,7 @@
 		<div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Confirm new training and end-point assessment price</h1>
             <div id="apprenticeship-price-hint" class="govuk-hint"> Add the new training and end-point assessment price. The total of these two prices must match the new total price of
-                @Model.ApprenticeshipTrainingPrice.FormatCurrency()
+                @Model.ApprenticeshipTotalPrice.FormatCurrency()
                 <br><br>
                 The new total price cannot be approved until you confirm the training and end-point assessment price.<br><br>
             </div>
@@ -56,7 +56,6 @@
                 <div class="govuk-inset-text">
                     <div id="price-hint" class="govuk-hint">
                         The employer has changed the total price to: @(Model.ApprenticeshipTotalPrice.FormatCurrency())
-                        @* <div class="@ViewContext.StyleAsError(nameof(Model.ApprenticeshipTotalPrice))" id="ApprenticeshipTotalPrice" name="ApprenticeshipTotalPrice">@((Model.ApprenticeshipTotalPrice).FormatCurrency()) *@
                     </div>
                 </div>
             </div>
