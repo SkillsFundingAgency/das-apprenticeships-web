@@ -18,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice
 
         protected bool MustBeAfterTrainingStartDate(BaseChangeOfPriceModel model)
         {
-            if (model.ApprenticeshipActualStartDate.HasValue && model.EffectiveFromDate.Date <= model.ApprenticeshipActualStartDate)
+            if (model.ApprenticeshipActualStartDate.HasValue && model.EffectiveFromDate.Date < model.ApprenticeshipActualStartDate)
             {
                 return false;
             }

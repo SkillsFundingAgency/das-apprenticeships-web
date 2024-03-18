@@ -42,7 +42,6 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfPrice
         [TestCase("Enter a date in the correct format", 1, 15, 2023)]
         [TestCase("Enter a date in the correct format", 1, 5, -1)]
         [TestCase("Enter a date that is after the training start date", 1, 5, 2023)]
-        [TestCase("Enter a date that is after the training start date", 1, 6, 2024)]
         [TestCase("The date entered must be before the planned end date", 1, 5, 2027)]
         [TestCase("The date entered must be before the planned end date", 1, 6, 2026)]
         public void Validate_EffectiveFromDate_ReturnsExpectedErrorMessage(
