@@ -124,16 +124,18 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfPrice
         [Test]
         public void Validate_ReasonForChangeOfPrice_ReturnsExpectedErrorMessage()
         {
+            var effectiveFromDate = DateTime.Now.AddDays(-1);
+
             // Arrange
             var model = new EmployerChangeOfPriceModel
             {
                 ApprenticeshipTotalPrice = 6000,
                 OriginalApprenticeshipTotalPrice = 5500,
-                EffectiveFromDate = new DateField { Day = 15, Month = 7, Year = 2025 },
-                ApprenticeshipActualStartDate = new DateTime(2024, 6, 1),
-                ApprenticeshipPlannedEndDate = new DateTime(2026, 6, 1),
-                ReasonForChangeOfPrice = null,
-                EarliestEffectiveDate = new DateTime(2025, 10, 17)
+                EffectiveFromDate = new DateField { Day = effectiveFromDate.Day, Month = effectiveFromDate.Month, Year = effectiveFromDate.Year },
+                ApprenticeshipActualStartDate = DateTime.Now.AddYears(-1),
+                ApprenticeshipPlannedEndDate = DateTime.Now.AddYears(3),
+                EarliestEffectiveDate = DateTime.Now.AddMonths(-1),
+                ReasonForChangeOfPrice = null
             };
             var validator = new EmployerChangeOfPriceModelValidator();
 
@@ -142,7 +144,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfPrice
 
             // Assert
             result.IsValid.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.ErrorMessage == "You must enter a reason for requesting a price change. This will help the employer when they review your request.");
+            result.Errors.Should().Contain(x => x.ErrorMessage == "You must enter a reason for requesting a price change. This will help the training provider when they review your request.");
             result.Errors.Should().Contain(x => x.PropertyName == nameof(EmployerChangeOfPriceModel.ReasonForChangeOfPrice));
 
         }
