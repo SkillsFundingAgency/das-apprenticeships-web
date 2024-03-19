@@ -231,7 +231,6 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 			return pendingPriceChange;
 		}
 
-        //  If other provider endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
         private void PopulateRouteValues(IRouteValuesProvider model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
