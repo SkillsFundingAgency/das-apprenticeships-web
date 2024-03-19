@@ -155,6 +155,11 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/approve")]
         public async Task<IActionResult> ConfirmApprovePendingPriceChange(ProviderConfirmPriceBreakdownPriceChangeModel model, long ukprn, string apprenticeshipHashedId)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(ProviderConfirmPriceBreakdownViewName, model);
+            }
+
             var userId = HttpContext.User.Identity?.Name!;
             await _apprenticeshipService.ApprovePendingPriceChange(model.ApprenticeshipKey, userId, model.ApprenticeshipTrainingPrice.GetValueOrDefault(), model.ApprenticeshipEndPointAssessmentPrice.GetValueOrDefault());
             return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}?showPriceChangeCancelled=true" }));

@@ -63,6 +63,7 @@
             
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m=> m.ApprenticeshipKey)
+                @Html.HiddenFor(m => m.ApprenticeshipTotalPrice)
                 <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
                     Save
                 </button>
