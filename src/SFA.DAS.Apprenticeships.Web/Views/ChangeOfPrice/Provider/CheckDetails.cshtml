@@ -65,18 +65,25 @@
 	</div>
 </div>
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-m">Now send to the employer for approval</h2>
-		<p class="govuk-body">Your payment schedule will not change until the employer approves your request.</p>
-		<form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/submit">
-			@Html.AntiForgeryToken()
-			@Html.HiddenFor(m=> m.CacheKey)
-			<div class="govuk-button-group">
-				<button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfPrice">
-					Send
-				</button>
-				<a class="govuk-link" href="@editPage" id="linkGoBackToEdit">Go back to edit changes</a>
-			</div>
-		</form>
-	</div>
+    <div class="govuk-grid-column-two-thirds">
+		@if (Model.NewTotalPriceIsLessThanOrEqualToOriginal)
+		{
+		    <h2 class="govuk-heading-m">The employer does not need to approve this change as the price has not increased</h2>
+		}
+		else
+		{
+		    <h2 class="govuk-heading-m">Now send to the employer for approval</h2>
+		    <p class="govuk-body">Your payment schedule will not change until the employer approves your request.</p>
+		}
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/submit">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CacheKey)
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfPrice">
+                    Send
+                </button>
+                <a class="govuk-link" href="@editPage" id="linkGoBackToEdit">Go back to edit changes</a>
+            </div>
+        </form>
+    </div>
 </div>
