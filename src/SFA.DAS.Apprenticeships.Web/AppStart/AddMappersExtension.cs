@@ -13,8 +13,9 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 			services.AddTransient<IMapper<EmployerCancelPriceChangeModel>, EmployerCancelPriceChangeModelMapper>();
             services.AddTransient<IMapper<ProviderCancelPriceChangeModel>, ProviderCancelPriceChangeModelMapper>();
             services.AddTransient<IMapper<ProviderViewPendingPriceChangeModel>, ProviderViewPendingPriceChangeModelMapper>();
+            services.AddTransient<IMapper<ProviderConfirmPriceBreakdownPriceChangeModel>, ProviderConfirmPriceBreakdownPriceChangeModelMapper>();
 
-            
+
 
 
             services.AddTransient<IMapper>((serviceProvider) =>
@@ -26,6 +27,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 				mapperResolver.Register(serviceProvider.GetService<IMapper<EmployerCancelPriceChangeModel>>()!);
                 mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderCancelPriceChangeModel>>()!);
                 mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderViewPendingPriceChangeModel>>()!);
+                mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderConfirmPriceBreakdownPriceChangeModel>>()!);
                 return mapperResolver;
             });
         }

@@ -12,6 +12,7 @@ using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
+using Azure.Identity;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 
@@ -29,6 +30,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         public const string ProviderCheckDetailsViewName = "~/Views/ChangeOfPrice/Provider/CheckDetails.cshtml";
 		public const string ProviderCancelPendingChangeViewName = "~/Views/ChangeOfPrice/Provider/CancelPendingChange.cshtml";
         public const string ApproveEmployerChangeOfPriceViewName = "~/Views/ChangeOfPrice/Provider/ApproveEmployerChangeOfPrice.cshtml";
+        public const string ProviderConfirmPriceBreakdownViewName = "~/Views/ChangeOfPrice/Provider/ConfirmPriceBreakdown.cshtml";
 
 
         public ChangeOfPriceProviderController(
@@ -125,6 +127,47 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
+        [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+        public IActionResult ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges)
+        {
+            if (ApproveChanges == "1")
+            {
+                return RedirectToAction("ConfirmPriceBreakdown", new { ukprn = ukprn, apprenticeshipHashedId = apprenticeshipHashedId });
+            }
+
+            throw new NotImplementedException("todo FLP-400 Reject journey goes here");
+        }
+
+        [HttpGet]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
+        [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/approve")]
+        public async Task<IActionResult> ConfirmPriceBreakdown(long ukprn, string apprenticeshipHashedId)
+        {
+            var response = await GetPendingPriceChange(apprenticeshipHashedId);
+
+            var confirmPriceBreakdownPriceChangeModel = _mapper.Map<ProviderConfirmPriceBreakdownPriceChangeModel>(response);
+
+            return View(ProviderConfirmPriceBreakdownViewName, confirmPriceBreakdownPriceChangeModel);
+        }
+
+        [HttpPost]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
+        [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/approve")]
+        public async Task<IActionResult> ConfirmApprovePendingPriceChange(ProviderConfirmPriceBreakdownPriceChangeModel model, long ukprn, string apprenticeshipHashedId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(ProviderConfirmPriceBreakdownViewName, model);
+            }
+
+            var userId = HttpContext.User.Identity?.Name!;
+            await _apprenticeshipService.ApprovePendingPriceChange(model.ApprenticeshipKey, userId, model.ApprenticeshipTrainingPrice.GetValueOrDefault(), model.ApprenticeshipEndPointAssessmentPrice.GetValueOrDefault());
+            return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}?showPriceChangeApproved=true" }));
+        }
+
+
+        [HttpPost]
+        [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/cancel")]
         public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
         {
@@ -188,8 +231,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 			return pendingPriceChange;
 		}
 
-		//  If other provider endpoints use the same route values, this could be refactored to take an interface/abstract class instead of CreateChangeOfPriceModel
-		private void PopulateRouteValues(IRouteValuesProvider model)
+        private void PopulateRouteValues(IRouteValuesProvider model)
         {
             model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber =  long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));

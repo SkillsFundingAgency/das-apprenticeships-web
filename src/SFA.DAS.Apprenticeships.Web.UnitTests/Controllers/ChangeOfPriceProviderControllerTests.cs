@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -13,6 +14,7 @@ using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
+using System.Security.Claims;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 {
@@ -198,6 +200,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipKey = Guid.NewGuid();
             var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
             pendingPriceChange.PendingPriceChange.Initiator = "Provider";
+            pendingPriceChange.HasPendingPriceChange = true;
 
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
                 .ReturnsAsync(apprenticeshipKey);
@@ -293,5 +296,132 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             result.ShouldBeOfType<RedirectResult>();
             ((RedirectResult)result).Url.Should().Be(expectedUrl);
         }
+
+        [Test]
+        public void ApproveOrRejectPendingPriceChange_ApproveChanges_RedirectsToConfirmPriceBreakdown()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var approveChanges = "1";
+
+            var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act
+            var result = controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges);
+
+            // Assert
+            var redirectToActionResult = result.ShouldBeOfType<RedirectToActionResult>();
+            redirectToActionResult.ActionName.Should().Be("ConfirmPriceBreakdown");
+            redirectToActionResult.RouteValues["ukprn"].Should().Be(ukprn);
+            redirectToActionResult.RouteValues["apprenticeshipHashedId"].Should().Be(apprenticeshipHashedId);
+        }
+
+        [Test]
+        public void ApproveOrRejectPendingPriceChange_RejectChanges_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var rejectChanges = "0";
+
+            var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act & Assert (TODO update this in reject story)
+            Assert.Throws<NotImplementedException>(() => controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, rejectChanges));
+        }
+
+        [Test]
+        public async Task ConfirmPriceBreakdown_ReturnsView()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var response = _fixture.Create<GetPendingPriceChangeResponse>();
+
+            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
+            _mockApprenticeshipService.Setup(m => m.GetPendingPriceChange(apprenticeshipKey)).ReturnsAsync(response);
+
+            var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            // Act
+            var result = await controller.ConfirmPriceBreakdown(ukprn, apprenticeshipHashedId);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<ViewResult>();
+            viewResult.ViewName.Should().Be(ChangeOfPriceProviderController.ProviderConfirmPriceBreakdownViewName);
+        }
+
+        [Test]
+        public async Task ConfirmApprovePendingPriceChange_ApprovesPendingPriceChange()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var model = _fixture.Create<ProviderConfirmPriceBreakdownPriceChangeModel>();
+            var userId = _fixture.Create<string>();
+            _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(_expectedProviderCommitmentsUrl);
+
+
+            var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, userId) })) }
+            };
+
+            // Act
+            await controller.ConfirmApprovePendingPriceChange(model, ukprn, apprenticeshipHashedId);
+
+            // Assert
+            _mockApprenticeshipService.Verify(m => m.ApprovePendingPriceChange(model.ApprenticeshipKey, userId, model.ApprenticeshipTrainingPrice.GetValueOrDefault(), model.ApprenticeshipEndPointAssessmentPrice.GetValueOrDefault()));
+        }
+
+        [Test]
+        public async Task ConfirmApprovePendingPriceChange_RedirectsToProviderCommitments()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var model = _fixture.Create<ProviderConfirmPriceBreakdownPriceChangeModel>();
+            var userId = _fixture.Create<string>();
+            _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(_expectedProviderCommitmentsUrl);
+
+
+            var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, userId) })) }
+            };
+
+            // Act
+            var result = await controller.ConfirmApprovePendingPriceChange(model, ukprn, apprenticeshipHashedId);
+
+            // Assert
+            var redirectResult = result.ShouldBeOfType<RedirectResult>();
+            redirectResult.Url.Should().Be(_expectedProviderCommitmentsUrl);
+        }
+
+        [Test]
+        public async Task ConfirmApprovePendingPriceChange_ReturnsViewOnValidationError()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            var apprenticeshipHashedId = _fixture.Create<string>();
+            var model = _fixture.Create<ProviderConfirmPriceBreakdownPriceChangeModel>();
+
+            var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+            controller.ModelState.AddModelError("ApprenticeshipTrainingPrice", _fixture.Create<string>());
+
+            // Act
+            var result = await controller.ConfirmApprovePendingPriceChange(model, ukprn, apprenticeshipHashedId);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<ViewResult>();
+            viewResult.ViewName.Should().Be("~/Views/ChangeOfPrice/Provider/ConfirmPriceBreakdown.cshtml");
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
     }
 }

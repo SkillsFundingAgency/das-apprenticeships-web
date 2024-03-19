@@ -43,13 +43,30 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 
         public async Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason)
         {
-            await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));
+            var response = await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));
+            if (!string.IsNullOrEmpty(response.ErrorContent))
+            {
+                throw new ServiceException(response.ErrorContent);
+            }
         }
 
         public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId)
         {
-			await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId }));
-		}
+            var response = await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId }));
+            if (!string.IsNullOrEmpty(response.ErrorContent))
+            {
+                throw new ServiceException(response.ErrorContent);
+            }
+        }
+
+        public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId, decimal trainingPrice, decimal endPointAssessmentPrice)
+        {
+            var response = await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId, TrainingPrice = trainingPrice, AssessmentPrice = endPointAssessmentPrice }));
+            if (!string.IsNullOrEmpty(response.ErrorContent))
+            {
+                throw new ServiceException(response.ErrorContent);
+            }
+        }
 
         public async Task CreatePriceHistory(
             Guid apprenticeshipKey,
