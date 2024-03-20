@@ -11,7 +11,7 @@
 			<th scope="row" class="govuk-table__header">@Label</th>
 			@if (!string.IsNullOrEmpty(OrginalValue))
 			{
-				<td class="govuk-table__cell" id="@GetOrginalValueId()">@OrginalValue</td>
+				<td class="govuk-table__cell" id="@GetOriginalValueId()">@OrginalValue</td>
 			}
 			<td class="govuk-table__cell" id="@GetNewValueId()">@Value</td>
 			<td class="govuk-table__cell" style="text-align: right;">
@@ -71,7 +71,7 @@
         return $"link{Id}";
     }
 
-	public string GetOrginalValueId()
+	public string GetOriginalValueId()
 	{
 		return $"{Id}-OriginalValue";
 	}
