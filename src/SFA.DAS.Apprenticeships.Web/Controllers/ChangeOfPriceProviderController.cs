@@ -96,12 +96,12 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 			if (priceChangeStatus == "Approved")
             {
 	            providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-		            { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceAutoApproved=true" });
+		            { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}?showChangeOfPriceAutoApproved=true" });
             }
             else
             {
 				providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-					{ Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
+					{ Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}?showChangeOfPriceRequestSent=true" });
 			}
             
             return Redirect(providerCommitmentsReturnUrl);
