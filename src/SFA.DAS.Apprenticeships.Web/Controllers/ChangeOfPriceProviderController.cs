@@ -194,7 +194,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-            return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}?showPriceChangeCancelled=true" }));
+            return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeCancelled=true" }));
         }
 
         private async Task<ApprenticeshipPrice?> GetApprenticeshipPrice(string apprenticeshipHashedId)
