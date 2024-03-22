@@ -68,7 +68,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             }
         }
 
-        public async Task CreatePriceHistory(
+        public async Task<string> CreatePriceHistory(
             Guid apprenticeshipKey,
             string initiator,
             string userId,
@@ -78,7 +78,7 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             string? reason,
             DateTime effectiveFromDate)
         {
-			var response = await _apiClient.Post<object>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
+			var response = await _apiClient.Post<PostPendingPriceChangeResponse>(new CreateApprenticeshipPriceHistoryRequest(apprenticeshipKey,
                 new CreateApprenticeshipPriceHistoryData
                 {
                     Initiator = initiator,
@@ -94,7 +94,9 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 			{
 				throw new ServiceException(response.ErrorContent);
 			}
-		}
+
+			return response.Body.PriceChangeStatus;
+        }
 
         public async Task<GetPendingPriceChangeResponse> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
         {

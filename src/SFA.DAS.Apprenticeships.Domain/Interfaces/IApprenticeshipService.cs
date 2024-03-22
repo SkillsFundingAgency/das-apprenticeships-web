@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task<Guid> GetApprenticeshipKey(string apprenticeshipHashId);
         Task<ApprenticeshipPrice> GetApprenticeshipPrice(Guid apprenticeshipKey);
 
-        Task CreatePriceHistory(
+        Task<string> CreatePriceHistory(
             Guid apprenticeshipKey,
             string initiator,
             string userId,

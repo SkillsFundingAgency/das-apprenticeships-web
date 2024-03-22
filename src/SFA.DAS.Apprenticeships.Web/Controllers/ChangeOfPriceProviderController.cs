@@ -90,10 +90,20 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
 		[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
 		public async Task<IActionResult> ProviderInitiatedSubmitChange(ProviderChangeOfPriceModel model)
 		{
-            await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Provider", HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
+            var priceChangeStatus = await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Provider", HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
+            string providerCommitmentsReturnUrl;
 
-            var providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}?showChangeOfPriceRequestSent=true" });
+			if (priceChangeStatus == "Approved")
+            {
+	            providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
+		            { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}?showChangeOfPriceAutoApproved=true" });
+            }
+            else
+            {
+				providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
+					{ Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}?showChangeOfPriceRequestSent=true" });
+			}
+            
             return Redirect(providerCommitmentsReturnUrl);
 		}
 
