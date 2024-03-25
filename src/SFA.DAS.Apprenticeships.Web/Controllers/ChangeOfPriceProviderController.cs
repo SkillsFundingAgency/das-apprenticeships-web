@@ -138,15 +138,17 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
         [HttpPost]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
         [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
-        public IActionResult ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges)
+        public async Task<IActionResult> ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges, string rejectReason = "")
         {
             if (ApproveChanges == "1")
             {
                 return RedirectToAction("ConfirmPriceBreakdown", new { ukprn = ukprn, apprenticeshipHashedId = apprenticeshipHashedId });
             }
 
-            throw new NotImplementedException("todo FLP-400 Reject journey goes here");
-        }
+            var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason);
+			return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeRejected=true" }));
+		}
 
         [HttpGet]
         [SetNavigationSection(NavigationSection.ManageApprentices)]
