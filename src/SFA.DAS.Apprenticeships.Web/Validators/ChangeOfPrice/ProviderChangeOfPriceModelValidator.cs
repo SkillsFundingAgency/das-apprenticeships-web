@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
-using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
-namespace SFA.DAS.Apprenticeships.Web.Validators
+namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice
 {
-    public class CreateChangeOfPriceModelValidator : AbstractValidator<ProviderChangeOfPriceModel>
+    public class ProviderChangeOfPriceModelValidator : BaseChangeOfPriceValidator<ProviderChangeOfPriceModel>
     {
-        public CreateChangeOfPriceModelValidator()
+        public ProviderChangeOfPriceModelValidator()
         {
             RuleFor(x => x)
                 .Must(HavePriceChange)
+                .WithName(nameof(ProviderChangeOfPriceModel.ApprenticeshipTrainingPrice))
                 .WithMessage("You must change the training price and/or the end-point assessment price");
 
             const string trainingPriceErrorMessage = "The training price must be a whole number between 1 - 100,000";
@@ -41,19 +41,24 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
                 .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
                 .WithMessage("The date entered must be before the planned end date");
 
-			RuleFor(x => x)
-	            .Must(MustBeAfterEarliestValidDate)
-	            .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
-	            .WithMessage(x => $"You cannot enter a date in a previous academic year. The earliest date you can enter is {x.EarliestEffectiveDate!.Value.ToString("dd/MM/yyyy")}.");
+            RuleFor(x => x)
+                .Must(MustBeAfterEarliestValidDate)
+                .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
+                .WithMessage(x => $"You cannot enter a date in a previous academic year. The earliest date you can enter is {x.EarliestEffectiveDate!.Value.ToString("dd/MM/yyyy")}.");
 
-			RuleFor(x => x.ReasonForChangeOfPrice)
+            RuleFor(x => x)
+                .Must(MustNotBeInTheFuture)
+                .WithName(nameof(ProviderChangeOfPriceModel.EffectiveFromDate))
+                .WithMessage(x => "The date must not be in the future");
+
+            RuleFor(x => x.ReasonForChangeOfPrice)
                 .NotEmpty()
                 .WithMessage("You must enter a reason for requesting a price change. This will help the employer when they review your request.");
         }
 
         private bool HavePriceChange(ProviderChangeOfPriceModel model)
         {
-            if(model.OriginalTrainingPrice == model.ApprenticeshipTrainingPrice && 
+            if (model.OriginalTrainingPrice == model.ApprenticeshipTrainingPrice &&
                 model.OriginalEndPointAssessmentPrice == model.ApprenticeshipEndPointAssessmentPrice)
             {
                 return false;
@@ -62,49 +67,5 @@ namespace SFA.DAS.Apprenticeships.Web.Validators
             return true;
         }
 
-        private bool IsValidDate(DateField dateField)
-        {
-            if(dateField.Date == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool MustBeAfterTrainingStartDate(ProviderChangeOfPriceModel model)
-        {
-            if(model.ApprenticeshipActualStartDate.HasValue && model.EffectiveFromDate.Date <= model.ApprenticeshipActualStartDate)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool MustBeBeforePlannedEndDate(ProviderChangeOfPriceModel model)
-        {
-            if (model.ApprenticeshipPlannedEndDate.HasValue && model.EffectiveFromDate.Date >= model.ApprenticeshipPlannedEndDate)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-		private bool MustBeAfterEarliestValidDate(ProviderChangeOfPriceModel model)
-		{
-            if (!model.EarliestEffectiveDate.HasValue)
-            {
-                throw new InvalidOperationException("EarliestEffectiveDate must be set");//This should come from api call to get Apprenticeship Price
-            }
-
-			if (model.EffectiveFromDate.Date < model.EarliestEffectiveDate)
-			{
-				return false;
-			}
-
-			return true;
-		}
-	}
+    }
 }

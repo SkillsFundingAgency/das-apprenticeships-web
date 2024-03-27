@@ -151,7 +151,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var apprenticeshipKey = Guid.NewGuid();
             var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
             var viewModel = _fixture.Create<EmployerCancelPriceChangeModel>();
-            pendingPriceChange.PendingPriceChange.ProviderApprovedDate = null;
+            pendingPriceChange.PendingPriceChange.Initiator = "Employer";
 
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(apprenticeshipHashedId))
                 .ReturnsAsync(apprenticeshipKey);
@@ -220,7 +220,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, rejectReason), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
             var redirectResult = ((RedirectResult)result);
-            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeRejected=true");
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showPriceChangeRejected=true");
         }
 
         [Test]
@@ -241,10 +241,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockApprenticeshipService.Verify(x => x.ApprovePendingPriceChange(apprenticeshipKey, userId), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
             var redirectResult = ((RedirectResult)result);
-            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeApproved=true");
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showPriceChangeApproved=true");
         }
-
-
 
         [Test]
         public async Task CancelPriceChange_CancelTrue_CancelsPriceHistoryAndRedirectsToProviderCommitments()
@@ -253,7 +251,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var employerAccountId = _fixture.Create<string>();
             var apprenticeshipHashedId = _fixture.Create<string>();
             var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
-            var expectedUrl = $"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details?showPriceChangeCancelled=true";
+            var expectedUrl = $"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showPriceChangeCancelled=true";
             _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
@@ -276,7 +274,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var providerUserName = _fixture.Create<string>();
 
             var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
-            var expectedUrl = $"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId}/details";
+            var expectedUrl = $"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details";
             _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);

@@ -20,7 +20,7 @@
 
             @await Html.PartialAsync("~/Views/ChangeOfPrice/_pendingSummary.cshtml", Model, new ViewDataDictionary(ViewData) { { "ShowAllPriceDetails", true } })
 
-            <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending">
+            <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m=> m.ApprenticeshipKey)
                 <div class="govuk-form-group">
