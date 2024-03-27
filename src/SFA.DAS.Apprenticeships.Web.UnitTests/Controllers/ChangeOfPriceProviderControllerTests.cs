@@ -15,6 +15,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Security.Claims;
+using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 {
@@ -323,7 +324,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 	        // Arrange
 	        var ukprn = _fixture.Create<long>();
 	        var apprenticeshipHashedId = _fixture.Create<string>();
-	        var rejectReason = _fixture.Create<string>();
+	        var rejectReason = $"<h3>{_fixture.Create<string>()}</h3>";
 			var approveChanges = "0";
             var apprenticeshipKey = _fixture.Create<Guid>();
             var expectedUrl = _fixture.Create<string>();
@@ -336,7 +337,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 			var result = await controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges, rejectReason);
 
 	        // Assert
-            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, rejectReason));
+            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason)));
 	        var redirectToActionResult = result.ShouldBeOfType<RedirectResult>();
 	        redirectToActionResult.Url.Should().Be(expectedUrl);
         }
