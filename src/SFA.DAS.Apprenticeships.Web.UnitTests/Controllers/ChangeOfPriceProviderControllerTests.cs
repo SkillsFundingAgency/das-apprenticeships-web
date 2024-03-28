@@ -318,14 +318,16 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             redirectToActionResult.RouteValues["apprenticeshipHashedId"].Should().Be(apprenticeshipHashedId);
         }
 
-        [Test]
-        public async Task ApproveOrRejectPendingPriceChange_RejectChanges_RedirectsToShowPriceChangeRejected()
+        [TestCase("<h3>test</h3>", "&lt;h3&gt;test&lt;/h3&gt;")]
+        [TestCase("test", "test")]
+        [TestCase(" ", " ")]
+        [TestCase(null, null)]
+        public async Task ApproveOrRejectPendingPriceChange_RejectChanges_RedirectsToShowPriceChangeRejected(string? rejectReason, string? expectedEncodedReason)
         {
 	        // Arrange
 	        var ukprn = _fixture.Create<long>();
 	        var apprenticeshipHashedId = _fixture.Create<string>();
-	        var rejectReason = $"<h3>{_fixture.Create<string>()}</h3>";
-			var approveChanges = "0";
+            var approveChanges = "0";
             var apprenticeshipKey = _fixture.Create<Guid>();
             var expectedUrl = _fixture.Create<string>();
 			var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
@@ -337,7 +339,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 			var result = await controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges, rejectReason);
 
 	        // Assert
-            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason)));
+            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason));
 	        var redirectToActionResult = result.ShouldBeOfType<RedirectResult>();
 	        redirectToActionResult.Url.Should().Be(expectedUrl);
         }
