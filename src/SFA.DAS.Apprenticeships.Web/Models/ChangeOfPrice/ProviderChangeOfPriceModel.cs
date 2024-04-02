@@ -9,6 +9,7 @@ public class ProviderChangeOfPriceModel : BaseChangeOfPriceModel, IChangeOfPrice
     public int ApprenticeshipEndPointAssessmentPrice { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public int ApprenticeshipTotalPrice => ApprenticeshipTrainingPrice + ApprenticeshipEndPointAssessmentPrice;
+    public bool NewTotalPriceIsLessThanOrEqualToOriginal => ApprenticeshipTotalPrice <= (OriginalTrainingPrice + OriginalEndPointAssessmentPrice);
 
     /// <summary>
     /// This is required for validation purposes, and saves making a second call to the API to get the original price

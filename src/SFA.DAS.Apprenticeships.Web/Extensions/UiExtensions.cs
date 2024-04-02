@@ -5,6 +5,11 @@ namespace SFA.DAS.Apprenticeships.Web.Extensions
 {
     public static class UiExtensions
     {
+        public static string FormatDate(this DateTime date)
+        {
+            return date.ToString("dd MMMM yyyy");
+        }
+
         public static string FormatCurrency(this int value)
         {
             CultureInfo cultureInfo = new CultureInfo("en-GB");

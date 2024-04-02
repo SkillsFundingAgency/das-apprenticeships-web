@@ -4,14 +4,15 @@ using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
-public class ProviderCancelPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesProvider
+public class ProviderViewPendingPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesProvider
 {
     public long? ProviderReferenceNumber { get; set; }
+    public string EmployerName { get; set; }
 }
 
-public class ProviderCancelPriceChangeModelMapper : IMapper<ProviderCancelPriceChangeModel>
+public class ProviderViewPendingPriceChangeModelMapper : IMapper<ProviderViewPendingPriceChangeModel>
 {
-    public ProviderCancelPriceChangeModel Map(object sourceObject)
+    public ProviderViewPendingPriceChangeModel Map(object sourceObject)
     {
         if (sourceObject is GetPendingPriceChangeResponse getPendingPriceChangeResponse)
         {
@@ -21,23 +22,23 @@ public class ProviderCancelPriceChangeModelMapper : IMapper<ProviderCancelPriceC
         throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
     }
 
-    private static ProviderCancelPriceChangeModel FromGetPendingPriceChangeResponse(GetPendingPriceChangeResponse getPendingPriceChangeResponse)
+    private static ProviderViewPendingPriceChangeModel FromGetPendingPriceChangeResponse(GetPendingPriceChangeResponse getPendingPriceChangeResponse)
     {
         var pendingPriceChange = getPendingPriceChangeResponse.PendingPriceChange;
-        var model = new ProviderCancelPriceChangeModel
+
+        var model = new ProviderViewPendingPriceChangeModel
         {
+            EmployerName = getPendingPriceChangeResponse.EmployerName.ValueOrSubstitute("The Employer"),
             ApprenticeshipKey = pendingPriceChange.ApprenticeshipKey,
-            ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice,
-            ApprenticeshipEndPointAssessmentPrice = pendingPriceChange.PendingAssessmentPrice,
+            ApprenticeshipTrainingPrice = pendingPriceChange.PendingTrainingPrice.ValueOrSubstitute(0),
+            ApprenticeshipEndPointAssessmentPrice = pendingPriceChange.PendingAssessmentPrice.ValueOrSubstitute(0),
             OriginalTrainingPrice = pendingPriceChange.OriginalTrainingPrice.ValueOrThrow(nameof(PendingPriceChange.OriginalTrainingPrice)),
             OriginalEndPointAssessmentPrice = pendingPriceChange.OriginalAssessmentPrice.ValueOrThrow(nameof(PendingPriceChange.OriginalAssessmentPrice)),
+            ApprenticeshipTotalPrice = pendingPriceChange.PendingTotalPrice,
             EffectiveFromDate = pendingPriceChange.EffectiveFrom,
-            ReasonForChangeOfPrice = HttpUtility.HtmlDecode(pendingPriceChange.Reason),
+            ReasonForChangeOfPrice = HttpUtility.HtmlDecode(pendingPriceChange.Reason)
         };
-
-        model.ApprenticeshipTotalPrice = model.ApprenticeshipTrainingPrice + model.ApprenticeshipEndPointAssessmentPrice;
 
         return model;
     }
 }
-
