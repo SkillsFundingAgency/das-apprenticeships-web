@@ -146,7 +146,8 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers
             }
 
             var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason));
+            var encodedRejectReason = rejectReason != null ? HttpUtility.HtmlEncode(rejectReason) : string.Empty;
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, encodedRejectReason);
 			return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeRejected=true" }));
 		}
 
