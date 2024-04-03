@@ -5,7 +5,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICacheModel, IRouteValuesProvider
 {
-    public DateTime? ApprenticeshipActualStartDate { get; set; }
+    public DateTime? ApprenticeshipActualStartDate => new DateTime(StartYear, StartMonth, StartDay);
     public long? ProviderReferenceNumber { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public DateTime? OriginalApprenticeshipActualStartDate { get; set; }
@@ -26,12 +26,14 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
         throw new NotImplementedException($"There is not mapping available for object of type {sourceObject.GetType().Name}");
     }
 
-    private static ProviderChangeOfStartDateModel FromApprenticeshipStartDate(ApprenticeshipStartDate apprenticeshipPrice)
+    private static ProviderChangeOfStartDateModel FromApprenticeshipStartDate(ApprenticeshipStartDate apprenticeshipStartDate)
     {
         var model = new ProviderChangeOfStartDateModel
         {
-            ApprenticeshipActualStartDate = apprenticeshipPrice.ActualStartDate,
-            ApprenticeshipKey = apprenticeshipPrice.ApprenticeshipKey
+            StartYear = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Year,
+            StartMonth = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Month,
+            StartDay = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Day,
+            ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey
         };
 
         model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate;

@@ -56,6 +56,22 @@ public class ChangeOfStartDateProviderController : Controller
         return View(ProviderEnterChangeDetailsViewName, model);
     }
 
+    [HttpPost]
+    [SetNavigationSection(NavigationSection.ManageApprentices)]
+    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
+    public async Task<IActionResult> ProviderSubmitChangeDetails(ProviderChangeOfStartDateModel model)
+    {
+        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
+
+        if (!ModelState.IsValid)
+        {
+            return View(ProviderEnterChangeDetailsViewName, model);
+        }
+
+        await _cache.SetCacheModelAsync(model);
+        throw new NotImplementedException("TODO later story continue journey");
+    }
+
     private async Task<ApprenticeshipStartDate?> GetApprenticeshipStartDate(string apprenticeshipHashedId)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
