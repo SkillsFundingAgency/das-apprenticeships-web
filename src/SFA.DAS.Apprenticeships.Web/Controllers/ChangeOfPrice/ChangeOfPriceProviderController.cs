@@ -13,6 +13,7 @@ using System.Web;
 using SFA.DAS.Apprenticeships.Web.Helpers;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
+using SFA.DAS.Apprenticeships.Web.Extensions;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -144,7 +145,7 @@ public class ChangeOfPriceProviderController : Controller
         }
 
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, HttpUtility.HtmlEncode(rejectReason));
+        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
         return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeRejected=true" }));
     }
 
