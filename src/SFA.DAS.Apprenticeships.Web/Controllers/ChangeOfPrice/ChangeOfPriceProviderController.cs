@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
@@ -11,6 +10,7 @@ using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
+using SFA.DAS.Apprenticeships.Web.Helpers;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 
@@ -57,7 +57,7 @@ public class ChangeOfPriceProviderController : Controller
         }
 
         var model = _mapper.Map<ProviderChangeOfPriceModel>(apprenticeshipPrice);
-        PopulateRouteValues(model);
+        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
         await _cache.SetCacheModelAsync(model);
         return View(ProviderEnterChangeDetailsViewName, model);
     }
@@ -74,7 +74,7 @@ public class ChangeOfPriceProviderController : Controller
     [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfPriceModel model)
     {
-        PopulateRouteValues(model);
+        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
         if (!ModelState.IsValid)
         {
             return View(ProviderEnterChangeDetailsViewName, model);
@@ -120,12 +120,12 @@ public class ChangeOfPriceProviderController : Controller
         {
             case PriceChangeInitiator.Employer:
                 var employerInitiateViewModel = _mapper.Map<ProviderViewPendingPriceChangeModel>(response);
-                PopulateRouteValues(employerInitiateViewModel);
+                RouteValuesHelper.PopulateRouteValues(employerInitiateViewModel, HttpContext);
                 return View(ApproveEmployerChangeOfPriceViewName, employerInitiateViewModel);
 
             case PriceChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<ProviderCancelPriceChangeModel>(response);
-                PopulateRouteValues(providerInitiateViewModel);
+                RouteValuesHelper.PopulateRouteValues(providerInitiateViewModel, HttpContext);
                 return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
 
         }
@@ -239,11 +239,5 @@ public class ChangeOfPriceProviderController : Controller
         }
 
         return pendingPriceChange;
-    }
-
-    private void PopulateRouteValues(IRouteValuesProvider model)
-    {
-        model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
-        model.ProviderReferenceNumber = long.Parse(HttpContext.GetRouteValueString(RouteValues.Ukprn));
     }
 }
