@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
@@ -16,7 +15,7 @@ namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 [Authorize]
 public class ChangeOfStartDateProviderController : Controller
 {
-    private readonly ILogger<ChangeOfPriceProviderController> _logger;
+    private readonly ILogger<ChangeOfStartDateProviderController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
     private readonly IMapper _mapper;
     private readonly IExternalUrlHelper _externalProviderUrlHelper;
@@ -27,7 +26,7 @@ public class ChangeOfStartDateProviderController : Controller
 
 
     public ChangeOfStartDateProviderController(
-        ILogger<ChangeOfPriceProviderController> logger,
+        ILogger<ChangeOfStartDateProviderController> logger,
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
         ICacheService cache,
