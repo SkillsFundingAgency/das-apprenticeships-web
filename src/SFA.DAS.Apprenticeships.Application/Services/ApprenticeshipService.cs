@@ -70,17 +70,6 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 
         public async Task<ApprenticeshipStartDate> GetApprenticeshipStartDate(Guid apprenticeshipKey)
         {
-            //todo obviously this is just test data until the api endpoint is ready
-            return new ApprenticeshipStartDate
-            {
-                ActualStartDate = new DateTime(2023, 05, 05),
-                AcademicYearCutOff = new DateTime(2024, 07, 31),
-                ApprenticeshipKey = apprenticeshipKey,
-                EmployerName = "DEVS N TINGS LTD",
-                PlannedEndDate = new DateTime(2025, 05, 05),
-                ProviderName = "BEST TRAINING UK"
-            };
-
             var result = await _apiClient.Get<ApprenticeshipStartDate>(new GetApprenticeshipStartDateRequest(apprenticeshipKey));
             return result.Body;
         }
