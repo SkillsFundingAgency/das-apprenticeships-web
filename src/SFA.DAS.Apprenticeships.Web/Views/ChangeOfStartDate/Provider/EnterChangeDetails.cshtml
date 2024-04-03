@@ -29,7 +29,7 @@
                     <h1 class="govuk-heading-l">Change training start date</h1>
 
                     <div id="apprenticeship-startdate-hint" class="govuk-hint">
-                        The current start date for the training is @Model.OriginalApprenticeshipActualStartDate.
+                        The current start date for the training is @Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("dd M yyyy").
                     </div>
 
                     <div class="govuk-form-group govuk-!-margin-top-7 @ViewContext.DisplayFormGroupError(nameof(Model.ApprenticeshipActualStartDate))">
