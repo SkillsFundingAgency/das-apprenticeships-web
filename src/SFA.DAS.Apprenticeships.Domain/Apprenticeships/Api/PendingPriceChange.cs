@@ -15,29 +15,25 @@
 		public DateTime? EmployerApprovedDate { get; set; }
 		public string? FirstName { get; set; }
 		public string? LastName { get; set; }
-	}
+        public string? Initiator { get; set; }
+    }
 
-	public enum InitiatedBy
-	{
+	public enum Initiator
+    {
 		Provider,
 		Employer
 	}
 
 	public static class PendingPriceChangeExtensions
 	{
-		public static InitiatedBy GetPriceChangeInitiatedBy(this PendingPriceChange pendingPriceChange)
+		public static Initiator GetPriceChangeInitiator(this PendingPriceChange pendingPriceChange)
 		{
-			if(pendingPriceChange.ProviderApprovedDate.HasValue && !pendingPriceChange.EmployerApprovedDate.HasValue) 
+			if(Enum.TryParse<Initiator>(pendingPriceChange.Initiator, out var initiatedBy)) 
 			{ 
-				return InitiatedBy.Provider;
+				return initiatedBy;
 			}
 
-			if (!pendingPriceChange.ProviderApprovedDate.HasValue && pendingPriceChange.EmployerApprovedDate.HasValue)
-			{
-				return InitiatedBy.Employer;
-			}
-
-			throw new ArgumentOutOfRangeException("Could not resolve PriceChange Initiator, expected at least one approval date to be populated");
+			throw new ArgumentOutOfRangeException("Could not resolve PriceChange Initiator");
 		}
 	}
 }

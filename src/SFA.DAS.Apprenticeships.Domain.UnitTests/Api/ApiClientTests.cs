@@ -130,7 +130,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
             var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
-            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
 
             // Act
             var result = await apiClient.Patch<string>(request.Object);

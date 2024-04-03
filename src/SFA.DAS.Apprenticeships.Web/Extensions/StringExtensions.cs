@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Extensions
 {
@@ -17,9 +18,17 @@ namespace SFA.DAS.Apprenticeships.Web.Extensions
 		}
 
 		/// <summary>
-		/// Recursively gets the leaves of a json object
+		/// Encodes a string to encode html characters, it will return an empty string if the value is null
 		/// </summary>
-		private static IEnumerable<(string Path, JsonProperty P)> GetLeaves(string? parentPath, JsonProperty property)
+        public static string HtmlEncode(this string value)
+        {
+            return value != null ? HttpUtility.HtmlEncode(value) : string.Empty;
+        }
+
+        /// <summary>
+        /// Recursively gets the leaves of a json object
+        /// </summary>
+        private static IEnumerable<(string Path, JsonProperty P)> GetLeaves(string? parentPath, JsonProperty property)
 		{
 			var path = parentPath == null ? property.Name : parentPath + "." + property.Name;
 

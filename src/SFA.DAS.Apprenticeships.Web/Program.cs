@@ -5,11 +5,9 @@ using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
-using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Apprenticeships.Web.Validators;
+using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.Services;
-using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
@@ -124,7 +122,7 @@ namespace SFA.DAS.Apprenticeships.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProviderChangeOfPriceModelValidator>())
                 .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
                 .SetDfESignInConfiguration(config.UseDfeSignIn())
