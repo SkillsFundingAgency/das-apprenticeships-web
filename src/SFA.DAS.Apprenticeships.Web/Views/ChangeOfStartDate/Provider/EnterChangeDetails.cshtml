@@ -1,0 +1,84 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@model ProviderChangeOfStartDateModel
+@{
+    ViewData["Title"] = "Change training start date - Manage apprenticeships";
+}
+
+@* @section Scripts {
+    <script src="/js/CreatePriceChangeRequest.js" no-cdn></script>
+} *@
+
+<div class="govuk-width-container ">
+
+    @*Renders href as href="https://approvals.{domain}/{ProviderReferenceNumber}/apprentices/{ApprenticeshipHashedId}" *@
+    <a class="govuk-back-link" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprentices" asp-external-action="@Model.ApprenticeshipHashedId">
+        Back
+    </a>
+
+    @await Html.PartialAsync("_validationSummary")
+
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m=> m.CacheKey)
+            @Html.HiddenFor(m=> m.ApprenticeshipKey)
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-l">Change training start date</h1>
+
+                    <div id="apprenticeship-startdate-hint" class="govuk-hint">
+                        The current start date for the training is @Model.OriginalApprenticeshipActualStartDate.
+                    </div>
+
+                    <div class="govuk-form-group govuk-!-margin-top-7 @ViewContext.DisplayFormGroupError(nameof(Model.ApprenticeshipActualStartDate))">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                Enter a new training start date
+                            </legend>
+                            <div id="apprenticeship-actualstartdate-hint" class="govuk-hint">
+                                For example, 31 3 2024
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ApprenticeshipActualStartDate, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ApprenticeshipActualStartDate) })
+                            <div class="govuk-date-input" id="startdate">
+                                <div class="govuk-date-input__item">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-date-input__label" for="startdate-day">
+                                            Day
+                                        </label>
+                                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="startdate-day" asp-for="StartDay" type="number" pattern="[0-9]*" inputmode="numeric">
+                                    </div>
+                                </div>
+                                <div class="govuk-date-input__item">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-date-input__label" for="startdate-month">
+                                            Month
+                                        </label>
+                                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="startdate-month" asp-for="StartMonth" type="number" pattern="[0-9]*" inputmode="numeric">
+                                    </div>
+                                </div>
+                                <div class="govuk-date-input__item">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-date-input__label" for="startdate-year">
+                                            Year
+                                        </label>
+                                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="startdate-year" asp-for="StartYear" type="number" pattern="[0-9]*" inputmode="numeric">
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    @await Html.PartialAsync("~/Views/ChangeOfStartDate/_reasonForStartDateChange.cshtml", Model)
+
+                </div>
+
+            </div>
+            <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                Continue
+            </button>
+
+        </form>
+    </main>
+</div>
