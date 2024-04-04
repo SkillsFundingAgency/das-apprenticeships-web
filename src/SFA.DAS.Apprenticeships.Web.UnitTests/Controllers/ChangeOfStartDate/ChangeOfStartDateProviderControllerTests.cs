@@ -12,11 +12,12 @@ using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 
-namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
+namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate
 {
     [TestFixture]
     public class ChangeOfStartDateProviderControllerTests
     {
+        #pragma warning disable CS8618
         private Fixture _fixture;
         private Mock<ILogger<ChangeOfStartDateProviderController>> _mockLogger;
         private Mock<IApprenticeshipService> _mockApprenticeshipService;
@@ -60,7 +61,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
             viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.ProviderEnterChangeDetailsViewName);
-            var viewModel = viewResult.Model.Should().BeEquivalentTo(expectedModel);
+            viewResult.Model.Should().BeEquivalentTo(expectedModel);
         }
 
         [Test]
@@ -92,8 +93,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
                 _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
             _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId))
                 .ReturnsAsync(apprenticeshipKey);
-            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipStartDate(apprenticeshipKey))
-                .ReturnsAsync((ApprenticeshipStartDate)null);
+            _mockApprenticeshipService.Setup(m => m.GetApprenticeshipStartDate(apprenticeshipKey))!
+                .ReturnsAsync((ApprenticeshipStartDate)null!);
 
             // Act
             var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);

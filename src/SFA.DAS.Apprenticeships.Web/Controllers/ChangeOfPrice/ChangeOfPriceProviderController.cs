@@ -58,7 +58,7 @@ public class ChangeOfPriceProviderController : Controller
         }
 
         var model = _mapper.Map<ProviderChangeOfPriceModel>(apprenticeshipPrice);
-        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
+        RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
         await _cache.SetCacheModelAsync(model);
         return View(ProviderEnterChangeDetailsViewName, model);
     }
@@ -75,7 +75,7 @@ public class ChangeOfPriceProviderController : Controller
     [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfPriceModel model)
     {
-        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
+        RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
         if (!ModelState.IsValid)
         {
             return View(ProviderEnterChangeDetailsViewName, model);
@@ -95,12 +95,12 @@ public class ChangeOfPriceProviderController : Controller
         if (priceChangeStatus == "Approved")
         {
             providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}?showChangeOfPriceAutoApproved=true" });
+                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?showChangeOfPriceAutoApproved=true" });
         }
         else
         {
             providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}?showChangeOfPriceRequestSent=true" });
+                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?showChangeOfPriceRequestSent=true" });
         }
 
         return Redirect(providerCommitmentsReturnUrl);
@@ -121,12 +121,12 @@ public class ChangeOfPriceProviderController : Controller
         {
             case PriceChangeInitiator.Employer:
                 var employerInitiateViewModel = _mapper.Map<ProviderViewPendingPriceChangeModel>(response);
-                RouteValuesHelper.PopulateRouteValues(employerInitiateViewModel, HttpContext);
+                RouteValuesHelper.PopulateProviderRouteValues(employerInitiateViewModel, HttpContext);
                 return View(ApproveEmployerChangeOfPriceViewName, employerInitiateViewModel);
 
             case PriceChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<ProviderCancelPriceChangeModel>(response);
-                RouteValuesHelper.PopulateRouteValues(providerInitiateViewModel, HttpContext);
+                RouteValuesHelper.PopulateProviderRouteValues(providerInitiateViewModel, HttpContext);
                 return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
 
         }

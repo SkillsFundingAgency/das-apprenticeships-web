@@ -6,7 +6,7 @@ namespace SFA.DAS.Apprenticeships.Web.Helpers
 {
     public static class RouteValuesHelper
     {
-        public static void PopulateRouteValues(IRouteValuesProvider model, HttpContext context)
+        public static void PopulateProviderRouteValues(IRouteValuesProvider model, HttpContext context)
         {
             model.ApprenticeshipHashedId = context.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
             model.ProviderReferenceNumber = long.Parse(context.GetRouteValueString(RouteValues.Ukprn));

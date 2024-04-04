@@ -51,7 +51,7 @@ public class ChangeOfStartDateProviderController : Controller
         }
 
         var model = _mapper.Map<ProviderChangeOfStartDateModel>(apprenticeshipStartDate);
-        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
+        RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
         await _cache.SetCacheModelAsync(model);
         return View(ProviderEnterChangeDetailsViewName, model);
     }
@@ -61,7 +61,7 @@ public class ChangeOfStartDateProviderController : Controller
     [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
     public async Task<IActionResult> ProviderSubmitChangeDetails(ProviderChangeOfStartDateModel model)
     {
-        RouteValuesHelper.PopulateRouteValues(model, HttpContext);
+        RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
 
         if (!ModelState.IsValid)
         {
