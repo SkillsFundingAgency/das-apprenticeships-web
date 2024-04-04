@@ -68,6 +68,12 @@ namespace SFA.DAS.Apprenticeships.Application.Services
             }
         }
 
+        public async Task<ApprenticeshipStartDate> GetApprenticeshipStartDate(Guid apprenticeshipKey)
+        {
+            var result = await _apiClient.Get<ApprenticeshipStartDate>(new GetApprenticeshipStartDateRequest(apprenticeshipKey));
+            return result.Body;
+        }
+
         public async Task<string> CreatePriceHistory(
             Guid apprenticeshipKey,
             string initiator,

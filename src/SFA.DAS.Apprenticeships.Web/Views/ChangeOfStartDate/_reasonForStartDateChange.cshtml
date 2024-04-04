@@ -1,0 +1,31 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.Enums
+@model SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate.ProviderChangeOfStartDateModel
+
+@{
+    const int MaxCharacters = 200;
+
+    var defaultApprovingPartyName = Model.InitiatedBy == InitiatedBy.Employer ? "the training provider" : "the employer";
+    var approvingPartyName = Model.ReasonForChangeOfStartDate ?? defaultApprovingPartyName;
+    var charactersRemaining = MaxCharacters - Model.ReasonForChangeOfStartDate?.Length ?? MaxCharacters;
+}
+<div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.ReasonForChangeOfStartDate))">
+    <br>
+    <fieldset class="govuk-fieldset" role="group" aria-describedby="ReasonForChangeOfStartDate-hint">
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="@MaxCharacters">
+            <div class="govuk-form-group" id="ReasonForChangeOfStartDateGroup">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m" for="ReasonForChangeOfStartDate">
+                    Why is the start date changing?
+                </legend>
+                @Html.ValidationMessageFor(m => m.ReasonForChangeOfStartDate, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ReasonForChangeOfStartDate) })
+                <div id="ReasonForChangeOfStartDate-hint" class="govuk-hint">
+                    This message will be shared with @approvingPartyName
+                </div>
+                @Html.TextAreaFor(m=>m.ReasonForChangeOfStartDate, new { @class = $"govuk-textarea", rows="5", aria_describedby="reason-for-update-hint", maxlength=MaxCharacters, onkeyup=$"calculateRemainingCharacters(this, {MaxCharacters}, 'ReasonForChangeOfStartDate-RemainingCharacters')" })
+            </div>
+            <div id="with-hint-info" class="govuk-hint govuk-character-count__message">
+                <span js-enabled-show hidden><span id="ReasonForChangeOfStartDate-RemainingCharacters">@charactersRemaining</span> characters remaining</span>
+                <span js-enabled-hide>Max @MaxCharacters characters</span>
+            </div>
+        </div>
+    </fieldset>
+</div>
