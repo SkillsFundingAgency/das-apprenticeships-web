@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate;
 
@@ -18,9 +19,12 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
             var model = new ProviderChangeOfStartDateModel
             {
                 OriginalApprenticeshipActualStartDate = originalStartDate,
-                StartYear = originalStartDate.Year,
-                StartMonth = originalStartDate.Month,
-                StartDay = startDateChanged ? originalStartDate.Day + 1 : originalStartDate.Day,
+                ApprenticeshipActualStartDate = new DateField
+                {
+                    Year = originalStartDate.Year,
+                    Month = originalStartDate.Month,
+                    Day = startDateChanged ? originalStartDate.Day + 1 : originalStartDate.Day
+                }
             };
             var validator = new ProviderChangeOfStartDateModelValidator();
 

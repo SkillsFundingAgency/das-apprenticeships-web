@@ -15,7 +15,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate
 
         private static bool HaveStartDateChange(ProviderChangeOfStartDateModel model)
         {
-            return model.ApprenticeshipActualStartDate != model.OriginalApprenticeshipActualStartDate;
+            return model.ApprenticeshipActualStartDate?.Date != model.OriginalApprenticeshipActualStartDate;
         }
 
     }

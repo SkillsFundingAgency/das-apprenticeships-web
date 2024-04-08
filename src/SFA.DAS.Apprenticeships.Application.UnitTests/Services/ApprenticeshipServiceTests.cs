@@ -1,10 +1,12 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Application.Services;
 using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
 namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
@@ -129,5 +131,35 @@ namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
             // Assert
             _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
         }
+
+        [Test]
+        public async Task CreateStartDateChange_WhenCalled_PostsRequest()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var data = _fixture.Create<CreateChangeOfStartDateData>();
+            _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, System.Net.HttpStatusCode.OK, ""));
+
+            // Act
+            await _apprenticeshipService.CreateStartDateChange(
+                apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate);
+
+            // Assert
+            _apiClientMock.Verify(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>()), Times.Once);
+        }
+
+        [Test]
+        public void CreateStartDateChange_WhenCalled_ThrowsException()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var data = _fixture.Create<CreateChangeOfStartDateData>();
+            _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, System.Net.HttpStatusCode.OK, "Error"));
+
+            // Act / Assert
+            Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CreateStartDateChange(
+                               apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate));
+        }
+
     }
 }

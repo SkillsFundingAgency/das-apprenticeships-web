@@ -1,16 +1,16 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 public class EmployerCancelPriceChangeModel : IRouteValuesEmployer
 {
-	public string ApprenticeshipHashedId { get; set; }
-	public Guid ApprenticeshipKey { get; set; }
-	public string EmployerAccountId { get; set; }
-	public string ProviderName { get; set; }
-	public string BackLinkUrl { get; set; }
-	public decimal OriginalTotalPrice { get; set; }
+	public string ApprenticeshipHashedId { get; set; } = string.Empty;
+    public Guid ApprenticeshipKey { get; set; }
+	public string EmployerAccountId { get; set; } = string.Empty;
+    public string ProviderName { get; set; } = string.Empty;
+    public string BackLinkUrl { get; set; } = string.Empty;
+    public decimal OriginalTotalPrice { get; set; }
 	public decimal ApprenticeshipTotalPrice { get; set; }
 	public DateTime EffectiveFromDate { get; set; }
 	public string? ReasonForChangeOfPrice { get; set; }

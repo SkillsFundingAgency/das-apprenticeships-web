@@ -14,6 +14,7 @@ using SFA.DAS.Apprenticeships.Web.Helpers;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 using SFA.DAS.Apprenticeships.Web.Extensions;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
