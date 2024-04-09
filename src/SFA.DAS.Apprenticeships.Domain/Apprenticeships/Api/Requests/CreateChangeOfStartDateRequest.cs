@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests
             Data = data;
         }
 
-        public string PostUrl => $"Apprenticeship/{_apprenticeshipKey}/startDateChanges";
+        public string PostUrl => $"Apprenticeship/{_apprenticeshipKey}/startDateChange";
         public object Data { get; set; }
     }
 

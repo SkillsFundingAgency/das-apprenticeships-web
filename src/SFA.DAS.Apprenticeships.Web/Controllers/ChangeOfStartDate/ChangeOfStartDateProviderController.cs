@@ -85,7 +85,7 @@ public class ChangeOfStartDateProviderController : Controller
         { 
             Controller = "", 
             SubDomain = Subdomains.Approvals, 
-            RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?banners=[changeOfStartDateSent]" 
+            RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?banners=ChangeOfStartDateSent" 
         });
 
         return Redirect(providerCommitmentsReturnUrl);
