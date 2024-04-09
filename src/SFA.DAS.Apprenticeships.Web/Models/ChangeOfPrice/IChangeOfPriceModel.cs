@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
+﻿using SFA.DAS.Apprenticeships.Web.Models.Enums;
+
+namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 public abstract class BaseChangeOfPriceModel
 {
@@ -24,10 +26,4 @@ public interface IChangeOfPriceModel
     public string? ReasonForChangeOfPrice { get; set; }
     public string? ApprovingPartyName { get; set; }
     public InitiatedBy InitiatedBy { get; }
-}
-
-public enum InitiatedBy
-{
-    Provider,
-    Employer
 }
