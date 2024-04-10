@@ -14,6 +14,7 @@ public class CreateApprenticeshipPriceHistoryRequest : IPostApiRequest
 
     public string PostUrl => $"Apprenticeship/{_apprenticeshipKey}/priceHistory";
     public object Data { get; set; }
+    public bool SendBearerToken => true;
 }
 
 public class CreateApprenticeshipPriceHistoryData
