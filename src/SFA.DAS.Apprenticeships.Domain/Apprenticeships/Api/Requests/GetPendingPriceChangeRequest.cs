@@ -12,5 +12,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests
         }
 
         public string GetUrl => $"Apprenticeship/{_apprenticeshipKey}/priceHistory/pending";
+        public bool SendBearerToken => true;
     }
 }

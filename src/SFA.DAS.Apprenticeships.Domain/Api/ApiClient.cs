@@ -26,7 +26,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
         public async Task<ApiResponse<TResponse>> Get<TResponse>(IGetApiRequest request)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, request.GetUrl);
-            AddAuthenticationHeader(requestMessage);
+            AddAuthenticationHeader(requestMessage, request);
             
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, request.PostUrl);
             requestMessage.Content = stringContent;
-            AddAuthenticationHeader(requestMessage);
+            AddAuthenticationHeader(requestMessage, request);
             
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
@@ -52,7 +52,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, request.PutUrl);
             requestMessage.Content = stringContent;
-            AddAuthenticationHeader(requestMessage);
+            AddAuthenticationHeader(requestMessage, request);
             
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
@@ -62,7 +62,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
         public async Task<ApiResponse<TResponse>> Delete<TResponse>(IDeleteApiRequest request)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, request.DeleteUrl);
-            AddAuthenticationHeader(requestMessage);
+            AddAuthenticationHeader(requestMessage, request);
 
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
@@ -75,20 +75,24 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Patch, request.PatchUrl);
             requestMessage.Content = stringContent;
-            AddAuthenticationHeader(requestMessage);
+            AddAuthenticationHeader(requestMessage, request);
 
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             return await ProcessResponse<TResponse>(response);
         }
 
-        private void AddAuthenticationHeader(HttpRequestMessage httpRequestMessage)
+        private void AddAuthenticationHeader(HttpRequestMessage httpRequestMessage, IApiRequest apiRequest)
         {
             httpRequestMessage.Headers.Add("Ocp-Apim-Subscription-Key", _config.Key);
             httpRequestMessage.Headers.Add("X-Version", "1");
 
-            var token = _httpContextAccessor.HttpContext.GetBearerToken();
-            httpRequestMessage.Headers.Add("Authorization", $"Bearer {token}");
+            if (apiRequest.SendBearerToken)
+            {
+                var token = _httpContextAccessor.HttpContext!.GetBearerToken();
+                httpRequestMessage.Headers.Add("Authorization", $"Bearer {token}");
+            }
+
         }
 
         private static async Task<ApiResponse<TResponse>> ProcessResponse<TResponse>(HttpResponseMessage response)

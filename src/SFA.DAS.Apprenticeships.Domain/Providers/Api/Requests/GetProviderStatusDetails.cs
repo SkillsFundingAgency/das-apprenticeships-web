@@ -14,5 +14,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Providers.Api.Requests
         }
 
         public string GetUrl => $"provideraccounts/{_ukprn}";
+        public bool SendBearerToken => true;
     }
 }
