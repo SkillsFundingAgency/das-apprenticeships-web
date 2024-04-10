@@ -1,0 +1,48 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice
+@model ProviderCancelPriceChangeModel
+@{
+    ViewData["Title"] = "View change request - Manage apprenticeships";
+}
+
+<div class="govuk-width-container ">
+
+    @*Renders href as href="https://approvals.{domain}/{ProviderReferenceNumber}/apprentices/{ApprenticeshipHashedId}" *@
+    <a class="govuk-back-link" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprentices" asp-external-action="@Model.ApprenticeshipHashedId">
+        Back
+    </a>
+
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">View change request</h1>
+            <strong class="govuk-tag govuk-tag--yellow">Pending employer review</strong>
+            <br /><br />
+            <h2 class="govuk-heading-m">Price changes you've requested</h2>
+
+            @await Html.PartialAsync("~/Views/ChangeOfPrice/_pendingSummary.cshtml", Model, new ViewDataDictionary(ViewData) { { "ShowAllPriceDetails", true } })
+
+            <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m=> m.ApprenticeshipKey)
+                <div class="govuk-form-group">
+                    <div id="select-a-version-hint" class="govuk-hint">
+                        Do you want to cancel this request?
+                    </div>
+                    
+                    <div class="govuk-radios">
+                        <div class="govuk-radios__item" id="radio-item-yes">
+                            <input class="govuk-radios__input" type="radio" id="option-yes" name="CancelRequest" value="1">
+                            <label class="govuk-label govuk-radios__label" for="option-yes">Yes, cancel the request</label>
+                        </div>
+                        <div class="govuk-radios__item" id="radio-item-no">
+                            <input class="govuk-radios__input" type="radio" id="option-no" name="CancelRequest" value="0">
+                            <label class="govuk-label govuk-radios__label" for="option-no">No, keep the request</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                    Continue
+                </button>
+            </form>
+		</div>
+	</div>
+</div>

@@ -59,5 +59,75 @@ namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
             // Assert
             result.Should().Be(expectedPrice);
         }
+
+        [Test]
+        public async Task GetPendingPriceChange_WhenCalled_ReturnsPendingPriceChange()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var expectedPrice = _fixture.Create<GetPendingPriceChangeResponse>();
+            var response = new ApiResponse<GetPendingPriceChangeResponse>(expectedPrice, System.Net.HttpStatusCode.Accepted, string.Empty);
+            _apiClientMock.Setup(x => x.Get<GetPendingPriceChangeResponse>(It.IsAny<GetPendingPriceChangeRequest>())).ReturnsAsync(response);
+
+            // Act
+            var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipKey);
+
+            // Assert
+            result.Should().Be(expectedPrice);
+        }
+
+        [Test]
+        public async Task CancelPendingPriceChange_WhenCalled_DeletesPendingPriceChange()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "");
+            _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
+
+            // Act
+            await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
+
+            // Assert
+            _apiClientMock.Verify(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task RejectPendingPriceChange_WhenCalled_PatchesPendingPriceChange()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+
+            // Act
+            await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
+
+            // Assert
+            _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>()), Times.Once);
+        }
+
+		[Test]
+		public async Task ApprovePendingPriceChange_WhenCalled_PatchesPendingPriceChange()
+		{
+			// Arrange
+			var apprenticeshipKey = _fixture.Create<Guid>();
+
+			// Act
+			await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
+
+			// Assert
+			_apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
+		}
+
+        [Test]
+        public async Task ApprovePendingPriceChange_Provider_WhenCalled_PatchesPendingPriceChange()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+
+            // Act
+            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>(), _fixture.Create<decimal>(), _fixture.Create<decimal>());
+
+            // Assert
+            _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
+        }
     }
 }

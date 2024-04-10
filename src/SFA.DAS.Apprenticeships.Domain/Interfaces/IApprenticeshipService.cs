@@ -7,15 +7,21 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task<Guid> GetApprenticeshipKey(string apprenticeshipHashId);
         Task<ApprenticeshipPrice> GetApprenticeshipPrice(Guid apprenticeshipKey);
 
-        Task CreatePriceHistory(
+        Task<string> CreatePriceHistory(
             Guid apprenticeshipKey,
-            long? providerId,
-            long? employerId,
+            string initiator,
             string userId,
             decimal? trainingPrice,
             decimal? assessmentPrice,
             decimal? totalPrice,
-            string reason,
+            string? reason,
             DateTime effectiveFromDate);
+
+        Task<GetPendingPriceChangeResponse> GetPendingPriceChange(Guid apprenticeshipKey);
+        Task CancelPendingPriceChange(Guid apprenticeshipKey);
+        Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason);
+        Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId);
+        Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId, decimal trainingPrice, decimal endPointAssessmentPrice);
+        Task<ApprenticeshipStartDate> GetApprenticeshipStartDate(Guid apprenticeshipKey);
     }
 }
