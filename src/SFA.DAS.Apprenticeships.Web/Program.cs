@@ -1,10 +1,12 @@
 using FluentValidation.AspNetCore;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
+using SFA.DAS.Apprenticeships.Web.TelemetryInitializers;
 using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.Services;
@@ -56,6 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web
 			// Logging 
 			FailedStartUpMiddleware.StartupStep = "Logging";
 			builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddSingleton<ITelemetryInitializer, RequestHeaderTelemetryInitializer>();
 
 			// Config
             builder.ConfigureAzureTableStorage(config);
