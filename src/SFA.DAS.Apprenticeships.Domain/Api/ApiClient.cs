@@ -1,4 +1,4 @@
-using System.Net.Http;
+using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
@@ -104,6 +104,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             
             if(!response.IsSuccessStatusCode)
             {
+                if (response.StatusCode == HttpStatusCode.Unauthorized) throw new ApiUnauthorizedException();
+                
                 errorContent = json;
             }
             else if (!string.IsNullOrWhiteSpace(json))
@@ -116,4 +118,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             return apiResponse;
         }
     }
+
+    public class ApiUnauthorizedException : Exception { }
 }
