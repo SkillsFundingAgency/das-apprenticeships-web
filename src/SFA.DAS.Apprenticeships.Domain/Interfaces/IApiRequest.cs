@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain.Interfaces
+﻿namespace SFA.DAS.Apprenticeships.Domain.Interfaces;
+
+public interface IApiRequest
 {
-    public interface IApiRequest
-    {
-        public bool SendBearerToken { get; }
-    }
+    public bool SendBearerToken { get; }
 }
