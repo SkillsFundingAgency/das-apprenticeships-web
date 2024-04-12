@@ -1,0 +1,55 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@model EmployerViewPendingStartDateChangeModel
+@{
+    ViewData["Title"] = "View change request - Manage apprenticeships";
+}
+
+<div class="govuk-width-container ">
+    
+    <a class="govuk-back-link" href="@Model.BackLinkUrl" id="backLink">
+        Back
+    </a>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l" id="reviewChangesHeader">Review changes</h1>
+            <h2 class="govuk-heading-m" id="providerRequestedChangesHeader">@Model.ProviderName has requested these changes</h2>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header app-custom-class" style="width:250px;"></th>
+                        <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Current</th>
+                        <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+                        <th scope="col" class="govuk-table__header app-custom-class "></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+
+                    <component type="typeof(DetailsRowComponent)"
+                               param-Id='"TrainingStartDate"'
+                               param-Label='"Training start date"'
+                               param-OrginalValue='Model.OriginalActualStartDate.ToString("dd MMMM yyyy")'
+                               param-Value='Model.PendingActualStartDate.ToString("dd MMMM yyyy")'
+                               render-mode="Static" />
+                </tbody>
+            </table>
+
+            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                <component type="typeof(DetailsRowComponent)"
+                           param-Id='"ReasonForChange"'
+                           param-Label='"Reason for change"'
+                           param-Value='Model.ReasonForChangeOfStartDate'
+                           param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+                           render-mode="Static" />
+            </dl>
+
+            <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfStartDate/@Model.ApprenticeshipHashedId/pending">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ApprenticeshipKey)
+                @await Html.PartialAsync("_ApproveOrReject")
+            </form>
+        </div>
+    </div>
+</div>
+

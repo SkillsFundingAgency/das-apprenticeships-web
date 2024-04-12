@@ -17,23 +17,4 @@
 		public string? LastName { get; set; }
         public string? Initiator { get; set; }
     }
-
-	public enum Initiator
-    {
-		Provider,
-		Employer
-	}
-
-	public static class PendingPriceChangeExtensions
-	{
-		public static Initiator GetPriceChangeInitiator(this PendingPriceChange pendingPriceChange)
-		{
-			if(Enum.TryParse<Initiator>(pendingPriceChange.Initiator, out var initiatedBy)) 
-			{ 
-				return initiatedBy;
-			}
-
-			throw new ArgumentOutOfRangeException("Could not resolve PriceChange Initiator");
-		}
-	}
 }

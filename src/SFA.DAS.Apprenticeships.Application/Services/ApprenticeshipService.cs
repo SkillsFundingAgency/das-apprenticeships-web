@@ -121,5 +121,11 @@ namespace SFA.DAS.Apprenticeships.Application.Services
                 throw new ServiceException(response.ErrorContent);
             }
         }
+
+        public async Task<GetPendingStartDateChangeResponse> GetPendingStartDateChange(Guid apprenticeshipKey)
+        {
+            var result = await _apiClient.Get<GetPendingStartDateChangeResponse>(new GetPendingStartDateChangeRequest(apprenticeshipKey));
+            return result.Body;
+        }
     }
 }
