@@ -59,7 +59,7 @@ public class ChangeOfStartDateEmployerController : Controller
 
         }
 
-        throw new ArgumentOutOfRangeException("Unrecognised ChangeInitiator");
+        throw new ArgumentOutOfRangeException("ChangeInitiator");
     }
 
     [HttpPost]

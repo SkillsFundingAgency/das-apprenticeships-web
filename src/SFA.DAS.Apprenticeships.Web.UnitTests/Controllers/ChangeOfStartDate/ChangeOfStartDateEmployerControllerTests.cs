@@ -73,7 +73,7 @@ public class ChangeOfStartDateEmployerControllerTests
 		_apprenticeshipServiceMock.Setup(x => x.GetPendingStartDateChange(It.IsAny<Guid>())).ReturnsAsync(getPendingStartDateChangeResponse);
 	}
 
-    private UrlBuilder GetUrlBuilder()
+    private static UrlBuilder GetUrlBuilder()
     {
         return new UrlBuilder("AT");
     }
