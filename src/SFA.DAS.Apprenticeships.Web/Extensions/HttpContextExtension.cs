@@ -17,7 +17,6 @@ public static class HttpContextExtension
         return routeValue;
     }
 
-    //  If other employer endpoints use the same route values, this could be refactored to take an interface/abstract class instead of EmployerChangeOfPriceModel
     public static void PopulateEmployerInitiatedRouteValues(this HttpContext context, IRouteValuesEmployer model)
     {
         model.ApprenticeshipHashedId = context.GetRouteValueString(RouteValues.ApprenticeshipHashedId);

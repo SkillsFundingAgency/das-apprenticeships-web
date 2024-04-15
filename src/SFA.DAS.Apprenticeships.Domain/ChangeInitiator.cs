@@ -18,6 +18,6 @@ public static class ChangeInitiatorExtensions
             }
         }
 
-        throw new ArgumentOutOfRangeException("Could not resolve Change Initiator");
+        throw new ArgumentOutOfRangeException($"Could not resolve Change Initiator :{changeInitiatorString}");
     }
 }
