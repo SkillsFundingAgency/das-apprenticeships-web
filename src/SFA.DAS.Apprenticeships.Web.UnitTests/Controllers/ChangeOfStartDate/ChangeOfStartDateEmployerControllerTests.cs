@@ -51,10 +51,9 @@ public class ChangeOfStartDateEmployerControllerTests
         var pendingStartDateChangeResponse = _fixture.Create<GetPendingStartDateChangeResponse>();
         pendingStartDateChangeResponse.PendingStartDateChange!.Initiator = "Provider";
 
-        _apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid);
-        _apprenticeshipServiceMock.Setup(x => x.GetPendingStartDateChange(It.IsAny<Guid>())).ReturnsAsync(pendingStartDateChangeResponse);
-        
-        _mapperMock.Setup(x => x.Map<EmployerViewPendingStartDateChangeModel>(It.IsAny<object>())).Returns(_fixture.Create<EmployerViewPendingStartDateChangeModel>());
+		MocksSetupGetPendingStartDateApis(pendingStartDateChangeResponse);
+
+		_mapperMock.Setup(x => x.Map<EmployerViewPendingStartDateChangeModel>(It.IsAny<object>())).Returns(_fixture.Create<EmployerViewPendingStartDateChangeModel>());
 
         var controller = new ChangeOfStartDateEmployerController(_loggerMock.Object, _apprenticeshipServiceMock.Object, _mapperMock.Object, GetUrlBuilder());
         controller.SetupHttpContext(null, "apprenticeshipHashedId", null, "employerAccountId");
@@ -67,6 +66,12 @@ public class ChangeOfStartDateEmployerControllerTests
         viewResult.ViewName.Should().Be(ChangeOfStartDateEmployerController.ApproveProviderChangeOfStartDateViewName);
         viewResult.Model.ShouldBeOfType<EmployerViewPendingStartDateChangeModel>();
     }
+
+    private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)
+    {
+		_apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid);
+		_apprenticeshipServiceMock.Setup(x => x.GetPendingStartDateChange(It.IsAny<Guid>())).ReturnsAsync(getPendingStartDateChangeResponse);
+	}
 
     private UrlBuilder GetUrlBuilder()
     {
