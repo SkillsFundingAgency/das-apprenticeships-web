@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 
 public class GetPendingPriceChangeResponse
 {

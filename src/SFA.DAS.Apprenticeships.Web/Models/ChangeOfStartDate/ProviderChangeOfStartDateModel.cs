@@ -5,13 +5,10 @@ namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICacheModel, IRouteValuesProvider
 {
-    public DateTime? ApprenticeshipActualStartDate => new DateTime(StartYear, StartMonth, StartDay);
+    public DateField? ApprenticeshipActualStartDate { get; set; }
     public long? ProviderReferenceNumber { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public DateTime? OriginalApprenticeshipActualStartDate { get; set; }
-    public int StartDay { get; set; }
-    public int StartMonth { get; set; }
-    public int StartYear { get; set; }
 }
 
 public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStartDateModel>
@@ -30,13 +27,11 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
     {
         var model = new ProviderChangeOfStartDateModel
         {
-            StartYear = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Year,
-            StartMonth = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Month,
-            StartDay = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Day,
+            ApprenticeshipActualStartDate = new DateField(apprenticeshipStartDate.ActualStartDate),
             ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey
         };
 
-        model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate;
+        model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
 
         return model;
     }
