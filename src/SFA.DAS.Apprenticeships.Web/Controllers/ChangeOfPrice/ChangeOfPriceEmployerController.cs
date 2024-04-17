@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -11,7 +13,6 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Attributes;
 using System.Web;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
-using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -56,7 +57,7 @@ public class ChangeOfPriceEmployerController : Controller
         }
 
         var model = _mapper.Map<EmployerChangeOfPriceModel>(apprenticeshipPrice);
-        PopulateEmployerInitiatedRouteValues(model);
+        HttpContext.PopulateEmployerInitiatedRouteValues(model);
         await _cache.SetCacheModelAsync(model);
         return View(EnterChangeDetailsViewName, model);
     }
@@ -105,17 +106,17 @@ public class ChangeOfPriceEmployerController : Controller
 
         var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
 
-        switch (response.PendingPriceChange.GetPriceChangeInitiator())
+        switch (response.PendingPriceChange.Initiator.GetChangeInitiator())
         {
-            case PriceChangeInitiator.Employer:
+            case ChangeInitiator.Employer:
                 var employerInitiateViewModel = _mapper.Map<EmployerCancelPriceChangeModel>(response);
-                PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
+                HttpContext.PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
                 employerInitiateViewModel.BackLinkUrl = backLink;
                 return View(CancelPendingChangeViewName, employerInitiateViewModel);
 
-            case PriceChangeInitiator.Provider:
+            case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
-                PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
+                HttpContext.PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
                 providerInitiateViewModel.BackLinkUrl = backLink;
                 return View(ApproveProviderChangeOfPriceViewName, providerInitiateViewModel);
 
@@ -205,19 +206,6 @@ public class ChangeOfPriceEmployerController : Controller
             return null;
         }
 
-        if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
-        {
-            _logger.LogWarning($"GetPendingPriceChange Response returned from API is null");
-            return null;
-        }
-
         return pendingPriceChange;
-    }
-
-    //  If other employer endpoints use the same route values, this could be refactored to take an interface/abstract class instead of EmployerChangeOfPriceModel
-    private void PopulateEmployerInitiatedRouteValues(IRouteValuesEmployer model)
-    {
-        model.ApprenticeshipHashedId = HttpContext.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
-        model.EmployerAccountId = HttpContext.GetRouteValueString(RouteValues.EmployerAccountId);
     }
 }

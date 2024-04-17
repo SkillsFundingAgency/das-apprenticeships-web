@@ -9,9 +9,9 @@
 	case DetailsRowType.Table:
 		<tr class="govuk-table__row">
 			<th scope="row" class="govuk-table__header">@Label</th>
-			@if (!string.IsNullOrEmpty(OrginalValue))
+			@if (!string.IsNullOrEmpty(OriginalValue))
 			{
-				<td class="govuk-table__cell" id="@GetOriginalValueId()">@OrginalValue</td>
+				<td class="govuk-table__cell" id="@GetOriginalValueId()">@OriginalValue</td>
 			}
 			<td class="govuk-table__cell" id="@GetNewValueId()">@Value</td>
 			<td class="govuk-table__cell" style="text-align: right;">
@@ -49,7 +49,7 @@
 	public string Label { get; set; } = string.Empty;
 
 	[Parameter]
-	public string OrginalValue { get; set; } = string.Empty;
+	public string OriginalValue { get; set; } = string.Empty;
 
 	[Parameter]
 	public string Value { get; set; } = string.Empty;

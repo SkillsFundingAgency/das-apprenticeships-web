@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Models
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+
+namespace SFA.DAS.Apprenticeships.Web.Models
 {
     public class DateField
     {
@@ -28,6 +30,23 @@
 
                 return date;
             } 
+        }
+
+        public DateField()
+        {
+            
+        }
+
+        public DateField(DateTime? initiateWithDate)
+        {
+            if(!initiateWithDate.HasValue)
+            {
+                return;
+            }
+
+            Year = initiateWithDate.Value.Year;
+            Month = initiateWithDate.Value.Month;
+            Day = initiateWithDate.Value.Day;
         }
 
         public override string ToString() => !Date.HasValue ? string.Empty : Date.Value.ToString("dd MMMM yyyy");

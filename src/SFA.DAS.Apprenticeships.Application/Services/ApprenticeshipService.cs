@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 
 namespace SFA.DAS.Apprenticeships.Application.Services
@@ -104,9 +105,26 @@ namespace SFA.DAS.Apprenticeships.Application.Services
 			return response.Body.PriceChangeStatus;
         }
 
-        public async Task<GetPendingPriceChangeResponse> CreateApprenticeshipPriceHistory(Guid apprenticeshipKey)
+        public async Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate)
         {
-            var result = await _apiClient.Get<GetPendingPriceChangeResponse>(new GetApprenticeshipPriceRequest(apprenticeshipKey));
+            var response = await _apiClient.Post<object>(new CreateChangeOfStartDateRequest(apprenticeshipKey,
+                new CreateChangeOfStartDateData
+                {
+                    Initiator = initiator,
+                    UserId = userId,
+                    Reason = reason,
+                    ActualStartDate = newActualStartDate
+                }));
+
+            if (!string.IsNullOrEmpty(response.ErrorContent))
+            {
+                throw new ServiceException(response.ErrorContent);
+            }
+        }
+
+        public async Task<GetPendingStartDateChangeResponse> GetPendingStartDateChange(Guid apprenticeshipKey)
+        {
+            var result = await _apiClient.Get<GetPendingStartDateChangeResponse>(new GetPendingStartDateChangeRequest(apprenticeshipKey));
             return result.Body;
         }
     }
