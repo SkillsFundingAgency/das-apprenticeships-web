@@ -31,7 +31,7 @@
             <component type="typeof(DetailsRowComponent)"
                        param-Id='"Trainingprice"'
                        param-Label='"Training price"'
-                       param-OrginalValue='Model.OriginalTrainingPrice.FormatCurrency()'
+                       param-OriginalValue='Model.OriginalTrainingPrice.FormatCurrency()'
                        param-Value='Model.ApprenticeshipTrainingPrice.FormatCurrency()'
                        param-Url='$"{editPage}#{nameof(Model.ApprenticeshipTrainingPrice)}"'
                        render-mode="Static"/>
@@ -39,7 +39,7 @@
             <component type="typeof(DetailsRowComponent)"
                        param-Id='"EndPointAssessmentPrice"'
                        param-Label='"End-point assessment price"'
-                       param-OrginalValue='Model.OriginalEndPointAssessmentPrice.FormatCurrency()'
+                       param-OriginalValue='Model.OriginalEndPointAssessmentPrice.FormatCurrency()'
                        param-Value='Model.ApprenticeshipEndPointAssessmentPrice.FormatCurrency()'
                        param-Url='$"{editPage}#{nameof(Model.ApprenticeshipEndPointAssessmentPrice)}"'
                        render-mode="Static"/>
@@ -47,7 +47,7 @@
             <component type="typeof(DetailsRowComponent)"
                        param-Id='"TotalPrice"'
                        param-Label='"Total price"'
-                       param-OrginalValue='(Model.OriginalTrainingPrice + Model.OriginalEndPointAssessmentPrice).FormatCurrency()'
+                       param-OriginalValue='(Model.OriginalTrainingPrice + Model.OriginalEndPointAssessmentPrice).FormatCurrency()'
                        param-Value='Model.ApprenticeshipTotalPrice.FormatCurrency()'
                        render-mode="Static"/>
             </tbody>

@@ -1,0 +1,23 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@model ProviderChangeOfStartDateModel
+@{
+	ViewData["Title"] = "Check your changes before sending to the employer - Manage apprenticeships";
+	var editPage = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfPrice/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}";
+}
+
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Now send to the employer for approval</h2>
+        <p class="govuk-body">This change will be sent to the employer to approve. The apprentice will then need to confirm their details in their apprenticeship account.</p>
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId/submit">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CacheKey)
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfStartDate">
+                    Send
+                </button>
+            </div>
+        </form>
+	</div>
+</div>

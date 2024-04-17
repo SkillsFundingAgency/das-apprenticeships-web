@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models

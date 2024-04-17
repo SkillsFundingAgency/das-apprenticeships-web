@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 
 namespace SFA.DAS.Apprenticeships.Domain.Interfaces
 {
@@ -23,5 +24,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId);
         Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId, decimal trainingPrice, decimal endPointAssessmentPrice);
         Task<ApprenticeshipStartDate> GetApprenticeshipStartDate(Guid apprenticeshipKey);
+        Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate);
+        Task<GetPendingStartDateChangeResponse> GetPendingStartDateChange(Guid apprenticeshipKey);
+
     }
 }

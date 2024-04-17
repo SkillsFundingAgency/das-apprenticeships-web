@@ -11,6 +11,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Provider.Shared.UI.Extensions;
+using SFA.DAS.Provider.Shared.UI.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate
 {
@@ -60,7 +61,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate
 
             // Assert
             var viewResult = result.ShouldBeOfType<ViewResult>();
-            viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.ProviderEnterChangeDetailsViewName);
+            viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
             viewResult.Model.Should().BeEquivalentTo(expectedModel);
         }
 
@@ -102,5 +103,83 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate
             // Assert
             result.ShouldBeOfType<NotFoundResult>();
         }
+
+        [Test]
+        public async Task ProviderCheckDetails_ValidModel_ReturnsCheckDetailsView()
+        {
+            // Arrange
+            var controller = new ChangeOfStartDateProviderController(
+                _mockLogger.Object, 
+                _mockApprenticeshipService.Object,
+                _mockMapper.Object, 
+                _mockCacheService.Object, 
+                _mockExternalUrlHelper.Object);
+                _mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ApprenticeshipStartDate>()));
+
+            var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+
+            controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>());
+
+            // Act
+            var result = await controller.ProviderCheckDetails(model);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<ViewResult>();
+            viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.CheckDetailsViewName);
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task ProviderCheckDetails_InValidModel_ReturnsEnterChangeDetailsViewName()
+        {
+            // Arrange
+            var controller = new ChangeOfStartDateProviderController(
+                _mockLogger.Object,
+                _mockApprenticeshipService.Object,
+                _mockMapper.Object,
+                _mockCacheService.Object,
+                _mockExternalUrlHelper.Object);
+            _mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ApprenticeshipStartDate>()));
+
+            var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+
+            controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>());
+            controller.ModelState.AddModelError("key", "error message");
+
+            // Act
+            var result = await controller.ProviderCheckDetails(model);
+
+            // Assert
+            var viewResult = result.ShouldBeOfType<ViewResult>();
+            viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+            viewResult.Model.Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public async Task ProviderSubmitChangeDetails_ValidModel_Redirects()
+        {
+            // Arrange
+            var controller = new ChangeOfStartDateProviderController(
+                _mockLogger.Object,
+                _mockApprenticeshipService.Object,
+                _mockMapper.Object,
+                _mockCacheService.Object,
+                _mockExternalUrlHelper.Object);
+            _mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ApprenticeshipStartDate>()));
+
+            var expectedRedirectUrl = _fixture.Create<string>();
+            _mockExternalUrlHelper.Setup(m=>m.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedRedirectUrl);
+            var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+
+            controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<string>());
+
+            // Act
+            var result = await controller.ProviderSubmitChangeDetails(model);
+
+            // Assert
+            var redirectResult = result.ShouldBeOfType<RedirectResult>();
+            redirectResult.Url.Should().Be(expectedRedirectUrl);
+        }
+
     }
 }

@@ -5,13 +5,13 @@ namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICacheModel, IRouteValuesProvider
 {
-    public DateTime? ApprenticeshipActualStartDate => new DateTime(StartYear, StartMonth, StartDay);
+    public DateField? ApprenticeshipActualStartDate { get; set; }
     public long? ProviderReferenceNumber { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public DateTime? OriginalApprenticeshipActualStartDate { get; set; }
-    public int StartDay { get; set; }
-    public int StartMonth { get; set; }
-    public int StartYear { get; set; }
+    public DateTime? EarliestStartDate { get; set; }
+    public DateTime? LatestStartDate { get; set; }
+    public DateTime LastFridayOfSchool { get; set; }
 }
 
 public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStartDateModel>
@@ -30,13 +30,14 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
     {
         var model = new ProviderChangeOfStartDateModel
         {
-            StartYear = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Year,
-            StartMonth = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Month,
-            StartDay = apprenticeshipStartDate.ActualStartDate.GetValueOrDefault().Day,
-            ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey
+            ApprenticeshipActualStartDate = new DateField(apprenticeshipStartDate.ActualStartDate),
+            ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey,
+            EarliestStartDate = apprenticeshipStartDate.EarliestStartDate,
+            LatestStartDate = apprenticeshipStartDate.LatestStartDate,
+            LastFridayOfSchool = apprenticeshipStartDate.LastFridayOfSchool
         };
 
-        model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate;
+        model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
 
         return model;
     }
