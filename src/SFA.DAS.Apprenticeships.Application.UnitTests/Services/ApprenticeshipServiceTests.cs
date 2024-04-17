@@ -132,7 +132,40 @@ namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
             _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
         }
 
-        [Test]
+		[Test]
+		public async Task GetApprenticeshipStartDate_WhenCalled_ReturnsPendingStartDateChange()
+		{
+			// Arrange
+			var apprenticeshipKey = _fixture.Create<Guid>();
+			var expectedStartDate = _fixture.Create<ApprenticeshipStartDate>();
+			var response = new ApiResponse<ApprenticeshipStartDate>(expectedStartDate, System.Net.HttpStatusCode.Accepted, string.Empty);
+			_apiClientMock.Setup(x => x.Get<ApprenticeshipStartDate>(It.IsAny<GetApprenticeshipStartDateRequest>())).ReturnsAsync(response);
+
+			// Act
+			var result = await _apprenticeshipService.GetApprenticeshipStartDate(apprenticeshipKey);
+
+			// Assert
+			result.Should().Be(expectedStartDate);
+		}
+
+		[Test]
+		public async Task GetPendingStartDateChange_WhenCalled_ReturnsPendingStartDateChange()
+		{
+			// Arrange
+			var apprenticeshipKey = _fixture.Create<Guid>();
+			var expectedStartDate = _fixture.Create<GetPendingStartDateChangeResponse>();
+			var response = new ApiResponse<GetPendingStartDateChangeResponse>(expectedStartDate, System.Net.HttpStatusCode.Accepted, string.Empty);
+			_apiClientMock.Setup(x => x.Get<GetPendingStartDateChangeResponse>(It.IsAny<GetPendingStartDateChangeRequest>())).ReturnsAsync(response);
+
+			// Act
+			var result = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipKey);
+
+			// Assert
+			result.Should().Be(expectedStartDate);
+		}
+
+
+		[Test]
         public async Task CreateStartDateChange_WhenCalled_PostsRequest()
         {
             // Arrange

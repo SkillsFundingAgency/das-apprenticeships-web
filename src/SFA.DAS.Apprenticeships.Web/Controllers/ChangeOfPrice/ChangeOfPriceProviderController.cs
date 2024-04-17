@@ -12,9 +12,9 @@ using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
 using SFA.DAS.Apprenticeships.Web.Helpers;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
-using PriceChangeInitiator = SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Initiator;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
+using SFA.DAS.Apprenticeships.Domain;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -118,14 +118,14 @@ public class ChangeOfPriceProviderController : Controller
             return NotFound();
         }
 
-        switch (response.PendingPriceChange.GetPriceChangeInitiator())
+        switch (response.PendingPriceChange.Initiator.GetChangeInitiator())
         {
-            case PriceChangeInitiator.Employer:
+            case ChangeInitiator.Employer:
                 var employerInitiateViewModel = _mapper.Map<ProviderViewPendingPriceChangeModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(employerInitiateViewModel, HttpContext);
                 return View(ApproveEmployerChangeOfPriceViewName, employerInitiateViewModel);
 
-            case PriceChangeInitiator.Provider:
+            case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<ProviderCancelPriceChangeModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(providerInitiateViewModel, HttpContext);
                 return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
@@ -231,12 +231,6 @@ public class ChangeOfPriceProviderController : Controller
         if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
         {
             _logger.LogWarning($"Pending Apprenticeship Price not found for apprenticeshipKey {apprenticeshipKey}");
-            return null;
-        }
-
-        if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
-        {
-            _logger.LogWarning($"GetPendingPriceChange Response returned from API is null");
             return null;
         }
 
