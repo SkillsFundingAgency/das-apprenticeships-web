@@ -27,7 +27,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
                     Year = originalStartDate.Year,
                     Month = originalStartDate.Month,
                     Day = startDateChanged ? originalStartDate.Day + 1 : originalStartDate.Day
-                }
+                },
                 EarliestStartDate = originalStartDate,
                 LatestStartDate = originalStartDate.AddDays(1),
                 LastFridayOfSchool = originalStartDate
@@ -58,9 +58,12 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
             var model = new ProviderChangeOfStartDateModel
             {
                 OriginalApprenticeshipActualStartDate = originalStartDate,
-                StartYear = originalStartDate.Year,
-                StartMonth = originalStartDate.Month,
-                StartDay = originalStartDate.Day + 1,
+                ApprenticeshipActualStartDate = new DateField
+                {
+                    Year = originalStartDate.Year,
+                    Month = originalStartDate.Month,
+                    Day = originalStartDate.Day + 1,
+                },
                 EarliestStartDate = valid ? originalStartDate : originalStartDate.AddDays(2),
                 LatestStartDate = originalStartDate.AddDays(1),
                 LastFridayOfSchool = originalStartDate
@@ -91,9 +94,12 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
             var model = new ProviderChangeOfStartDateModel
             {
                 OriginalApprenticeshipActualStartDate = originalStartDate,
-                StartYear = originalStartDate.Year,
-                StartMonth = originalStartDate.Month,
-                StartDay = originalStartDate.Day + 1,
+                ApprenticeshipActualStartDate = new DateField
+                {
+                    Year = originalStartDate.Year,
+                    Month = originalStartDate.Month,
+                    Day = originalStartDate.Day + 1,
+                },
                 EarliestStartDate = originalStartDate,
                 LatestStartDate = valid ? originalStartDate.AddDays(1) : originalStartDate,
                 LastFridayOfSchool = originalStartDate
@@ -124,9 +130,12 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
             var model = new ProviderChangeOfStartDateModel
             {
                 OriginalApprenticeshipActualStartDate = originalStartDate,
-                StartYear = originalStartDate.Year,
-                StartMonth = originalStartDate.Month,
-                StartDay = originalStartDate.Day + 1,
+                ApprenticeshipActualStartDate = new DateField
+                {
+                    Year = originalStartDate.Year,
+                    Month = originalStartDate.Month,
+                    Day = originalStartDate.Day + 1,
+                },
                 EarliestStartDate = originalStartDate,
                 LatestStartDate = originalStartDate.AddDays(1),
                 LastFridayOfSchool = valid ? originalStartDate : originalStartDate.AddDays(2)
