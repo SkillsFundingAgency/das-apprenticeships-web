@@ -7,5 +7,7 @@ public class ApprenticeshipStartDate
     public DateTime? PlannedEndDate { get; set; }
     public string? EmployerName { get; set; }
     public string? ProviderName { get; set; }
-    public DateTime AcademicYearCutOff { get; set; }
+    public DateTime? EarliestStartDate { get; set; }
+    public DateTime? LatestStartDate { get; set; }
+    public DateTime LastFridayOfSchool { get; set; }
 }

@@ -9,6 +9,9 @@ public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICache
     public long? ProviderReferenceNumber { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public DateTime? OriginalApprenticeshipActualStartDate { get; set; }
+    public DateTime? EarliestStartDate { get; set; }
+    public DateTime? LatestStartDate { get; set; }
+    public DateTime LastFridayOfSchool { get; set; }
 }
 
 public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStartDateModel>
@@ -28,7 +31,10 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
         var model = new ProviderChangeOfStartDateModel
         {
             ApprenticeshipActualStartDate = new DateField(apprenticeshipStartDate.ActualStartDate),
-            ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey
+            ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey,
+            EarliestStartDate = apprenticeshipStartDate.EarliestStartDate,
+            LatestStartDate = apprenticeshipStartDate.LatestStartDate,
+            LastFridayOfSchool = apprenticeshipStartDate.LastFridayOfSchool
         };
 
         model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
