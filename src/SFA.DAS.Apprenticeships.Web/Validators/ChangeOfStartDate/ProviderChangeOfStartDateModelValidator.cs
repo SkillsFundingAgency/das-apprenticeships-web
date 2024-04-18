@@ -70,22 +70,28 @@ namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate
 
         private static bool NotBeEarlierThanStandardEarliestDate(ProviderChangeOfStartDateModel model)
         {
-            return model.ApprenticeshipActualStartDate?.Date >= model.StandardEarliestDate;
+            return model.StandardEarliestDate == null || model.ApprenticeshipActualStartDate?.Date >= model.StandardEarliestDate;
         }
 
         private static bool NotBeLaterThanStandardLatestDate(ProviderChangeOfStartDateModel model)
         {
-            return model.ApprenticeshipActualStartDate?.Date <= model.StandardLatestDate;
+            return model.StandardLatestDate == null || model.ApprenticeshipActualStartDate?.Date <= model.StandardLatestDate;
         }
 
         private static bool NotBeEarlierThanStandardVersionEarliestDate(ProviderChangeOfStartDateModel model)
         {
-            return model.ApprenticeshipActualStartDate?.Date >= model.StandardVersionEarliestDate;
+            if(NotBeEarlierThanStandardEarliestDate(model))
+                return model.StandardVersionEarliestDate == null || model.ApprenticeshipActualStartDate?.Date >= model.StandardVersionEarliestDate;
+            else
+                return true;
         }
 
         private static bool NotBeLaterThanStandardVersionLatestDate(ProviderChangeOfStartDateModel model)
         {
-            return model.ApprenticeshipActualStartDate?.Date <= model.StandardVersionLatestDate;
+            if (NotBeLaterThanStandardLatestDate(model))
+                return model.StandardVersionLatestDate == null || model.ApprenticeshipActualStartDate?.Date <= model.StandardVersionLatestDate;
+            else
+                return true;
         }
     }
 }

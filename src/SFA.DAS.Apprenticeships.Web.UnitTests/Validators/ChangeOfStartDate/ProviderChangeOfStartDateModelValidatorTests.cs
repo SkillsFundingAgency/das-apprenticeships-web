@@ -2,6 +2,7 @@
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate;
+using System;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate;
 
@@ -228,6 +229,44 @@ public class ProviderChangeOfStartDateModelValidatorTests
             result.IsValid.Should().BeFalse();
             result.Errors.Should().Contain(x => x.ErrorMessage == $"{_standardVersionLatestDateMessage}{model.StandardVersionLatestDate.Value:dd MM yyyy}.");
         }
+    }
+
+    [Test]
+    public void Validate_StandardVersionEarliestDate_OnlyIfStandardEarliestDateIsValid_ReturnsExpectedErrorMessage()
+    {
+        // Arrange
+        var originalStartDate = new DateTime(2023, 6, 1);
+        var model = BuildValidTestModel(originalStartDate);
+        model.StandardEarliestDate = originalStartDate.AddDays(2);
+        model.StandardVersionEarliestDate = originalStartDate.AddDays(2);
+
+        var validator = new ProviderChangeOfStartDateModelValidator();
+
+        // Act
+        var result = validator.Validate(model);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().NotContain(x => x.ErrorMessage == $"{_standardVersionEarliestDateMessage}{model.StandardVersionEarliestDate.Value:dd MM yyyy}.");
+    }
+
+    [Test]
+    public void Validate_StandardVersionLatestDate_OnlyIfStandardLatestDateIsValid_ReturnsExpectedErrorMessage()
+    {
+        // Arrange
+        var originalStartDate = new DateTime(2023, 6, 1);
+        var model = BuildValidTestModel(originalStartDate);
+        model.StandardLatestDate = originalStartDate;
+        model.StandardVersionLatestDate = originalStartDate;
+
+        var validator = new ProviderChangeOfStartDateModelValidator();
+
+        // Act
+        var result = validator.Validate(model);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().NotContain(x => x.ErrorMessage == $"{_standardVersionLatestDateMessage}{model.StandardVersionLatestDate.Value:dd MM yyyy}.");
     }
 
     private ProviderChangeOfStartDateModel BuildValidTestModel(DateTime originalStartDate)
