@@ -26,6 +26,26 @@ namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate
                 .Must(NotBeEarlierThanLastFridayOfSchool)
                 .WithName(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate))
                 .WithMessage(x => $"The start date must be after {x.LastFridayOfSchool:dd MM yyyy} when the learner has reached school leaving age.");
+
+            RuleFor(x => x)
+                .Must(NotBeEarlierThanStandardEarliestDate)
+                .WithName(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate))
+                .WithMessage(x => $"This training course is only available to apprentices with a start date after {x.StandardEarliestDate.GetValueOrDefault():dd MM yyyy}.");
+
+            RuleFor(x => x)
+                .Must(NotBeLaterThanStandardLatestDate)
+                .WithName(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate))
+                .WithMessage(x => $"This training course is only available to apprentices with a start date before {x.StandardLatestDate.GetValueOrDefault():dd MM yyyy}.");
+
+            RuleFor(x => x)
+                .Must(NotBeEarlierThanStandardVersionEarliestDate)
+                .WithName(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate))
+                .WithMessage(x => $"This version of the training course is only available to apprentices with a start date after {x.StandardVersionEarliestDate.GetValueOrDefault():dd MM yyyy}.");
+
+            RuleFor(x => x)
+                .Must(NotBeLaterThanStandardVersionLatestDate)
+                .WithName(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate))
+                .WithMessage(x => $"This version of the training course is only available to apprentices with a start date before {x.StandardVersionLatestDate.GetValueOrDefault():dd MM yyyy}.");
         }
 
         private static bool HaveStartDateChange(ProviderChangeOfStartDateModel model)
@@ -46,6 +66,26 @@ namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate
         private static bool NotBeEarlierThanLastFridayOfSchool(ProviderChangeOfStartDateModel model)
         {
             return model.ApprenticeshipActualStartDate?.Date >= model.LastFridayOfSchool;
+        }
+
+        private static bool NotBeEarlierThanStandardEarliestDate(ProviderChangeOfStartDateModel model)
+        {
+            return model.ApprenticeshipActualStartDate?.Date >= model.StandardEarliestDate;
+        }
+
+        private static bool NotBeLaterThanStandardLatestDate(ProviderChangeOfStartDateModel model)
+        {
+            return model.ApprenticeshipActualStartDate?.Date <= model.StandardLatestDate;
+        }
+
+        private static bool NotBeEarlierThanStandardVersionEarliestDate(ProviderChangeOfStartDateModel model)
+        {
+            return model.ApprenticeshipActualStartDate?.Date >= model.StandardVersionEarliestDate;
+        }
+
+        private static bool NotBeLaterThanStandardVersionLatestDate(ProviderChangeOfStartDateModel model)
+        {
+            return model.ApprenticeshipActualStartDate?.Date <= model.StandardVersionLatestDate;
         }
     }
 }
