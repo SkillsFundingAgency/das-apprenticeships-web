@@ -13,6 +13,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests
         }
 
         public string PostUrl => $"Apprenticeship/{_apprenticeshipKey}/startDateChange";
+        public bool SendBearerToken => true;
         public object Data { get; set; }
     }
 

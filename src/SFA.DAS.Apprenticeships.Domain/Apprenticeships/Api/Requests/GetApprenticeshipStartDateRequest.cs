@@ -12,4 +12,5 @@ public class GetApprenticeshipStartDateRequest : IGetApiRequest
     }
 
     public string GetUrl => $"Apprenticeship/{_apprenticeshipKey}/startDate";
+    public bool SendBearerToken => true;
 }

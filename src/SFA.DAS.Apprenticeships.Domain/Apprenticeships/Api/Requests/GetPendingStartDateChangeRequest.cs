@@ -2,14 +2,15 @@
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 
-public class GetPendingPriceChangeRequest : IGetApiRequest
+public class GetPendingStartDateChangeRequest : IGetApiRequest
 {
     private readonly Guid _apprenticeshipKey;
 
-    public GetPendingPriceChangeRequest(Guid apprenticeshipKey)
+    public GetPendingStartDateChangeRequest(Guid apprenticeshipKey)
     {
         _apprenticeshipKey = apprenticeshipKey;
     }
 
-    public string GetUrl => $"Apprenticeship/{_apprenticeshipKey}/priceHistory/pending";
+    public string GetUrl => $"Apprenticeship/{_apprenticeshipKey}/startDateChange/pending";
+    public bool SendBearerToken => true;
 }

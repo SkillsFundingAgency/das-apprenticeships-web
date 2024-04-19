@@ -12,5 +12,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests
         }
 
         public string GetUrl => $"Apprenticeship/{_apprenticeshipHashId}/key";
+
+        public bool SendBearerToken => true;
     }
 }

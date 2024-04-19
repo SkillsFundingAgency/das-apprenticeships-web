@@ -15,5 +15,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Employers.Api.Requests
         }
 
         public string GetUrl => $"accountusers/{_userId}/accounts?email={_email}";
+        public bool SendBearerToken => false;
     }
 }

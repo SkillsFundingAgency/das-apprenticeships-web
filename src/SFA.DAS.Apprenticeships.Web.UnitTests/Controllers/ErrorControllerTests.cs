@@ -4,7 +4,10 @@ using Microsoft.Extensions.Configuration;
 using SFA.DAS.Apprenticeships.Web.Controllers;
 using SFA.DAS.Apprenticeships.Web.Models.Error;
 using Moq;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.Apprenticeships.Domain.Api;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
 {
@@ -43,9 +46,45 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Assert
             result.ViewName.Should().Be("404");
         }
-        
+
+        [Test]
+        public void WhenStatusCodeIs401Then401ViewIsReturned()
+        {
+            // Arrange
+            var sut = CreateController();
+
+            // Act
+            var result = (ViewResult)sut.Error(401);
+
+            // Assert
+            result.ViewName.Should().Be("401");
+        }
+
+        [Test]
+        public void WhenAuthErrorReturnedFromApiThen401ViewIsReturned()
+        {
+            // Arrange
+            var httpContextMock = new Mock<HttpContext>();
+            var featureCollection = new FeatureCollection();
+            var exceptionHandlerFeatureMock = new Mock<IExceptionHandlerFeature>();
+
+            var apiUnauthorizedException = new ApiUnauthorizedException();
+            exceptionHandlerFeatureMock.SetupGet(x => x.Error).Returns(apiUnauthorizedException);
+
+            featureCollection.Set(exceptionHandlerFeatureMock.Object);
+            httpContextMock.SetupGet(x => x.Features).Returns(featureCollection);
+
+            var sut = CreateController();
+            sut.ControllerContext.HttpContext = httpContextMock.Object;
+
+            // Act
+            var result = (ViewResult)sut.Error(500);
+
+            // Assert
+            result.ViewName.Should().Be("401");
+        }
+
         [TestCase(null)]
-        [TestCase(401)]
         [TestCase(503)]
         [TestCase(405)]
         public void WhenStatusCodeIsNotHandledThenGenericErrorViewIsReturned(int? errorCode)
