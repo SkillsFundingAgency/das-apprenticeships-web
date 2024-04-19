@@ -41,8 +41,8 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
             LastFridayOfSchool = apprenticeshipStartDate.LastFridayOfSchool,
             StandardEarliestDate = apprenticeshipStartDate.Standard.EffectiveFrom,
             StandardLatestDate = apprenticeshipStartDate.Standard.EffectiveTo,
-            StandardVersionEarliestDate = apprenticeshipStartDate.Standard.StandardVersion?.EffectiveFrom,
-            StandardVersionLatestDate = apprenticeshipStartDate.Standard.StandardVersion?.EffectiveTo
+            StandardVersionEarliestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionEarliestStartDate,
+            StandardVersionLatestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionLatestStartDate
         };
 
         model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
