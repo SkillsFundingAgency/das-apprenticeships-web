@@ -65,9 +65,23 @@ public class ChangeOfStartDateEmployerController : Controller
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
-    public async Task<IActionResult> ApproveOrRejectStartDateChange(string ApproveChanges, string rejectReason)
+    public async Task<IActionResult> ApproveOrRejectStartDateChange(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
     {
-        throw new NotImplementedException("To be completed in FLP-488");
+        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+        if (apprenticeshipKey == default)
+        {
+            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            return NotFound();
+        }
+
+        if (ApproveChanges != "0")
+        {
+            var userId = HttpContext.User.GetUserId();
+            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
+            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showStartDateChangeApproved=true");
+        }
+
+        throw new NotImplementedException("Reject Journey");
     }
 
     private async Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashedId)

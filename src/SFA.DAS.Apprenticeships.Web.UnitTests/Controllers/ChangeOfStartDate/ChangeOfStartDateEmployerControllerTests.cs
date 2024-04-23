@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
@@ -65,6 +66,27 @@ public class ChangeOfStartDateEmployerControllerTests
         var viewResult = result.ShouldBeOfType<ViewResult>();
         viewResult.ViewName.Should().Be(ChangeOfStartDateEmployerController.ApproveProviderChangeOfStartDateViewName);
         viewResult.Model.ShouldBeOfType<EmployerViewPendingStartDateChangeModel>();
+    }
+
+    [Test]
+    public async Task EmployerApproveChange_ApprovesStartDateAndRedirectsToEmployerCommitments()
+    {
+        // Arrange
+        var employerAccountId = _fixture.Create<string>();
+        var apprenticeshipHashedId = _fixture.Create<string>();
+        var controller = new ChangeOfStartDateEmployerController(_loggerMock.Object, _apprenticeshipServiceMock.Object, _mapperMock.Object, GetUrlBuilder());
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        _apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+        var userId = _fixture.Create<string>();
+        controller.SetupHttpContext(null, null, userId);
+        // Act
+        var result = await controller.ApproveOrRejectStartDateChange(employerAccountId, apprenticeshipHashedId, "1", "");
+
+        // Assert
+        _apprenticeshipServiceMock.Verify(x => x.ApprovePendingStartDateChange(apprenticeshipKey, userId), Times.Once);
+        result.ShouldBeOfType<RedirectResult>();
+        var redirectResult = (RedirectResult)result;
+        redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showStartDateChangeApproved=true");
     }
 
     private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)
