@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Apprenticeships.Domain.Interfaces
 {
-    public interface IPostApiRequest 
+    public interface IPostApiRequest : IApiRequest
     {
         /// <summary>
         /// This is the relative URL used in the POST request. Note that this should not have a leading slash.

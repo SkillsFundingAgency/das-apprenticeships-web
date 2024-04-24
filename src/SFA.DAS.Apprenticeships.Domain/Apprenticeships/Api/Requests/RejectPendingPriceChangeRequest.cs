@@ -14,6 +14,7 @@ public class RejectPendingPriceChangeRequest : IPatchApiRequest
 
     public string PatchUrl => $"Apprenticeship/{_apprenticeshipKey}/priceHistory/pending/reject";
     public object Data { get; set; }
+    public bool SendBearerToken => true;
 }
 
 public class RejectPendingPriceChangeData
