@@ -58,6 +58,7 @@ namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public class StubProviderUserClaims
     {
         public string ProviderUkprn { get; set; }
