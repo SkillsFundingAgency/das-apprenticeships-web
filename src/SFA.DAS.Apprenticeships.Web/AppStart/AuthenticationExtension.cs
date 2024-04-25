@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.DfESignIn.Auth.AppStart;
@@ -28,7 +29,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             }
             else
             {
-                services.AddProviderStubAuthentication();
+                services.AddProviderStubAuthentication(config);
             }
         }
 
@@ -37,8 +38,11 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/service/SignIn-Stub");
         }
 
-        private static void AddProviderStubAuthentication(this IServiceCollection services)
+        private static void AddProviderStubAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
+            var stubClaims = config.GetSection(nameof(StubProviderUserClaims)).Get<StubProviderUserClaims>();
+            services.AddSingleton(stubClaims);
+
             services
                 .AddAuthentication("Provider-stub")
                 .AddScheme<AuthenticationSchemeOptions, ProviderStubAuthHandler>(

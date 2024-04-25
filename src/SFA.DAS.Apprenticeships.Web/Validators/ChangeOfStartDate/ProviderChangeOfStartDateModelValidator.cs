@@ -26,6 +26,14 @@ namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate
                 .Must(NotBeEarlierThanLastFridayOfSchool)
                 .WithName(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate))
                 .WithMessage(x => $"The start date must be after {x.LastFridayOfSchool:dd MM yyyy} when the learner has reached school leaving age.");
+
+            RuleFor(x => x.ReasonForChangeOfStartDate)
+                .NotEmpty()
+                .WithMessage("You must enter a reason for requesting a change of start date. This will help the employer when they review your request.");
+
+            RuleFor(x => x.ReasonForChangeOfStartDate)
+                .Length(0, 200)
+                .WithMessage("Reason cannot exceed 200 characters");
         }
 
         private static bool HaveStartDateChange(ProviderChangeOfStartDateModel model)
