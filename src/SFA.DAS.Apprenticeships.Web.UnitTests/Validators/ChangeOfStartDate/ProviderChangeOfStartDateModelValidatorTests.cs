@@ -30,7 +30,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
                 },
                 EarliestStartDate = originalStartDate,
                 LatestStartDate = originalStartDate.AddDays(1),
-                LastFridayOfSchool = originalStartDate
+                LastFridayOfSchool = originalStartDate,
+                ReasonForChangeOfStartDate = "Reason"
             };
             var validator = new ProviderChangeOfStartDateModelValidator();
 
@@ -66,7 +67,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
                 },
                 EarliestStartDate = valid ? originalStartDate : originalStartDate.AddDays(2),
                 LatestStartDate = originalStartDate.AddDays(1),
-                LastFridayOfSchool = originalStartDate
+                LastFridayOfSchool = originalStartDate,
+                ReasonForChangeOfStartDate = "Reason"
             };
             var validator = new ProviderChangeOfStartDateModelValidator();
 
@@ -102,7 +104,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
                 },
                 EarliestStartDate = originalStartDate,
                 LatestStartDate = valid ? originalStartDate.AddDays(1) : originalStartDate,
-                LastFridayOfSchool = originalStartDate
+                LastFridayOfSchool = originalStartDate,
+                ReasonForChangeOfStartDate = "Reason"
             };
             var validator = new ProviderChangeOfStartDateModelValidator();
 
@@ -138,7 +141,8 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators.ChangeOfStartDate
                 },
                 EarliestStartDate = originalStartDate,
                 LatestStartDate = originalStartDate.AddDays(1),
-                LastFridayOfSchool = valid ? originalStartDate : originalStartDate.AddDays(2)
+                LastFridayOfSchool = valid ? originalStartDate : originalStartDate.AddDays(2),
+                ReasonForChangeOfStartDate = "Reason"
             };
             var validator = new ProviderChangeOfStartDateModelValidator();
 
