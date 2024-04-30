@@ -44,6 +44,34 @@ public class ChangeOfStartDateEmployerControllerTests
     }
 
     [Test]
+    public async Task ViewPendingChangePage_WhenStartDateInitiatedByEmployer_ThrowsNotImplementedException()
+    {
+        // Arrange
+        var pendingStartDateChangeResponse = _fixture.Create<GetPendingStartDateChangeResponse>();
+        pendingStartDateChangeResponse.PendingStartDateChange!.Initiator = "Employer";
+        MocksSetupGetPendingStartDateApis(pendingStartDateChangeResponse);
+        var controller = new ChangeOfStartDateEmployerController(_loggerMock.Object, _apprenticeshipServiceMock.Object, _mapperMock.Object, GetUrlBuilder());
+        controller.SetupHttpContext(null, "apprenticeshipHashedId", null, "employerAccountId");
+
+        // Act & Assert
+        Assert.ThrowsAsync<NotImplementedException>(() => controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId"));
+    }
+
+    [Test]
+    public async Task ViewPendingChangePage_WhenInitiatorInvalid_ThrowsArgOutOfRangeException()
+    {
+        // Arrange
+        var pendingStartDateChangeResponse = _fixture.Create<GetPendingStartDateChangeResponse>();
+        pendingStartDateChangeResponse.PendingStartDateChange!.Initiator = "";
+        MocksSetupGetPendingStartDateApis(pendingStartDateChangeResponse);
+        var controller = new ChangeOfStartDateEmployerController(_loggerMock.Object, _apprenticeshipServiceMock.Object, _mapperMock.Object, GetUrlBuilder());
+        controller.SetupHttpContext(null, "apprenticeshipHashedId", null, "employerAccountId");
+
+        // Act & Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId"));
+    }
+
+    [Test]
     public async Task ViewPendingChangePage_WhenProviderInitiated_ReturnsApproveView()
     {
         // Arrange
@@ -66,6 +94,20 @@ public class ChangeOfStartDateEmployerControllerTests
         viewResult.Model.ShouldBeOfType<EmployerViewPendingStartDateChangeModel>();
     }
 
+    [Test]
+    public async Task ApproveOrRejectStartDateChange_WhenApprenticeshipKeyNotFound_ReturnNotFound()
+    {
+        // Arrange
+        var controller = new ChangeOfStartDateEmployerController(_loggerMock.Object, _apprenticeshipServiceMock.Object, _mapperMock.Object, GetUrlBuilder());
+        _apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.Empty);
+
+        // Act
+        var result = await controller.ApproveOrRejectStartDateChange(_fixture.Create<string>(), _fixture.Create<string>(), "1", "");
+
+        // Assert
+        Assert.IsInstanceOf<NotFoundResult>(result);
+    }
+    
     [Test]
     public async Task EmployerApproveChange_ApprovesStartDateAndRedirectsToEmployerCommitments()
     {
