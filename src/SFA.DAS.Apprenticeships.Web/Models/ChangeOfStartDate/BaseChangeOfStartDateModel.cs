@@ -6,5 +6,6 @@
         public Guid ApprenticeshipKey { get; set; }
         public string? ApprenticeshipHashedId { get; set; }
         public string? ReasonForChangeOfStartDate { get; set; }
+        public string? ApprovingPartyName { get; set; }
     }
 }

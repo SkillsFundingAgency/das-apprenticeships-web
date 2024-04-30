@@ -5,7 +5,7 @@
     const int MaxCharacters = 200;
 
     var defaultApprovingPartyName = Model.InitiatedBy == InitiatedBy.Employer ? "the training provider" : "the employer";
-    var approvingPartyName = Model.ReasonForChangeOfStartDate ?? defaultApprovingPartyName;
+    var approvingPartyName = Model.ApprovingPartyName ?? defaultApprovingPartyName;
     var charactersRemaining = MaxCharacters - Model.ReasonForChangeOfStartDate?.Length ?? MaxCharacters;
 }
 <div class="govuk-form-group @ViewContext.DisplayFormGroupError(nameof(Model.ReasonForChangeOfStartDate))">

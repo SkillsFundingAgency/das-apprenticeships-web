@@ -44,6 +44,7 @@ public class ProviderChangeOfStartDateModelValidatorTests
             Year = originalStartDate.Year,
             Month = originalStartDate.Month,
             Day = originalStartDate.Day
+
         };
 
         var validator = new ProviderChangeOfStartDateModelValidator();
@@ -81,7 +82,6 @@ public class ProviderChangeOfStartDateModelValidatorTests
         var originalStartDate = new DateTime(2023, 6, 1);
         var model = BuildValidTestModel(originalStartDate);
         model.LatestStartDate = originalStartDate;
-
         var validator = new ProviderChangeOfStartDateModelValidator();
 
         // Act
@@ -135,6 +135,7 @@ public class ProviderChangeOfStartDateModelValidatorTests
         var originalStartDate = new DateTime(2023, 6, 1);
         var model = BuildValidTestModel(originalStartDate);
         model.StandardLatestDate = originalStartDate;
+
 
         var validator = new ProviderChangeOfStartDateModelValidator();
 
@@ -235,6 +236,7 @@ public class ProviderChangeOfStartDateModelValidatorTests
             LatestStartDate = originalStartDate.AddDays(1),
             LastFridayOfSchool = originalStartDate,
             StandardEarliestDate = originalStartDate,
+            ReasonForChangeOfStartDate = "Reason"
             StandardLatestDate = originalStartDate.AddDays(1),
             StandardVersionEarliestDate = originalStartDate,
             StandardVersionLatestDate = originalStartDate.AddDays(1)
