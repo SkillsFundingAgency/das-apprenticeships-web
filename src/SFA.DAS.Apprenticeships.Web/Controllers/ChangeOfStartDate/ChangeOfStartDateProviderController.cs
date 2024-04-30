@@ -94,7 +94,7 @@ public class ChangeOfStartDateProviderController : BaseChangeOfStartDateControll
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
-    public async Task<IActionResult> ViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
+    public async Task<IActionResult> ViewPendingChangePage(long ukprn, string apprenticeshipHashedId)
     {
         var response = await GetPendingStartDateChange(apprenticeshipHashedId);
         if (response == null || !response.HasPendingStartDateChange)
