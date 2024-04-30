@@ -65,7 +65,7 @@ public class ChangeOfStartDateEmployerController : Controller
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
-    public async Task<IActionResult> ApproveOrRejectStartDateChange(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
+    public async Task<IActionResult> ApproveOrRejectStartDateChange(string employerAccountId, string apprenticeshipHashedId, string approveChanges, string rejectReason)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
         if (apprenticeshipKey == default)
@@ -74,7 +74,7 @@ public class ChangeOfStartDateEmployerController : Controller
             return NotFound();
         }
 
-        if (ApproveChanges != "0")
+        if (approveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
