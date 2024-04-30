@@ -18,6 +18,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
             services.AddTransient<IMapper<ProviderChangeOfStartDateModel>, ProviderChangeOfStartDateModelMapper>();
             services.AddTransient<IMapper<EmployerViewPendingStartDateChangeModel>, EmployerViewPendingStartDateChangeModelMapper>();
+            services.AddTransient<IMapper<ProviderCancelStartDateModel>, ProviderCancelStartDateModelMapper>();
 
 
 
@@ -34,6 +35,7 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
 
                 mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderChangeOfStartDateModel>>()!);
                 mapperResolver.Register(serviceProvider.GetService<IMapper<EmployerViewPendingStartDateChangeModel>>()!);
+                mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderCancelStartDateModel>>()!);
                 return mapperResolver;
             });
         }

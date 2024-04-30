@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -16,7 +16,7 @@ using System.Web;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
 [Authorize]
-public class ChangeOfStartDateProviderController : Controller
+public class ChangeOfStartDateProviderController : BaseChangeOfStartDateController<ChangeOfStartDateProviderController>
 {
     private readonly ILogger<ChangeOfStartDateProviderController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
@@ -26,14 +26,14 @@ public class ChangeOfStartDateProviderController : Controller
 
     public const string EnterChangeDetailsViewName = "~/Views/ChangeOfStartDate/Provider/EnterChangeDetails.cshtml";
     public const string CheckDetailsViewName = "~/Views/ChangeOfStartDate/Provider/CheckDetails.cshtml";
-
+    public const string ProviderCancelPendingChangeViewName = "~/Views/ChangeOfStartDate/Provider/CancelPendingChange.cshtml";
 
     public ChangeOfStartDateProviderController(
         ILogger<ChangeOfStartDateProviderController> logger,
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
         ICacheService cache,
-        IExternalUrlHelper externalProviderUrlHelper)
+        IExternalUrlHelper externalProviderUrlHelper) : base(logger, apprenticeshipService)
     {
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
@@ -91,22 +91,49 @@ public class ChangeOfStartDateProviderController : Controller
         return Redirect(providerCommitmentsReturnUrl);
     }
 
-    private async Task<ApprenticeshipStartDate?> GetApprenticeshipStartDate(string apprenticeshipHashedId)
+    [HttpGet]
+    [SetNavigationSection(NavigationSection.ManageApprentices)]
+    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
+    public async Task<IActionResult> ViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
     {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        var response = await GetPendingStartDateChange(apprenticeshipHashedId);
+        if (response == null || !response.HasPendingStartDateChange)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return null;
+            return NotFound();
         }
 
-        var apprenticeshipStartDate = await _apprenticeshipService.GetApprenticeshipStartDate(apprenticeshipKey);
-        if (apprenticeshipStartDate == null || apprenticeshipStartDate.ApprenticeshipKey != apprenticeshipKey)
+        switch (response.PendingStartDateChange!.Initiator.GetChangeInitiator())
         {
-            _logger.LogWarning($"ApprenticeshipStartDate not found for apprenticeshipKey {apprenticeshipKey}");
-            return null;
+            case ChangeInitiator.Employer:
+                throw new NotImplementedException("Employer initiated change of start date is not yet implemented");
+
+            case ChangeInitiator.Provider:
+                var providerInitiateViewModel = _mapper.Map<ProviderCancelStartDateModel>(response);
+                RouteValuesHelper.PopulateProviderRouteValues(providerInitiateViewModel, HttpContext);
+                return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
+
         }
 
-        return apprenticeshipStartDate;
+        throw new ArgumentOutOfRangeException("ChangeInitiator");
     }
+
+	[HttpPost]
+	[SetNavigationSection(NavigationSection.ManageApprentices)]
+	[Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/cancel")]
+	public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+	{
+		if (CancelRequest != "1")
+		{
+			return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
+		}
+
+		var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+		if (apprenticeshipKey == default)
+		{
+			_logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}", apprenticeshipHashedId);
+			return NotFound();
+		}
+
+		throw new NotImplementedException("To be completed in FLP-486");
+	}
 }
