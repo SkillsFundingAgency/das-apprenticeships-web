@@ -11,14 +11,13 @@ using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
+[Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}")]
 public class ChangeOfStartDateEmployerController : Controller
 {
     private readonly ILogger<ChangeOfStartDateEmployerController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
     private readonly IMapper _mapper;
     private readonly UrlBuilder _externalEmployerUrlHelper;
-
-
     public const string ApproveProviderChangeOfStartDateViewName = "~/Views/ChangeOfStartDate/Employer/ApproveProviderChangeOfStartDate.cshtml";
 
     public ChangeOfStartDateEmployerController(
@@ -35,7 +34,7 @@ public class ChangeOfStartDateEmployerController : Controller
 
     [HttpGet]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ViewPendingChangePage(string employerAccountId, string apprenticeshipHashedId)
     {
         var response = await GetPendingStartDateChange(apprenticeshipHashedId);
@@ -64,7 +63,7 @@ public class ChangeOfStartDateEmployerController : Controller
 
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ApproveOrRejectStartDateChange(string employerAccountId, string apprenticeshipHashedId, string approveChanges, string rejectReason)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
