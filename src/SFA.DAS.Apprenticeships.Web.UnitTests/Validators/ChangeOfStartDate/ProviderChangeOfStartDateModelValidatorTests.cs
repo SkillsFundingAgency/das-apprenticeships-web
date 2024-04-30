@@ -236,7 +236,7 @@ public class ProviderChangeOfStartDateModelValidatorTests
             LatestStartDate = originalStartDate.AddDays(1),
             LastFridayOfSchool = originalStartDate,
             StandardEarliestDate = originalStartDate,
-            ReasonForChangeOfStartDate = "Reason"
+            ReasonForChangeOfStartDate = "Reason",
             StandardLatestDate = originalStartDate.AddDays(1),
             StandardVersionEarliestDate = originalStartDate,
             StandardVersionLatestDate = originalStartDate.AddDays(1)
