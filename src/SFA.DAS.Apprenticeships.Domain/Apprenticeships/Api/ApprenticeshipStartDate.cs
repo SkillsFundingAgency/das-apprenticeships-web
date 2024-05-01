@@ -10,4 +10,5 @@ public class ApprenticeshipStartDate
     public DateTime? EarliestStartDate { get; set; }
     public DateTime? LatestStartDate { get; set; }
     public DateTime LastFridayOfSchool { get; set; }
+    public StandardInfo Standard { get; set; } = null!;
 }
