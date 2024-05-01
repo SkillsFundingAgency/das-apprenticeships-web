@@ -50,12 +50,22 @@ public class ApprenticeshipServiceTests
         result.Should().Be(expectedKey);
     }
 
-    [Test]
-    public async Task GetApprenticeshipKey_WhenCalled_LogsMessageAndReturnsEmptyGuid()
+	[Test]
+	public async Task GetApprenticeshipKey_WhenCalled_AndEmptyHashIdSend_LogsMessageAndReturnsEmptyGuid()
+	{
+		// Act
+		var result = await _apprenticeshipService.GetApprenticeshipKey(string.Empty);
+
+		// Assert
+		result.Should().BeEmpty();
+		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, "Cannot get apprenticeshipKey when apprenticeshipHashId is null or empty");
+	}
+
+	[Test]
+    public async Task GetApprenticeshipKey_WhenCalled_AndNoKeyExists_LogsMessageAndReturnsEmptyGuid()
     {
         // Arrange
         var apprenticeshipHashId = "hashId";
-        var expectedKey = _fixture.Create<Guid>();
         var response = new ApiResponse<Guid>(Guid.Empty, System.Net.HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<Guid>(It.IsAny<GetApprenticeshipKeyRequest>())).ReturnsAsync(response);
 
@@ -66,7 +76,6 @@ public class ApprenticeshipServiceTests
         result.Should().BeEmpty();
         _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
     }
-
 
     [Test]
     public async Task GetApprenticeshipPrice_WhenCalled_ReturnsApprenticeshipPrice()
@@ -86,7 +95,22 @@ public class ApprenticeshipServiceTests
         result.Should().Be(expectedPrice);
     }
 
-    [Test]
+	[Test]
+	public async Task GetApprenticeshipPrice_WhenCalled_AndKeyNotFound_LogsMessageAndReturnsNull()
+	{
+		// Arrange
+		var apprenticeshipHashId = _fixture.Create<string>();
+
+		// Act
+		var result = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashId);
+
+		// Assert
+		result.Should().BeNull();
+		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
+
+	}
+
+	[Test]
     public async Task GetPendingPriceChange_WhenCalled_ReturnsPendingPriceChange()
     {
         // Arrange
