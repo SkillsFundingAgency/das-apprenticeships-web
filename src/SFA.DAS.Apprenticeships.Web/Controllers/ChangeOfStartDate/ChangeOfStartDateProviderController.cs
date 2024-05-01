@@ -16,7 +16,7 @@ using System.Web;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
 [Authorize]
-public class ChangeOfStartDateProviderController : BaseChangeOfStartDateController<ChangeOfStartDateProviderController>
+public class ChangeOfStartDateProviderController : Controller
 {
     private readonly ILogger<ChangeOfStartDateProviderController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
@@ -33,7 +33,7 @@ public class ChangeOfStartDateProviderController : BaseChangeOfStartDateControll
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
         ICacheService cache,
-        IExternalUrlHelper externalProviderUrlHelper) : base(logger, apprenticeshipService)
+        IExternalUrlHelper externalProviderUrlHelper)
     {
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
@@ -47,7 +47,7 @@ public class ChangeOfStartDateProviderController : BaseChangeOfStartDateControll
     [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
     public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
     {
-        var apprenticeshipStartDate = await GetApprenticeshipStartDate(apprenticeshipHashedId);
+        var apprenticeshipStartDate = await _apprenticeshipService.GetApprenticeshipStartDate(apprenticeshipHashedId);
         if (apprenticeshipStartDate == null)
         {
             return NotFound();
@@ -96,7 +96,7 @@ public class ChangeOfStartDateProviderController : BaseChangeOfStartDateControll
     [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
     public async Task<IActionResult> ViewPendingChangePage(long ukprn, string apprenticeshipHashedId)
     {
-        var response = await GetPendingStartDateChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipHashedId);
         if (response == null || !response.HasPendingStartDateChange)
         {
             return NotFound();

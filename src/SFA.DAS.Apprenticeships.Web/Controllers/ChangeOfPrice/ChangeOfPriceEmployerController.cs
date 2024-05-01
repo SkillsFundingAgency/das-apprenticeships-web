@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
@@ -50,7 +49,7 @@ public class ChangeOfPriceEmployerController : Controller
     [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
     public async Task<IActionResult> GetEmployerEnterChangeDetails(string apprenticeshipHashedId)
     {
-        var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
+        var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashedId);
         if (apprenticeshipPrice == null)
         {
             return NotFound();
@@ -98,7 +97,7 @@ public class ChangeOfPriceEmployerController : Controller
     [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
     public async Task<IActionResult> ViewPendingPriceChangePage(string employerAccountId, string apprenticeshipHashedId)
     {
-        var response = await GetPendingPriceChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashedId);
         if (response == null || !response.HasPendingPriceChange)
         {
             return NotFound();
@@ -171,41 +170,4 @@ public class ChangeOfPriceEmployerController : Controller
         return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeRejected=true");
     }
 
-    private async Task<ApprenticeshipPrice?> GetApprenticeshipPrice(string apprenticeshipHashedId)
-    {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return null;
-        }
-
-        var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipKey);
-        if (apprenticeshipPrice == null || apprenticeshipPrice.ApprenticeshipKey != apprenticeshipKey)
-        {
-            _logger.LogWarning($"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
-            return null;
-        }
-
-        return apprenticeshipPrice;
-    }
-
-    private async Task<GetPendingPriceChangeResponse?> GetPendingPriceChange(string apprenticeshipHashedId)
-    {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return null;
-        }
-
-        var pendingPriceChange = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipKey);
-        if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
-        {
-            _logger.LogWarning($"Pending Apprenticeship Price not found for apprenticeshipKey {apprenticeshipKey}");
-            return null;
-        }
-
-        return pendingPriceChange;
-    }
 }

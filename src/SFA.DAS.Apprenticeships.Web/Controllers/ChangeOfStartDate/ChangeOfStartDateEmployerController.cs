@@ -11,7 +11,7 @@ using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
-public class ChangeOfStartDateEmployerController : BaseChangeOfStartDateController<ChangeOfStartDateEmployerController>
+public class ChangeOfStartDateEmployerController : Controller
 {
     private readonly ILogger<ChangeOfStartDateEmployerController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
@@ -25,7 +25,7 @@ public class ChangeOfStartDateEmployerController : BaseChangeOfStartDateControll
         ILogger<ChangeOfStartDateEmployerController> logger, 
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
-        UrlBuilder externalEmployerUrlHelper) : base(logger, apprenticeshipService)
+        UrlBuilder externalEmployerUrlHelper)
 	{
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
@@ -38,7 +38,7 @@ public class ChangeOfStartDateEmployerController : BaseChangeOfStartDateControll
     [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
     public async Task<IActionResult> ViewPendingChangePage(string employerAccountId, string apprenticeshipHashedId)
     {
-        var response = await GetPendingStartDateChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipHashedId);
         if (response == null)
         {
             return NotFound();

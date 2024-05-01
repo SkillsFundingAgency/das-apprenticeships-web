@@ -50,9 +50,9 @@ public class ChangeOfStartDateProviderControllerTests
         _mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ApprenticeshipStartDate>())).Returns(expectedModel);
 
         var apprenticeshipStartDate = new ApprenticeshipStartDate { ApprenticeshipKey = apprenticeshipKey };
-		SetupGetStartDate(apprenticeshipHashedId, apprenticeshipKey, apprenticeshipStartDate);
+        SetupGetStartDate(apprenticeshipHashedId, apprenticeshipStartDate);
 
-		controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
+        controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
 
         // Act
         var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
@@ -85,11 +85,11 @@ public class ChangeOfStartDateProviderControllerTests
         // Arrange
         var apprenticeshipHashedId = _fixture.Create<string>();
         var apprenticeshipKey = Guid.NewGuid();
-		var controller = GetSubjectUnderTest();
-		SetupGetStartDate(apprenticeshipHashedId, apprenticeshipKey, null);
+        var controller = GetSubjectUnderTest();
+        SetupGetStartDate(apprenticeshipHashedId, null);
 
-		// Act
-		var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        // Act
+        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
 
         // Assert
         result.ShouldBeOfType<NotFoundResult>();
@@ -170,54 +170,55 @@ public class ChangeOfStartDateProviderControllerTests
         Assert.IsInstanceOf<NotFoundResult>(result);
     }
 
-	[Test]
-	public async Task ViewPendingChangePage_ProviderInitiated_ReturnsCancelView()
-	{
+    [Test]
+    public async Task ViewPendingChangePage_ProviderInitiated_ReturnsCancelView()
+    {
         // Arrange
         var hashId = "hashId";
         var ukprn = _fixture.Create<long>();
         var controller = GetSubjectUnderTest();
-		controller.SetupHttpContext(ukprn, hashId);
+        controller.SetupHttpContext(ukprn, hashId);
 
-		var pendingStartDateChangeResponse = _fixture.Create<GetPendingStartDateChangeResponse>();
+        var pendingStartDateChangeResponse = _fixture.Create<GetPendingStartDateChangeResponse>();
         pendingStartDateChangeResponse.PendingStartDateChange!.Initiator = "Provider";
 
-		SetupGetPendingStartDateChange(hashId, pendingStartDateChangeResponse.PendingStartDateChange.ApprenticeshipKey, pendingStartDateChangeResponse);
-		_mockMapper.Setup(m => m.Map<ProviderCancelStartDateModel>(It.IsAny<GetPendingStartDateChangeResponse>())).Returns(new ProviderCancelStartDateModel());
+        SetupGetPendingStartDateChange(hashId, pendingStartDateChangeResponse);
+        _mockMapper.Setup(m => m.Map<ProviderCancelStartDateModel>(It.IsAny<GetPendingStartDateChangeResponse>())).Returns(new ProviderCancelStartDateModel());
 
         // Act
         var result = await controller.ViewPendingChangePage(ukprn, hashId);
 
-		// Assert
-		var viewResult = result.ShouldBeOfType<ViewResult>();
-		Assert.That(viewResult.ViewName, Is.EqualTo(ChangeOfStartDateProviderController.ProviderCancelPendingChangeViewName));
+        // Assert
+        var viewResult = result.ShouldBeOfType<ViewResult>();
+        Assert.That(viewResult.ViewName, Is.EqualTo(ChangeOfStartDateProviderController.ProviderCancelPendingChangeViewName));
     }
 
     private ChangeOfStartDateProviderController GetSubjectUnderTest()
     {
-		return new ChangeOfStartDateProviderController(
-			_mockLogger.Object,
-			_mockApprenticeshipService.Object,
-			_mockMapper.Object,
-			_mockCacheService.Object,
-			_mockExternalUrlHelper.Object); 
+        return new ChangeOfStartDateProviderController(
+            _mockLogger.Object,
+            _mockApprenticeshipService.Object,
+            _mockMapper.Object,
+            _mockCacheService.Object,
+            _mockExternalUrlHelper.Object); 
     }
 
-	private void SetupGetStartDate(string apprenticeshipHashedId, Guid apprenticeshipKey, ApprenticeshipStartDate? apprenticeshipStartDate)
+    private void SetupGetStartDate(string apprenticeshipHashedId, ApprenticeshipStartDate? apprenticeshipStartDate)
     {
-		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
-        if(apprenticeshipStartDate != null)
-			_mockApprenticeshipService.Setup(m => m.GetApprenticeshipStartDate(apprenticeshipKey)).ReturnsAsync(apprenticeshipStartDate);
+        if(apprenticeshipStartDate == null)
+            return;
 
-	}
+        _mockApprenticeshipService.Setup(m => m.GetApprenticeshipStartDate(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipStartDate);
 
-	private void SetupGetPendingStartDateChange(string apprenticeshipHashedId, Guid apprenticeshipKey, GetPendingStartDateChangeResponse? pendingStartDateChangeResponse)
-	{
-		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
+    }
 
-        if(pendingStartDateChangeResponse != null)
-			_mockApprenticeshipService.Setup(m => m.GetPendingStartDateChange(apprenticeshipKey)).ReturnsAsync(pendingStartDateChangeResponse);
+    private void SetupGetPendingStartDateChange(string apprenticeshipHashedId, GetPendingStartDateChangeResponse? pendingStartDateChangeResponse)
+    {
+        if(pendingStartDateChangeResponse == null)
+            return;
 
-	}
+        _mockApprenticeshipService.Setup(m => m.GetPendingStartDateChange(apprenticeshipHashedId)).ReturnsAsync(pendingStartDateChangeResponse);
+
+    }
 }
