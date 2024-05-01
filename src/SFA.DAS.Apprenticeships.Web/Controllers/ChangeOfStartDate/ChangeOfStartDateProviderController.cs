@@ -120,7 +120,7 @@ public class ChangeOfStartDateProviderController : BaseChangeOfStartDateControll
 	[HttpPost]
 	[SetNavigationSection(NavigationSection.ManageApprentices)]
 	[Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/cancel")]
-	public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
 	{
 		if (CancelRequest != "1")
 		{
