@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
@@ -12,7 +11,6 @@ using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
-using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 
@@ -207,17 +205,19 @@ public class ChangeOfStartDateProviderControllerTests
 
 	private void SetupGetStartDate(string apprenticeshipHashedId, Guid apprenticeshipKey, ApprenticeshipStartDate? apprenticeshipStartDate)
     {
-		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId))
-	        .ReturnsAsync(apprenticeshipKey);
-		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipStartDate(apprenticeshipKey))
-			.ReturnsAsync(apprenticeshipStartDate);
+		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
+
+        if(apprenticeshipStartDate != null)
+			_mockApprenticeshipService.Setup(m => m.GetApprenticeshipStartDate(apprenticeshipKey)).ReturnsAsync(apprenticeshipStartDate);
+
 	}
 
 	private void SetupGetPendingStartDateChange(string apprenticeshipHashedId, Guid apprenticeshipKey, GetPendingStartDateChangeResponse? pendingStartDateChangeResponse)
 	{
-		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId))
-			.ReturnsAsync(apprenticeshipKey);
-		_mockApprenticeshipService.Setup(m => m.GetPendingStartDateChange(apprenticeshipKey))
-			.ReturnsAsync(pendingStartDateChangeResponse);
+		_mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
+
+        if(pendingStartDateChangeResponse != null)
+			_mockApprenticeshipService.Setup(m => m.GetPendingStartDateChange(apprenticeshipKey)).ReturnsAsync(pendingStartDateChangeResponse);
+
 	}
 }
