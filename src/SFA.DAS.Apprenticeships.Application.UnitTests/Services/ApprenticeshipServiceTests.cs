@@ -111,6 +111,23 @@ public class ApprenticeshipServiceTests
 	}
 
 	[Test]
+	public async Task GetApprenticeshipPrice_WhenCalled_AndPriceNotFound_LogsMessageAndReturnsNull()
+	{
+		// Arrange
+		var apprenticeshipHashId = _fixture.Create<string>();
+		var apprenticeshipKey = _fixture.Create<Guid>();
+		MockGetApprenticeshipKey(apprenticeshipHashId, apprenticeshipKey);
+
+		// Act
+		var result = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashId);
+
+		// Assert
+		result.Should().BeNull();
+		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
+
+	}
+
+	[Test]
     public async Task GetPendingPriceChange_WhenCalled_ReturnsPendingPriceChange()
     {
         // Arrange
@@ -128,7 +145,38 @@ public class ApprenticeshipServiceTests
         result.Should().Be(expectedPrice);
     }
 
-    [Test]
+	[Test]
+	public async Task GetPendingPriceChange_WhenCalled_AndKeyNotFound_LogsMessageAndReturnsNull()
+	{
+		// Arrange
+		var apprenticeshipHashId = _fixture.Create<string>();
+
+		// Act
+		var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashId);
+
+		// Assert
+		result.Should().BeNull();
+		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
+	}
+
+	[Test]
+	public async Task GetPendingPriceChange_WhenCalled_AndPendingPriceNotFound_LogsMessageAndReturnsNull()
+	{
+		// Arrange
+		var apprenticeshipHashId = _fixture.Create<string>();
+		var apprenticeshipKey = _fixture.Create<Guid>();
+		MockGetApprenticeshipKey(apprenticeshipHashId, apprenticeshipKey);
+
+		// Act
+		var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashId);
+
+		// Assert
+		result.Should().BeNull();
+		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"PendingPriceChange not found for apprenticeshipKey {apprenticeshipKey}");
+
+	}
+
+	[Test]
     public async Task CancelPendingPriceChange_WhenCalled_DeletesPendingPriceChange()
     {
         // Arrange
@@ -143,20 +191,47 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Verify(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>()), Times.Once);
     }
 
-    [Test]
+	[Test]
+	public void CancelPendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
+	{
+		// Arrange
+		var apprenticeshipKey = _fixture.Create<Guid>();
+		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
+		_apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
+
+		// Act / Assert
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey));
+	}
+
+	[Test]
     public async Task RejectPendingPriceChange_WhenCalled_PatchesPendingPriceChange()
     {
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
+		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "");
+		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
 
-        // Act
-        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
+		// Act
+		await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
 
         // Assert
         _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>()), Times.Once);
     }
 
-    [Test]
+	[Test]
+	public void RejectPendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
+	{
+		// Arrange
+		var apprenticeshipKey = _fixture.Create<Guid>();
+		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
+		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
+
+		// Act / Assert
+		Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
+		
+	}
+
+	[Test]
     public async Task ApprovePendingPriceChange_WhenCalled_PatchesPendingPriceChange()
     {
         // Arrange
@@ -169,7 +244,20 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
     }
 
-    [Test]
+	[Test]
+	public void ApprovePendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
+	{
+		// Arrange
+		var apprenticeshipKey = _fixture.Create<Guid>();
+		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
+		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
+
+		// Act / Assert
+		Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
+
+	}
+
+	[Test]
     public async Task ApprovePendingPriceChange_Provider_WhenCalled_PatchesPendingPriceChange()
     {
         // Arrange
@@ -182,7 +270,20 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
     }
 
-    [Test]
+	[Test]
+	public void ApprovePendingPriceChange_Provider_WhenCalled_AndApiCallFails_ThrowsServiceException()
+	{
+		// Arrange
+		var apprenticeshipKey = _fixture.Create<Guid>();
+		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
+		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
+
+		// Act / Assert
+		Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>(), _fixture.Create<decimal>(), _fixture.Create<decimal>()));
+
+	}
+
+	[Test]
     public async Task GetApprenticeshipStartDate_WhenCalled_ReturnsPendingStartDateChange()
     {
         // Arrange
