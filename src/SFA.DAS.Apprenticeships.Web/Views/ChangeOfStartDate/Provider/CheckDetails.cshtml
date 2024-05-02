@@ -1,13 +1,45 @@
 ﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
 @model ProviderChangeOfStartDateModel
 @{
-	ViewData["Title"] = "Check your changes before sending to the employer - Manage apprenticeships";
-	var editPage = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfPrice/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}";
+    ViewData["Title"] = "Check your changes before sending to the employer - Manage apprenticeships";
+    var editPage = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfStartDate/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}";
 }
 
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">Check your change before sending to the employer</h1>
+        <h2 class="govuk-heading-m">Change you're requesting</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third"/>
+                    <th scope="col" class="govuk-table__header app-custom-class">Current</th>
+                    <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+                    <td class="govuk-table__cell"></td>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Training start date</th>
+                    <td class="govuk-table__cell">@Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("d MMMM yyyy")</td>
+                    <td class="govuk-table__cell">@Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")</td>
+                    <td class="govuk-table__cell"><a href="@editPage">Change</a></td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Reason for change</th>
+                    <td class="govuk-table__cell">@Model.ReasonForChangeOfStartDate</td>
+                    <td class="govuk-table__cell"></td>
+                    <td class="govuk-table__cell"><a href="@editPage">Change</a></td>
+
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m">Now send to the employer for approval</h2>
         <p class="govuk-body">This change will be sent to the employer to approve. The apprentice will then need to confirm their details in their apprenticeship account.</p>
         <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId/submit">
@@ -19,5 +51,5 @@
                 </button>
             </div>
         </form>
-	</div>
+    </div>
 </div>
