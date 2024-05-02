@@ -1,5 +1,6 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -7,7 +8,6 @@ using SFA.DAS.Apprenticeships.Web.Middleware;
 using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.Services;
-using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
@@ -84,6 +84,7 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+            BearerTokenProvider.SetSigningKey(config["UserBearerTokenSigningKey"]);
             Try(() => builder.Services.AddDataProtection(config, builder.Environment), "Setup DataProtection");
 
             //TODO is this the right way to ensure UrlBuilder used in the controller can be built?

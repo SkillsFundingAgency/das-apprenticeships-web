@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart
 {
@@ -15,6 +16,8 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
             services.AddTransient<IMapper<ProviderViewPendingPriceChangeModel>, ProviderViewPendingPriceChangeModelMapper>();
             services.AddTransient<IMapper<ProviderConfirmPriceBreakdownPriceChangeModel>, ProviderConfirmPriceBreakdownPriceChangeModelMapper>();
 
+            services.AddTransient<IMapper<ProviderChangeOfStartDateModel>, ProviderChangeOfStartDateModelMapper>();
+            services.AddTransient<IMapper<EmployerViewPendingStartDateChangeModel>, EmployerViewPendingStartDateChangeModelMapper>();
 
 
 
@@ -28,6 +31,9 @@ namespace SFA.DAS.Apprenticeships.Web.AppStart
                 mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderCancelPriceChangeModel>>()!);
                 mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderViewPendingPriceChangeModel>>()!);
                 mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderConfirmPriceBreakdownPriceChangeModel>>()!);
+
+                mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderChangeOfStartDateModel>>()!);
+                mapperResolver.Register(serviceProvider.GetService<IMapper<EmployerViewPendingStartDateChangeModel>>()!);
                 return mapperResolver;
             });
         }

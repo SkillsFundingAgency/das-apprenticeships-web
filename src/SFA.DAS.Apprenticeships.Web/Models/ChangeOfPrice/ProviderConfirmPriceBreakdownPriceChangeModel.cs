@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using System.Web;
 using SFA.DAS.Apprenticeships.Web.Extensions;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 

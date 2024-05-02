@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.Controllers;
+using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
@@ -14,7 +15,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 
-namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
+namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
 {
     [TestFixture]
     public class ChangeOfPriceEmployerControllerTests
@@ -23,11 +24,11 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         private readonly Mock<ILogger<ChangeOfPriceEmployerController>> _mockLogger;
         private Mock<IApprenticeshipService> _mockApprenticeshipService = null!; // should be initialized in Setup()
         private Mock<IMapper> _mockMapper = null!; // should be initialized in Setup()
-		private Mock<ICacheService> _mockCacheService = null!; // should be initialized in Setup()
+        private Mock<ICacheService> _mockCacheService = null!; // should be initialized in Setup()
         private Mock<IExternalUrlHelper> _mockExternalUrlHelper = null!;
         private string _expectedProviderCommitmentsUrl = null!;
 
-		public ChangeOfPriceEmployerControllerTests()
+        public ChangeOfPriceEmployerControllerTests()
         {
             _fixture = new Fixture();
             _mockLogger = new Mock<ILogger<ChangeOfPriceEmployerController>>();
@@ -38,11 +39,11 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
         {
             _mockApprenticeshipService = new Mock<IApprenticeshipService>();
             _mockMapper = new Mock<IMapper>();
-			_mockCacheService = new Mock<ICacheService>();
+            _mockCacheService = new Mock<ICacheService>();
 
             _mockExternalUrlHelper = new Mock<IExternalUrlHelper>();
             _expectedProviderCommitmentsUrl = _fixture.Create<string>();
-		}
+        }
 
         [Test]
         public async Task GetEmployerInitiatedPage_ReturnsMappedModel()
@@ -67,7 +68,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             _mockCacheService = new Mock<ICacheService>();
             var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
 
-            controller.SetupHttpContext(null, apprenticeshipHashedId,null, employerAccountId);
+            controller.SetupHttpContext(null, apprenticeshipHashedId, null, employerAccountId);
 
             // Act
             var result = await controller.GetEmployerEnterChangeDetails(apprenticeshipHashedId);
@@ -202,8 +203,11 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             result.ShouldBeOfType<NotFoundResult>();
         }
 
-        [Test]
-        public async Task EmployerRejectChange_ApproveFalse_RejectsPriceHistoryAndRedirectsToEmployerCommitments()
+        [TestCase("<h3>test</h3>", "&lt;h3&gt;test&lt;/h3&gt;")]
+        [TestCase("test", "test")]
+        [TestCase(" ", " ")]
+        [TestCase(null, "")]
+        public async Task EmployerRejectChange_ApproveFalse_RejectsPriceHistoryAndRedirectsToEmployerCommitments(string? rejectReason, string? expectedEncodedReason)
         {
             // Arrange
             var employerAccountId = _fixture.Create<string>();
@@ -211,15 +215,14 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
             var apprenticeshipKey = _fixture.Create<Guid>();
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
-            var rejectReason = _fixture.Create<string>();
 
             // Act
             var result = await controller.ApproveOrRejectPriceChangePage(employerAccountId, apprenticeshipHashedId, "0", rejectReason);
 
             // Assert
-            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, rejectReason), Times.Once);
+            _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
-            var redirectResult = ((RedirectResult)result);
+            var redirectResult = (RedirectResult)result;
             redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showPriceChangeRejected=true");
         }
 
@@ -240,7 +243,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers
             // Assert
             _mockApprenticeshipService.Verify(x => x.ApprovePendingPriceChange(apprenticeshipKey, userId), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
-            var redirectResult = ((RedirectResult)result);
+            var redirectResult = (RedirectResult)result;
             redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showPriceChangeApproved=true");
         }
 
