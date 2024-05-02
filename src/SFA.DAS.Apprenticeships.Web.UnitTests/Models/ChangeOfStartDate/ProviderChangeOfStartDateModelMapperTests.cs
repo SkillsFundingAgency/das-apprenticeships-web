@@ -25,7 +25,8 @@ public class ProviderChangeOfStartDateModelMapperTests
             EarliestStartDate = DateTime.Now.AddDays(-10),
             LatestStartDate = DateTime.Now.AddDays(10),
             LastFridayOfSchool = DateTime.Now.AddDays(-5),
-            EmployerName = "Test Employer"
+            EmployerName = "Test Employer",
+            Standard = new StandardInfo()
         };
 
         // Act
