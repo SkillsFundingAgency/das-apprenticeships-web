@@ -25,6 +25,21 @@
 		</tr>
 		break;
 
+	case DetailsRowType.TableTwoColumns:
+		<tr class="govuk-table__row">
+			<th scope="row" class="govuk-table__header">@Label</th>
+			@if (!string.IsNullOrEmpty(OriginalValue))
+			{
+				<td class="govuk-table__cell" id="@GetOriginalValueId()">@OriginalValue</td>
+				<td class="govuk-table__cell" id="@GetNewValueId()">@Value</td>
+			}
+			else
+			{
+				<td class="govuk-table__cell" id="@GetNewValueId()" colspan="2">@Value</td>
+			}
+		</tr>
+		break;
+
     case DetailsRowType.DescriptionList:
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@Label</dt>
@@ -63,6 +78,7 @@
 	public enum DetailsRowType
 	{
 		Table,
+		TableTwoColumns,
 		DescriptionList
 	}
 

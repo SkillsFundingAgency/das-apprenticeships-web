@@ -26,7 +26,7 @@ public class ChangeOfStartDateEmployerController : Controller
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
         UrlBuilder externalEmployerUrlHelper)
-    {
+	{
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
         _mapper = mapper;
@@ -38,7 +38,7 @@ public class ChangeOfStartDateEmployerController : Controller
     [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
     public async Task<IActionResult> ViewPendingChangePage(string employerAccountId, string apprenticeshipHashedId)
     {
-        var response = await GetPendingStartDateChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipHashedId);
         if (response == null)
         {
             return NotFound();
@@ -68,25 +68,6 @@ public class ChangeOfStartDateEmployerController : Controller
     public async Task<IActionResult> ApproveOrRejectStartDateChange(string ApproveChanges, string rejectReason)
     {
         throw new NotImplementedException("To be completed in FLP-488");
-    }
-
-    private async Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashedId)
-    {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}", apprenticeshipHashedId);
-            return null;
-        }
-
-        var pendingStartDateChange = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipKey);
-        if (pendingStartDateChange == null || !pendingStartDateChange.HasPendingStartDateChange)
-        {
-            _logger.LogWarning("Pending start date not found for apprenticeshipKey {apprenticeshipKey}", apprenticeshipKey);
-            return null;
-        }
-
-        return pendingStartDateChange;
     }
 
 }
