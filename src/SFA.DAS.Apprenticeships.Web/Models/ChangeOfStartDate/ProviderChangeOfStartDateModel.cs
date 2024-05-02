@@ -16,6 +16,9 @@ public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICache
     public DateTime? StandardLatestDate { get; set; }
     public DateTime? StandardVersionEarliestDate { get; set; }
     public DateTime? StandardVersionLatestDate { get; set; }
+    public DateTime PreviousAcademicYearEndDate { get; set; }
+    public DateTime PreviousAcademicYearHardCloseDate { get; set; }
+    public DateTime CurrentAcademicYearStartDate { get; set; }
 }
 
 public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStartDateModel>
@@ -43,7 +46,10 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
             StandardEarliestDate = apprenticeshipStartDate.Standard.EffectiveFrom,
             StandardLatestDate = apprenticeshipStartDate.Standard.EffectiveTo,
             StandardVersionEarliestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionEarliestStartDate,
-            StandardVersionLatestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionLatestStartDate
+            StandardVersionLatestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionLatestStartDate,
+            PreviousAcademicYearEndDate = apprenticeshipStartDate.PreviousAcademicYear.EndDate,
+            PreviousAcademicYearHardCloseDate = apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate,
+            CurrentAcademicYearStartDate = apprenticeshipStartDate.CurrentAcademicYear.StartDate
         };
 
         model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
