@@ -1,4 +1,4 @@
-﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
 @model ProviderChangeOfStartDateModel
 @{
     ViewData["Title"] = "Check your changes before sending to the employer - Manage apprenticeships";
@@ -11,36 +11,29 @@
         <h2 class="govuk-heading-m">Change you're requesting</h2>
         <table class="govuk-table">
             <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third"/>
-                <th scope="col" class="govuk-table__header app-custom-class">Current</th>
-                <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
-                <td class="govuk-table__cell"></td>
-            </tr>
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third" />
+                    <th scope="col" class="govuk-table__header app-custom-class">Current</th>
+                    <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+                    <td class="govuk-table__cell"></td>
+                </tr>
             </thead>
             <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">Training start date</th>
-                <td class="govuk-table__cell">@Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("d MMMM yyyy")</td>
-                <td class="govuk-table__cell">
-                        @Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")
-                        @if (Model.PreviousAcademicYearEndDate > Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault() && Model.PreviousAcademicYearHardCloseDate < DateTime.Now)
-                        {
-                            <span style="width:26px; position: relative; float: left; margin:0px 4px 0px 0px">
-                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g><path d="M0 0h24v24H0z" fill="none"></path><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"></path></g></svg>
-                            </span>
-                        }
-                </td>
-                <td class="govuk-table__cell"><a href="@editPage">Change</a></td>
-            </tr>
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">Reason for change</th>
-                <td class="govuk-table__cell">@Model.ReasonForChangeOfStartDate</td>
-                <td class="govuk-table__cell"></td>
-                <td class="govuk-table__cell"><a href="@editPage">Change</a></td>
-
-            </tr>
-
+            <component type="typeof(DetailsRowComponent)"
+                       param-Id='"ApprenticeshipActualStartDate"'
+                       param-Label='"Training start date"'
+                       param-OriginalValue='Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("d MMMM yyyy")'
+                       param-Value='Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")'
+                       param-Url='$"{editPage}"'
+                       param-ShowWarningOnNewValue="Model.PreviousAcademicYearEndDate > Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault() && Model.PreviousAcademicYearHardCloseDate < DateTime.Now"
+                       render-mode="Static"/>
+            <component type="typeof(DetailsRowComponent)"
+                       param-Id='"ReasonForChangeOfStartDate"'
+                       param-Label='"Reason for change"'
+                       param-OriginalValue='Model.ReasonForChangeOfStartDate'
+                       param-Value='""'
+                       param-Url='$"{editPage}"'
+                       render-mode="Static"/>
             </tbody>
         </table>
     </div>
