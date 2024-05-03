@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
@@ -89,7 +88,29 @@ public class ChangeOfStartDateEmployerControllerTests
         redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showStartDateChangeApproved=true");
     }
 
-    private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)
+    [Test]
+    public async Task EmployerRejectChange_RejectsStartDateAndRedirectsToEmployerCommitments()
+    {
+	    // Arrange
+	    var employerAccountId = _fixture.Create<string>();
+	    var apprenticeshipHashedId = _fixture.Create<string>();
+	    var controller = new ChangeOfStartDateEmployerController(_loggerMock.Object, _apprenticeshipServiceMock.Object, _mapperMock.Object, GetUrlBuilder());
+	    var apprenticeshipKey = _fixture.Create<Guid>();
+	    var rejectReason = _fixture.Create<string>();
+	    _apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+	    var userId = _fixture.Create<string>();
+	    controller.SetupHttpContext(null, null, userId);
+	    // Act
+	    var result = await controller.ApproveOrRejectStartDateChange(employerAccountId, apprenticeshipHashedId, "0", rejectReason);
+
+	    // Assert
+	    _apprenticeshipServiceMock.Verify(x => x.RejectPendingStartDateChange(apprenticeshipKey, rejectReason), Times.Once);
+	    result.ShouldBeOfType<RedirectResult>();
+	    var redirectResult = (RedirectResult)result;
+	    redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showStartDateChangeRejected=true");
+    }
+
+	private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)
     {
 		_apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid);
 		_apprenticeshipServiceMock.Setup(x => x.GetPendingStartDateChange(It.IsAny<Guid>())).ReturnsAsync(getPendingStartDateChangeResponse);

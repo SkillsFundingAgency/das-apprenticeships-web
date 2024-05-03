@@ -8,6 +8,7 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Employer.Shared.UI;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
@@ -79,10 +80,11 @@ public class ChangeOfStartDateEmployerController : Controller
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
             return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showStartDateChangeApproved=true");
-        }
+		}
 
-        throw new NotImplementedException("Reject Journey");
-    }
+		await _apprenticeshipService.RejectPendingStartDateChange(apprenticeshipKey, rejectReason);
+		return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showStartDateChangeRejected=true");
+	}
 
     private async Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashedId)
     {
