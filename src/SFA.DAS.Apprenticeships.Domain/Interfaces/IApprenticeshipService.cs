@@ -26,6 +26,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task<ApprenticeshipStartDate?> GetApprenticeshipStartDate(string apprenticeshipHashId);
         Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate);
         Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashId);
+        Task ApprovePendingStartDateChange(Guid apprenticeshipKey, string userId);
 
     }
 }

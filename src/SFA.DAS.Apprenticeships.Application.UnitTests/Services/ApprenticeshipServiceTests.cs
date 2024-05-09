@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Net;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -349,7 +350,40 @@ public class ApprenticeshipServiceTests
             apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate));
     }
 
-    private void MockGetApprenticeshipKey(string apprenticeshipHashId, Guid? apprenticeshipKey = null)
+        [Test]
+        public async Task ApprovePendingStartDateChange_WhenCalled_PatchesRequest()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var userId = _fixture.Create<string>();
+            var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "");
+
+            _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()))
+                .ReturnsAsync(responseData);
+
+            // Act
+            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
+
+            // Assert
+            _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()), Times.Once);
+        }
+
+        [Test]
+        public void ApprovePendingStartDateChange_WhenCalled_ThrowsServiceExceptionOnError()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var userId = _fixture.Create<string>();
+            var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, _fixture.Create<string>());
+
+            _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()))
+                .ReturnsAsync(responseData);
+
+            // Act
+            Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId));
+        }
+	
+            private void MockGetApprenticeshipKey(string apprenticeshipHashId, Guid? apprenticeshipKey = null)
     {
         if(apprenticeshipKey == null)
         {
@@ -358,5 +392,5 @@ public class ApprenticeshipServiceTests
 
 		_apiClientMock.Setup(x => x.Get<Guid>(It.Is<GetApprenticeshipKeyRequest>(r => r.GetUrl == $"Apprenticeship/{apprenticeshipHashId}/key")))
 			.ReturnsAsync(new ApiResponse<Guid>(apprenticeshipKey.Value, System.Net.HttpStatusCode.Accepted, string.Empty));
-	}
+			}
 }
