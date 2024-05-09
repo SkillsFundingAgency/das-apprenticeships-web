@@ -17,6 +17,7 @@ using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
 [Authorize]
+[Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
 public class ChangeOfPriceEmployerController : Controller
 {
     private readonly ILogger<ChangeOfPriceEmployerController> _logger;
@@ -47,7 +48,7 @@ public class ChangeOfPriceEmployerController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
+    [Route("")]
     public async Task<IActionResult> GetEmployerEnterChangeDetails(string apprenticeshipHashedId)
     {
         var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
@@ -63,7 +64,7 @@ public class ChangeOfPriceEmployerController : Controller
     }
 
     [HttpGet]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
+    [Route("edit")]
     public IActionResult GetEmployerEditChangeDetails(EmployerChangeOfPriceModel model)
     {
         return View(EnterChangeDetailsViewName, model);
@@ -71,7 +72,7 @@ public class ChangeOfPriceEmployerController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
+    [Route("")]
     public async Task<IActionResult> EmployerCheckDetails(EmployerChangeOfPriceModel model)
     {
         if (!ModelState.IsValid)
@@ -84,7 +85,7 @@ public class ChangeOfPriceEmployerController : Controller
     }
 
     [HttpPost]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
+    [Route("submit")]
     public async Task<IActionResult> EmployerInitiatedSubmitChange(EmployerChangeOfPriceModel model)
     {
         await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
@@ -95,7 +96,7 @@ public class ChangeOfPriceEmployerController : Controller
 
     [HttpGet]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ViewPendingPriceChangePage(string employerAccountId, string apprenticeshipHashedId)
     {
         var response = await GetPendingPriceChange(apprenticeshipHashedId);
@@ -127,7 +128,7 @@ public class ChangeOfPriceEmployerController : Controller
 
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/cancel")]
+    [Route("cancel")]
     public async Task<IActionResult> CancelPriceChange(string employerAccountId, string apprenticeshipHashedId, string cancelRequest)
     {
         var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
@@ -150,7 +151,7 @@ public class ChangeOfPriceEmployerController : Controller
 
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ApproveOrRejectPriceChangePage(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);

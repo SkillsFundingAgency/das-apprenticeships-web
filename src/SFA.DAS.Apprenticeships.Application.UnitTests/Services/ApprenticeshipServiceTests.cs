@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Net;
+using AutoFixture;
 using FluentAssertions;
 using Moq;
 using SFA.DAS.Apprenticeships.Application.Exceptions;
@@ -194,5 +195,37 @@ namespace SFA.DAS.Apprenticeships.Application.UnitTests.Services
                                apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate));
         }
 
+        [Test]
+        public async Task ApprovePendingStartDateChange_WhenCalled_PatchesRequest()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var userId = _fixture.Create<string>();
+            var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "");
+
+            _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()))
+                .ReturnsAsync(responseData);
+
+            // Act
+            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
+
+            // Assert
+            _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()), Times.Once);
+        }
+
+        [Test]
+        public void ApprovePendingStartDateChange_WhenCalled_ThrowsServiceExceptionOnError()
+        {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            var userId = _fixture.Create<string>();
+            var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, _fixture.Create<string>());
+
+            _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()))
+                .ReturnsAsync(responseData);
+
+            // Act
+            Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId));
+        }
     }
 }
