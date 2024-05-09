@@ -94,7 +94,7 @@ public class ChangeOfStartDateProviderController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ViewPendingChangePage(long ukprn, string apprenticeshipHashedId)
     {
         var response = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipHashedId);
@@ -120,7 +120,7 @@ public class ChangeOfStartDateProviderController : Controller
 
 	[HttpPost]
 	[SetNavigationSection(NavigationSection.ManageApprentices)]
-	[Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/cancel")]
+	[Route("cancel")]
 	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
 	{
 		if (CancelRequest != "1")
