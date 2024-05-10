@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -11,6 +10,7 @@ using SFA.DAS.Employer.Shared.UI;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
+[Authorize]
 [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}")]
 public class ChangeOfStartDateEmployerController : Controller
 {
@@ -25,7 +25,7 @@ public class ChangeOfStartDateEmployerController : Controller
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
         UrlBuilder externalEmployerUrlHelper)
-    {
+	{
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
         _mapper = mapper;
@@ -37,7 +37,7 @@ public class ChangeOfStartDateEmployerController : Controller
     [Route("pending")]
     public async Task<IActionResult> ViewPendingChangePage(string employerAccountId, string apprenticeshipHashedId)
     {
-        var response = await GetPendingStartDateChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipHashedId);
         if (response == null)
         {
             return NotFound();
@@ -81,25 +81,6 @@ public class ChangeOfStartDateEmployerController : Controller
         }
 
         throw new NotImplementedException("Reject Journey");
-    }
-
-    private async Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashedId)
-    {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}", apprenticeshipHashedId);
-            return null;
-        }
-
-        var pendingStartDateChange = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipKey);
-        if (pendingStartDateChange == null || !pendingStartDateChange.HasPendingStartDateChange)
-        {
-            _logger.LogWarning("Pending start date not found for apprenticeshipKey {apprenticeshipKey}", apprenticeshipKey);
-            return null;
-        }
-
-        return pendingStartDateChange;
     }
 
 }

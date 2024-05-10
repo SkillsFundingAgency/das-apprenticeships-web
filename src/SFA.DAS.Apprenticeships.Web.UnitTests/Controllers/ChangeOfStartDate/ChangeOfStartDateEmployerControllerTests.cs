@@ -132,8 +132,7 @@ public class ChangeOfStartDateEmployerControllerTests
 
     private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)
     {
-		_apprenticeshipServiceMock.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid);
-		_apprenticeshipServiceMock.Setup(x => x.GetPendingStartDateChange(It.IsAny<Guid>())).ReturnsAsync(getPendingStartDateChangeResponse);
+		_apprenticeshipServiceMock.Setup(x => x.GetPendingStartDateChange(It.IsAny<string>())).ReturnsAsync(getPendingStartDateChangeResponse);
 	}
 
     private static UrlBuilder GetUrlBuilder()
