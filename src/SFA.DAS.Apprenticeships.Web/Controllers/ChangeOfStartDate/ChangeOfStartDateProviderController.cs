@@ -5,7 +5,6 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
-using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Provider.Shared.UI;
@@ -62,7 +61,7 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpGet]
-    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/edit")]
+    [Route("edit")]
     public IActionResult GetProviderEditChangeDetails(ProviderChangeOfStartDateModel model)
     {
         return View(EnterChangeDetailsViewName, model);
