@@ -81,6 +81,15 @@ public class ApprenticeshipService : IApprenticeshipService
         }
     }
 
+    public async Task ApprovePendingStartDateChange(Guid apprenticeshipKey, string userId)
+    {
+        var response = await _apiClient.Patch<object>(new ApprovePendingStartDateChangeRequest(apprenticeshipKey, new ApprovePendingStartDateChangeData() { UserId = userId }));
+        if (!string.IsNullOrEmpty(response?.ErrorContent))
+        {
+            throw new ServiceException(response.ErrorContent);
+        }
+    }
+
     public async Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason)
     {
         var response = await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));

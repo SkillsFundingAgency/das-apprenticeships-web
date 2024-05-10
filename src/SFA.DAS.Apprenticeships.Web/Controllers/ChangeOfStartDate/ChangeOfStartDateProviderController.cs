@@ -17,6 +17,7 @@ using System.Web;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
 [Authorize]
+[Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
 public class ChangeOfStartDateProviderController : Controller
 {
     private readonly ILogger<ChangeOfStartDateProviderController> _logger;
@@ -45,7 +46,7 @@ public class ChangeOfStartDateProviderController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
+    [Route("")]
     public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
     {
         var apprenticeshipStartDate = await _apprenticeshipService.GetApprenticeshipStartDate(apprenticeshipHashedId);
@@ -69,7 +70,7 @@ public class ChangeOfStartDateProviderController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
+    [Route("")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfStartDateModel model)
     {
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
@@ -85,7 +86,7 @@ public class ChangeOfStartDateProviderController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/submit")]
+    [Route("submit")]
     public async Task<IActionResult> ProviderSubmitChangeDetails(ProviderChangeOfStartDateModel model)
     {
         await _apprenticeshipService.CreateStartDateChange(model.ApprenticeshipKey, "Provider", HttpContext.User.Identity?.Name!, HttpUtility.HtmlEncode(model.ReasonForChangeOfStartDate), model.ApprenticeshipActualStartDate!.Date.GetValueOrDefault());
@@ -101,7 +102,7 @@ public class ChangeOfStartDateProviderController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ViewPendingChangePage(long ukprn, string apprenticeshipHashedId)
     {
         var response = await _apprenticeshipService.GetPendingStartDateChange(apprenticeshipHashedId);
@@ -127,7 +128,7 @@ public class ChangeOfStartDateProviderController : Controller
 
 	[HttpPost]
 	[SetNavigationSection(NavigationSection.ManageApprentices)]
-	[Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}/cancel")]
+	[Route("cancel")]
 	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
 	{
 		if (CancelRequest != "1")

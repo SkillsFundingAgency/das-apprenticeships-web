@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Net;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,12 +20,7 @@ public class ApprenticeshipServiceTests
     private Mock<IApiClient> _apiClientMock;
     private Mock<ILogger<ApprenticeshipService>> _mockLogger;
     private ApprenticeshipService _apprenticeshipService;
-    private Fixture _fixture;
-
-    public ApprenticeshipServiceTests()
-    {
-        _fixture = new Fixture();
-    }
+    private readonly Fixture _fixture = new();
 
     [SetUp]
     public void SetUp()
@@ -40,7 +36,7 @@ public class ApprenticeshipServiceTests
         // Arrange
         var apprenticeshipHashId = "hashId";
         var expectedKey = _fixture.Create<Guid>();
-        var response = new ApiResponse<Guid>(expectedKey, System.Net.HttpStatusCode.Accepted, string.Empty);
+        var response = new ApiResponse<Guid>(expectedKey, HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<Guid>(It.IsAny<GetApprenticeshipKeyRequest>())).ReturnsAsync(response);
 
         // Act
@@ -50,23 +46,23 @@ public class ApprenticeshipServiceTests
         result.Should().Be(expectedKey);
     }
 
-	[Test]
-	public async Task GetApprenticeshipKey_WhenCalled_AndEmptyHashIdSend_LogsMessageAndReturnsEmptyGuid()
-	{
-		// Act
-		var result = await _apprenticeshipService.GetApprenticeshipKey(string.Empty);
+    [Test]
+    public async Task GetApprenticeshipKey_WhenCalled_AndEmptyHashIdSend_LogsMessageAndReturnsEmptyGuid()
+    {
+        // Act
+        var result = await _apprenticeshipService.GetApprenticeshipKey(string.Empty);
 
-		// Assert
-		result.Should().BeEmpty();
-		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, "Cannot get apprenticeshipKey when apprenticeshipHashId is null or empty");
-	}
+        // Assert
+        result.Should().BeEmpty();
+        _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, "Cannot get apprenticeshipKey when apprenticeshipHashId is null or empty");
+    }
 
-	[Test]
+    [Test]
     public async Task GetApprenticeshipKey_WhenCalled_AndNoKeyExists_LogsMessageAndReturnsEmptyGuid()
     {
         // Arrange
         var apprenticeshipHashId = "hashId";
-        var response = new ApiResponse<Guid>(Guid.Empty, System.Net.HttpStatusCode.Accepted, string.Empty);
+        var response = new ApiResponse<Guid>(Guid.Empty, HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<Guid>(It.IsAny<GetApprenticeshipKeyRequest>())).ReturnsAsync(response);
 
         // Act
@@ -85,7 +81,7 @@ public class ApprenticeshipServiceTests
         MockGetApprenticeshipKey(apprenticeshipHashId);
 
         var expectedPrice = _fixture.Create<ApprenticeshipPrice>();
-        var response = new ApiResponse<ApprenticeshipPrice>(expectedPrice, System.Net.HttpStatusCode.Accepted, string.Empty);
+        var response = new ApiResponse<ApprenticeshipPrice>(expectedPrice, HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<ApprenticeshipPrice>(It.IsAny<GetApprenticeshipPriceRequest>())).ReturnsAsync(response);
 
         // Act
@@ -95,39 +91,39 @@ public class ApprenticeshipServiceTests
         result.Should().Be(expectedPrice);
     }
 
-	[Test]
-	public async Task GetApprenticeshipPrice_WhenCalled_AndKeyNotFound_LogsMessageAndReturnsNull()
-	{
-		// Arrange
-		var apprenticeshipHashId = _fixture.Create<string>();
+    [Test]
+    public async Task GetApprenticeshipPrice_WhenCalled_AndKeyNotFound_LogsMessageAndReturnsNull()
+    {
+        // Arrange
+        var apprenticeshipHashId = _fixture.Create<string>();
 
-		// Act
-		var result = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashId);
+        // Act
+        var result = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashId);
 
-		// Assert
-		result.Should().BeNull();
-		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
+        // Assert
+        result.Should().BeNull();
+        _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
 
-	}
+    }
 
-	[Test]
-	public async Task GetApprenticeshipPrice_WhenCalled_AndPriceNotFound_LogsMessageAndReturnsNull()
-	{
-		// Arrange
-		var apprenticeshipHashId = _fixture.Create<string>();
-		var apprenticeshipKey = _fixture.Create<Guid>();
-		MockGetApprenticeshipKey(apprenticeshipHashId, apprenticeshipKey);
+    [Test]
+    public async Task GetApprenticeshipPrice_WhenCalled_AndPriceNotFound_LogsMessageAndReturnsNull()
+    {
+        // Arrange
+        var apprenticeshipHashId = _fixture.Create<string>();
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        MockGetApprenticeshipKey(apprenticeshipHashId, apprenticeshipKey);
 
-		// Act
-		var result = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashId);
+        // Act
+        var result = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashId);
 
-		// Assert
-		result.Should().BeNull();
-		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
+        // Assert
+        result.Should().BeNull();
+        _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
 
-	}
+    }
 
-	[Test]
+    [Test]
     public async Task GetPendingPriceChange_WhenCalled_ReturnsPendingPriceChange()
     {
         // Arrange
@@ -135,7 +131,7 @@ public class ApprenticeshipServiceTests
         MockGetApprenticeshipKey(apprenticeshipHashId);
 
         var expectedPrice = _fixture.Create<GetPendingPriceChangeResponse>();
-        var response = new ApiResponse<GetPendingPriceChangeResponse>(expectedPrice, System.Net.HttpStatusCode.Accepted, string.Empty);
+        var response = new ApiResponse<GetPendingPriceChangeResponse>(expectedPrice, HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<GetPendingPriceChangeResponse>(It.IsAny<GetPendingPriceChangeRequest>())).ReturnsAsync(response);
 
         // Act
@@ -145,43 +141,43 @@ public class ApprenticeshipServiceTests
         result.Should().Be(expectedPrice);
     }
 
-	[Test]
-	public async Task GetPendingPriceChange_WhenCalled_AndKeyNotFound_LogsMessageAndReturnsNull()
-	{
-		// Arrange
-		var apprenticeshipHashId = _fixture.Create<string>();
+    [Test]
+    public async Task GetPendingPriceChange_WhenCalled_AndKeyNotFound_LogsMessageAndReturnsNull()
+    {
+        // Arrange
+        var apprenticeshipHashId = _fixture.Create<string>();
 
-		// Act
-		var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashId);
+        // Act
+        var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashId);
 
-		// Assert
-		result.Should().BeNull();
-		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
-	}
+        // Assert
+        result.Should().BeNull();
+        _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"ApprenticeshipKey not found for apprenticeshipHashId {apprenticeshipHashId}");
+    }
 
-	[Test]
-	public async Task GetPendingPriceChange_WhenCalled_AndPendingPriceNotFound_LogsMessageAndReturnsNull()
-	{
-		// Arrange
-		var apprenticeshipHashId = _fixture.Create<string>();
-		var apprenticeshipKey = _fixture.Create<Guid>();
-		MockGetApprenticeshipKey(apprenticeshipHashId, apprenticeshipKey);
+    [Test]
+    public async Task GetPendingPriceChange_WhenCalled_AndPendingPriceNotFound_LogsMessageAndReturnsNull()
+    {
+        // Arrange
+        var apprenticeshipHashId = _fixture.Create<string>();
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        MockGetApprenticeshipKey(apprenticeshipHashId, apprenticeshipKey);
 
-		// Act
-		var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashId);
+        // Act
+        var result = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashId);
 
-		// Assert
-		result.Should().BeNull();
-		_mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"PendingPriceChange not found for apprenticeshipKey {apprenticeshipKey}");
+        // Assert
+        result.Should().BeNull();
+        _mockLogger.ShouldHaveLoggedMessage(LogLevel.Warning, $"PendingPriceChange not found for apprenticeshipKey {apprenticeshipKey}");
 
-	}
+    }
 
-	[Test]
+    [Test]
     public async Task CancelPendingPriceChange_WhenCalled_DeletesPendingPriceChange()
     {
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "");
+        var response = new ApiResponse<object>(_fixture.Create<string>(), HttpStatusCode.OK, "");
         _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
 
         // Act
@@ -191,47 +187,47 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Verify(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>()), Times.Once);
     }
 
-	[Test]
-	public void CancelPendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
-	{
-		// Arrange
-		var apprenticeshipKey = _fixture.Create<Guid>();
-		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
-		_apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
+    [Test]
+    public void CancelPendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var response = new ApiResponse<object>(_fixture.Create<string>(), HttpStatusCode.OK, "Error");
+        _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
 
-		// Act / Assert
+        // Act / Assert
         Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey));
-	}
+    }
 
-	[Test]
+    [Test]
     public async Task RejectPendingPriceChange_WhenCalled_PatchesPendingPriceChange()
     {
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
-		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "");
-		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
+        var response = new ApiResponse<object>(_fixture.Create<string>(), HttpStatusCode.OK, "");
+        _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
 
-		// Act
-		await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
+        // Act
+        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>());
 
         // Assert
         _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>()), Times.Once);
     }
 
-	[Test]
-	public void RejectPendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
-	{
-		// Arrange
-		var apprenticeshipKey = _fixture.Create<Guid>();
-		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
-		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
+    [Test]
+    public void RejectPendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var response = new ApiResponse<object>(_fixture.Create<string>(), HttpStatusCode.OK, "Error");
+        _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
 
-		// Act / Assert
-		Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
-		
-	}
+        // Act / Assert
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
 
-	[Test]
+    }
+
+    [Test]
     public async Task ApprovePendingPriceChange_WhenCalled_PatchesPendingPriceChange()
     {
         // Arrange
@@ -244,20 +240,20 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
     }
 
-	[Test]
-	public void ApprovePendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
-	{
-		// Arrange
-		var apprenticeshipKey = _fixture.Create<Guid>();
-		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
-		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
+    [Test]
+    public void ApprovePendingPriceChange_WhenCalled_AndApiCallFails_ThrowsServiceException()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var response = new ApiResponse<object>(_fixture.Create<string>(), HttpStatusCode.OK, "Error");
+        _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
 
-		// Act / Assert
-		Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
+        // Act / Assert
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
 
-	}
+    }
 
-	[Test]
+    [Test]
     public async Task ApprovePendingPriceChange_Provider_WhenCalled_PatchesPendingPriceChange()
     {
         // Arrange
@@ -270,20 +266,20 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>()), Times.Once);
     }
 
-	[Test]
-	public void ApprovePendingPriceChange_Provider_WhenCalled_AndApiCallFails_ThrowsServiceException()
-	{
-		// Arrange
-		var apprenticeshipKey = _fixture.Create<Guid>();
-		var response = new ApiResponse<object>(_fixture.Create<string>(), System.Net.HttpStatusCode.OK, "Error");
-		_apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
+    [Test]
+    public void ApprovePendingPriceChange_Provider_WhenCalled_AndApiCallFails_ThrowsServiceException()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var response = new ApiResponse<object>(_fixture.Create<string>(), HttpStatusCode.OK, "Error");
+        _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
 
-		// Act / Assert
-		Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>(), _fixture.Create<decimal>(), _fixture.Create<decimal>()));
+        // Act / Assert
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>(), _fixture.Create<decimal>(), _fixture.Create<decimal>()));
 
-	}
+    }
 
-	[Test]
+    [Test]
     public async Task GetApprenticeshipStartDate_WhenCalled_ReturnsPendingStartDateChange()
     {
         // Arrange
@@ -292,7 +288,7 @@ public class ApprenticeshipServiceTests
         MockGetApprenticeshipKey(apprenticeshipHashId);
 
         var expectedStartDate = _fixture.Create<ApprenticeshipStartDate>();
-        var response = new ApiResponse<ApprenticeshipStartDate>(expectedStartDate, System.Net.HttpStatusCode.Accepted, string.Empty);
+        var response = new ApiResponse<ApprenticeshipStartDate>(expectedStartDate, HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<ApprenticeshipStartDate>(It.IsAny<GetApprenticeshipStartDateRequest>())).ReturnsAsync(response);
 
         // Act
@@ -311,7 +307,7 @@ public class ApprenticeshipServiceTests
 
         var expectedStartDate = _fixture.Create<GetPendingStartDateChangeResponse>();
         expectedStartDate.HasPendingStartDateChange = true;
-        var response = new ApiResponse<GetPendingStartDateChangeResponse>(expectedStartDate, System.Net.HttpStatusCode.Accepted, string.Empty);
+        var response = new ApiResponse<GetPendingStartDateChangeResponse>(expectedStartDate, HttpStatusCode.Accepted, string.Empty);
         _apiClientMock.Setup(x => x.Get<GetPendingStartDateChangeResponse>(It.IsAny<GetPendingStartDateChangeRequest>())).ReturnsAsync(response);
 
         // Act
@@ -327,7 +323,7 @@ public class ApprenticeshipServiceTests
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
         var data = _fixture.Create<CreateChangeOfStartDateData>();
-        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, System.Net.HttpStatusCode.OK, ""));
+        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, HttpStatusCode.OK, ""));
 
         // Act
         await _apprenticeshipService.CreateStartDateChange(apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate);
@@ -342,21 +338,54 @@ public class ApprenticeshipServiceTests
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
         var data = _fixture.Create<CreateChangeOfStartDateData>();
-        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, System.Net.HttpStatusCode.OK, "Error"));
+        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "Error"));
 
         // Act / Assert
         Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CreateStartDateChange(
             apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate));
     }
 
+    [Test]
+    public async Task ApprovePendingStartDateChange_WhenCalled_PatchesRequest()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var userId = _fixture.Create<string>();
+        var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "");
+
+        _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()))
+            .ReturnsAsync(responseData);
+
+        // Act
+        await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
+
+        // Assert
+        _apiClientMock.Verify(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()), Times.Once);
+    }
+
+    [Test]
+    public void ApprovePendingStartDateChange_WhenCalled_ThrowsServiceExceptionOnError()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var userId = _fixture.Create<string>();
+        var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, _fixture.Create<string>());
+
+        _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingStartDateChangeRequest>()))
+            .ReturnsAsync(responseData);
+
+        // Act
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId));
+    }
+
     private void MockGetApprenticeshipKey(string apprenticeshipHashId, Guid? apprenticeshipKey = null)
     {
-        if(apprenticeshipKey == null)
+        if (apprenticeshipKey == null)
         {
             apprenticeshipKey = Guid.NewGuid();
         }
 
-		_apiClientMock.Setup(x => x.Get<Guid>(It.Is<GetApprenticeshipKeyRequest>(r => r.GetUrl == $"Apprenticeship/{apprenticeshipHashId}/key")))
-			.ReturnsAsync(new ApiResponse<Guid>(apprenticeshipKey.Value, System.Net.HttpStatusCode.Accepted, string.Empty));
-	}
+        _apiClientMock.Setup(x => x.Get<Guid>(It.Is<GetApprenticeshipKeyRequest>(r => r.GetUrl == $"Apprenticeship/{apprenticeshipHashId}/key")))
+            .ReturnsAsync(new ApiResponse<Guid>(apprenticeshipKey.Value, HttpStatusCode.Accepted, string.Empty));
+    }
 }
