@@ -85,30 +85,7 @@
 				<form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
 					@Html.AntiForgeryToken()
 					@Html.HiddenFor(m => m.ApprenticeshipKey)
-					<fieldset class="govuk-fieldset">
-
-						<div class="govuk-form-group">
-							<fieldset class="govuk-fieldset">
-								<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-									Do you want to cancel this request?
-								</legend>
-
-								<div class="govuk-radios" data-module="govuk-radios">
-									<div class="govuk-radios__item">
-										<input class="govuk-radios__input" type="radio" id="option-yes" name="CancelRequest" value="1">
-										<label class="govuk-label govuk-radios__label" for="option-yes">Yes, cancel the request</label>
-									</div>
-									<div class="govuk-radios__item" id="radio-item-no">
-										<input class="govuk-radios__input" type="radio" id="option-no" name="CancelRequest" value="0">
-										<label class="govuk-label govuk-radios__label" for="option-no">No, keep the request</label>
-									</div>
-								</div>
-							</fieldset>
-						</div>
-						<button class="govuk-button" type="submit" data-module="govuk-button" id="buttonSubmitForm">
-							Continue
-						</button>
-					</fieldset>
+					@await Html.PartialAsync("_CancelOrKeep")
 				</form>
 			</div>
 		</div>

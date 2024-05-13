@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
@@ -13,12 +12,12 @@ using System.Web;
 using SFA.DAS.Apprenticeships.Web.Helpers;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using SFA.DAS.Apprenticeships.Web.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
 [Authorize]
+[Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
 public class ChangeOfPriceProviderController : Controller
 {
     private readonly ILogger<ChangeOfPriceProviderController> _logger;
@@ -49,10 +48,10 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
+    [Route("")]
     public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
     {
-        var apprenticeshipPrice = await GetApprenticeshipPrice(apprenticeshipHashedId);
+        var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipHashedId);
         if (apprenticeshipPrice == null)
         {
             return NotFound();
@@ -65,7 +64,7 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpGet]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/edit")]
+    [Route("edit")]
     public IActionResult GetProviderEditChangeDetails(ProviderChangeOfPriceModel model)
     {
         return View(ProviderEnterChangeDetailsViewName, model);
@@ -73,7 +72,7 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
+    [Route("")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfPriceModel model)
     {
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
@@ -87,7 +86,7 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpPost]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/submit")]
+    [Route("submit")]
     public async Task<IActionResult> ProviderInitiatedSubmitChange(ProviderChangeOfPriceModel model)
     {
         var priceChangeStatus = await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Provider", HttpContext.User.Identity?.Name!, model.ApprenticeshipTrainingPrice, model.ApprenticeshipEndPointAssessmentPrice, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
@@ -109,10 +108,10 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
     {
-        var response = await GetPendingPriceChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashedId);
         if (response == null || !response.HasPendingPriceChange)
         {
             return NotFound();
@@ -137,7 +136,7 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/pending")]
+    [Route("pending")]
     public async Task<IActionResult> ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges, string rejectReason = "")
     {
         if (ApproveChanges == "1")
@@ -152,10 +151,10 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/approve")]
+    [Route("approve")]
     public async Task<IActionResult> ConfirmPriceBreakdown(long ukprn, string apprenticeshipHashedId)
     {
-        var response = await GetPendingPriceChange(apprenticeshipHashedId);
+        var response = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashedId);
 
         var confirmPriceBreakdownPriceChangeModel = _mapper.Map<ProviderConfirmPriceBreakdownPriceChangeModel>(response);
 
@@ -164,7 +163,7 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/approve")]
+    [Route("approve")]
     public async Task<IActionResult> ConfirmApprovePendingPriceChange(ProviderConfirmPriceBreakdownPriceChangeModel model, long ukprn, string apprenticeshipHashedId)
     {
         if (!ModelState.IsValid)
@@ -180,7 +179,7 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}/cancel")]
+    [Route("cancel")]
     public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
     {
         if (CancelRequest != "1")
@@ -197,43 +196,5 @@ public class ChangeOfPriceProviderController : Controller
 
         await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
         return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeCancelled=true" }));
-    }
-
-    private async Task<ApprenticeshipPrice?> GetApprenticeshipPrice(string apprenticeshipHashedId)
-    {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return null;
-        }
-
-        var apprenticeshipPrice = await _apprenticeshipService.GetApprenticeshipPrice(apprenticeshipKey);
-        if (apprenticeshipPrice == null || apprenticeshipPrice.ApprenticeshipKey != apprenticeshipKey)
-        {
-            _logger.LogWarning($"ApprenticeshipPrice not found for apprenticeshipKey {apprenticeshipKey}");
-            return null;
-        }
-
-        return apprenticeshipPrice;
-    }
-
-    private async Task<GetPendingPriceChangeResponse?> GetPendingPriceChange(string apprenticeshipHashedId)
-    {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return null;
-        }
-
-        var pendingPriceChange = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipKey);
-        if (pendingPriceChange == null || !pendingPriceChange.HasPendingPriceChange)
-        {
-            _logger.LogWarning($"Pending Apprenticeship Price not found for apprenticeshipKey {apprenticeshipKey}");
-            return null;
-        }
-
-        return pendingPriceChange;
     }
 }
