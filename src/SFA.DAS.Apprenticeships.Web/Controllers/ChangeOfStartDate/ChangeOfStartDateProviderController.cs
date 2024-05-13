@@ -60,6 +60,13 @@ public class ChangeOfStartDateProviderController : Controller
         return View(EnterChangeDetailsViewName, model);
     }
 
+    [HttpGet]
+    [Route("edit")]
+    public IActionResult GetProviderEditChangeDetails(ProviderChangeOfStartDateModel model)
+    {
+        return View(EnterChangeDetailsViewName, model);
+    }
+
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]

@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿using AutoFixture;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models.ChangeOfStartDate;
@@ -7,11 +8,13 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models.ChangeOfStartDate;
 public class ProviderChangeOfStartDateModelMapperTests
 {
     private ProviderChangeOfStartDateModelMapper _mapper;
+    private Fixture _fixture;
 
     [SetUp]
     public void SetUp()
     {
         _mapper = new ProviderChangeOfStartDateModelMapper();
+        _fixture = new Fixture();
     }
 
     [Test]
@@ -26,7 +29,9 @@ public class ProviderChangeOfStartDateModelMapperTests
             LatestStartDate = DateTime.Now.AddDays(10),
             LastFridayOfSchool = DateTime.Now.AddDays(-5),
             EmployerName = "Test Employer",
-            Standard = new StandardInfo()
+            Standard = _fixture.Create<StandardInfo>(),
+            CurrentAcademicYear = _fixture.Create<AcademicYearDetails>(),
+            PreviousAcademicYear = _fixture.Create<AcademicYearDetails>()
         };
 
         // Act
@@ -40,6 +45,9 @@ public class ProviderChangeOfStartDateModelMapperTests
         Assert.That(result.LastFridayOfSchool, Is.EqualTo(apprenticeshipStartDate.LastFridayOfSchool));
         Assert.That(result.ApprovingPartyName, Is.EqualTo(apprenticeshipStartDate.EmployerName));
         Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.ActualStartDate.Value.Date));
+        Assert.That(result.PreviousAcademicYearEndDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.EndDate));
+        Assert.That(result.PreviousAcademicYearHardCloseDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate));
+        Assert.That(result.CurrentAcademicYearStartDate, Is.EqualTo(apprenticeshipStartDate.CurrentAcademicYear.StartDate));
     }
 
     [Test]

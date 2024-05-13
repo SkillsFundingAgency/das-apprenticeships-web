@@ -6,8 +6,10 @@ using Moq;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
@@ -191,6 +193,25 @@ public class ChangeOfStartDateProviderControllerTests
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
         Assert.That(viewResult.ViewName, Is.EqualTo(ChangeOfStartDateProviderController.ProviderCancelPendingChangeViewName));
+    }
+
+    [Test]
+    public void GetProviderInitiatedEditPage_ReturnsProviderInitiatedViewName()
+    {
+        // Arrange
+        var hashId = "hashId";
+        var ukprn = _fixture.Create<long>();
+        var controller = GetSubjectUnderTest();
+        controller.SetupHttpContext(ukprn, hashId);
+
+        var createChangeOfStartDateModel = _fixture.Create<ProviderChangeOfStartDateModel>();
+
+        // Act
+        var result = controller.GetProviderEditChangeDetails(createChangeOfStartDateModel);
+
+        // Assert
+        var viewResult = result.ShouldBeOfType<ViewResult>();
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
     }
 
     private ChangeOfStartDateProviderController GetSubjectUnderTest()
