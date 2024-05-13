@@ -8,7 +8,11 @@
 {
 	case DetailsRowType.Table:
 		<tr class="govuk-table__row">
-			<th scope="row" class="govuk-table__header">@Label</th>
+            <th scope="row" class="govuk-table__header">@Label</th>
+            @if (!string.IsNullOrEmpty(OriginalValue))
+            {
+                <td class="govuk-table__cell" id="@GetOriginalValueId()">@OriginalValue</td>
+            }
             <td class="govuk-table__cell" id="@GetNewValueId()" colspan="2">@Value</td>
 			<td class="govuk-table__cell" style="text-align: right;">
 				@if (!string.IsNullOrEmpty(Url))
