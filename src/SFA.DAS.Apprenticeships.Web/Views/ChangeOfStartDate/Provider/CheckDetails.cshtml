@@ -25,7 +25,6 @@
                        param-OriginalValue='Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("d MMMM yyyy")'
                        param-Value='Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")'
                        param-Url='$"{editPage}"'
-                       param-ShowWarningOnNewValue="Model.PreviousAcademicYearEndDate > Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault() && Model.PreviousAcademicYearHardCloseDate < DateTime.Now"
                        render-mode="Static"/>
             <component type="typeof(DetailsRowComponent)"
                        param-Id='"ReasonForChangeOfStartDate"'
@@ -38,17 +37,6 @@
         </table>
     </div>
 </div>
-
-@if (Model.PreviousAcademicYearEndDate > Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault() && Model.PreviousAcademicYearHardCloseDate < DateTime.Now)
-{
-    <div class="govuk-warning-text">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-            <span class="govuk-visually-hidden">Warning</span>
-            You will not receive funding for apprenticeship activity before @Model.CurrentAcademicYearStartDate.ToString("d MMMM yyyy")
-        </strong>
-    </div>
-}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
