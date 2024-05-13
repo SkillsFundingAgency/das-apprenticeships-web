@@ -24,7 +24,7 @@
                        param-Label='"Training start date"'
                        param-OriginalValue='Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("d MMMM yyyy")'
                        param-Value='Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")'
-                       param-Url='$"{editPage}"'
+                       param-Url='$"{editPage}&view=startDate#{nameof(Model.ApprenticeshipActualStartDate)}"'
                        param-ShowWarningOnNewValue="Model.PreviousAcademicYearEndDate > Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault() && Model.PreviousAcademicYearHardCloseDate < DateTime.Now"
                        render-mode="Static"/>
             <component type="typeof(DetailsRowComponent)"
@@ -32,7 +32,7 @@
                        param-Label='"Reason for change"'
                        param-OriginalValue='Model.ReasonForChangeOfStartDate'
                        param-Value='""'
-                       param-Url='$"{editPage}"'
+                       param-Url='$"{editPage}#{nameof(Model.ReasonForChangeOfStartDate)}"'
                        render-mode="Static"/>
             </tbody>
         </table>

@@ -25,8 +25,9 @@ public class ChangeOfStartDateProviderController : Controller
     private readonly ICacheService _cache;
     private readonly IExternalUrlHelper _externalProviderUrlHelper;
 
-    public const string EnterChangeDetailsViewName = "~/Views/ChangeOfStartDate/Provider/EnterChangeDetails.cshtml";
-    public const string CheckDetailsViewName = "~/Views/ChangeOfStartDate/Provider/CheckDetails.cshtml";
+    public const string EnterNewStartDateViewName = "~/Views/ChangeOfStartDate/Provider/EnterNewStartDate.cshtml";
+	public const string EnterNewEndDateViewName = "~/Views/ChangeOfStartDate/Provider/EnterNewEndDate.cshtml";
+	public const string CheckDetailsViewName = "~/Views/ChangeOfStartDate/Provider/CheckDetails.cshtml";
     public const string ProviderCancelPendingChangeViewName = "~/Views/ChangeOfStartDate/Provider/CancelPendingChange.cshtml";
 
     public ChangeOfStartDateProviderController(
@@ -46,7 +47,7 @@ public class ChangeOfStartDateProviderController : Controller
     [HttpGet]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
-    public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
+    public async Task<IActionResult> GetEnterStartDatePage(string apprenticeshipHashedId)
     {
         var apprenticeshipStartDate = await _apprenticeshipService.GetApprenticeshipStartDate(apprenticeshipHashedId);
         if (apprenticeshipStartDate == null)
@@ -57,26 +58,56 @@ public class ChangeOfStartDateProviderController : Controller
         var model = _mapper.Map<ProviderChangeOfStartDateModel>(apprenticeshipStartDate);
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
         await _cache.SetCacheModelAsync(model);
-        return View(EnterChangeDetailsViewName, model);
+        return View(EnterNewStartDateViewName, model);
     }
 
-    [HttpGet]
+
+	[HttpPost]
+	[SetNavigationSection(NavigationSection.ManageApprentices)]
+	[Route("")]
+	public async Task<IActionResult> SubmitStartDate(ProviderChangeOfStartDateModel model)
+	{
+        RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
+
+        if (!ModelState.IsValid)
+        {
+            return View(EnterNewStartDateViewName, model);
+        }
+
+        await _cache.SetCacheModelAsync(model);
+        var plannedEndDateModel = _mapper.Map<ProviderPlannedEndDateModel>(model);
+        return View(EnterNewEndDateViewName, plannedEndDateModel);
+    }
+
+	[HttpGet]
     [Route("edit")]
     public IActionResult GetProviderEditChangeDetails(ProviderChangeOfStartDateModel model)
     {
-        return View(EnterChangeDetailsViewName, model);
+        var view = HttpContext.Request.Query["view"].ToString();
+
+        switch(view)
+        {
+            case "startDate":
+                return View(EnterNewStartDateViewName, model);
+            case "endDate":
+                return View(EnterNewEndDateViewName, model);
+
+        }
+
+        _logger.LogError("Invalid view {view} requested for edit", view);
+        return NotFound();
     }
 
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("")]
+    [Route("checkDetails")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfStartDateModel model)
     {
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
 
         if (!ModelState.IsValid)
         {
-            return View(EnterChangeDetailsViewName, model);
+            return View(EnterNewStartDateViewName, model);
         }
 
         await _cache.SetCacheModelAsync(model);
@@ -144,4 +175,5 @@ public class ChangeOfStartDateProviderController : Controller
 
 		throw new NotImplementedException("To be completed in FLP-486");
 	}
+
 }

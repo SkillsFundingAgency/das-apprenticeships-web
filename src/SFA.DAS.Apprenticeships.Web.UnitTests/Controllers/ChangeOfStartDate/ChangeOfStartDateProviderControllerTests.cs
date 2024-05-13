@@ -57,11 +57,11 @@ public class ChangeOfStartDateProviderControllerTests
         controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
 
         // Act
-        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        var result = await controller.GetEnterStartDatePage(apprenticeshipHashedId);
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewStartDateViewName);
         viewResult.Model.Should().BeEquivalentTo(expectedModel);
     }
 
@@ -75,7 +75,7 @@ public class ChangeOfStartDateProviderControllerTests
             .ReturnsAsync(Guid.Empty);
 
         // Act
-        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        var result = await controller.GetEnterStartDatePage(apprenticeshipHashedId);
 
         // Assert
         result.ShouldBeOfType<NotFoundResult>();
@@ -91,7 +91,7 @@ public class ChangeOfStartDateProviderControllerTests
         SetupGetStartDate(apprenticeshipHashedId, null);
 
         // Act
-        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        var result = await controller.GetEnterStartDatePage(apprenticeshipHashedId);
 
         // Assert
         result.ShouldBeOfType<NotFoundResult>();
@@ -134,7 +134,7 @@ public class ChangeOfStartDateProviderControllerTests
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewStartDateViewName);
         viewResult.Model.Should().BeEquivalentTo(model);
     }
 
@@ -211,7 +211,7 @@ public class ChangeOfStartDateProviderControllerTests
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewStartDateViewName);
     }
 
     private ChangeOfStartDateProviderController GetSubjectUnderTest()

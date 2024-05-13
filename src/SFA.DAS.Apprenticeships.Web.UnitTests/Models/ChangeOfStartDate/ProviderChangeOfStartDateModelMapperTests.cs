@@ -24,6 +24,7 @@ public class ProviderChangeOfStartDateModelMapperTests
         var apprenticeshipStartDate = new ApprenticeshipStartDate
         {
             ActualStartDate = DateTime.Now,
+            PlannedEndDate = DateTime.Now.AddDays(100),
             ApprenticeshipKey = Guid.NewGuid(),
             EarliestStartDate = DateTime.Now.AddDays(-10),
             LatestStartDate = DateTime.Now.AddDays(10),
@@ -45,6 +46,7 @@ public class ProviderChangeOfStartDateModelMapperTests
         Assert.That(result.LastFridayOfSchool, Is.EqualTo(apprenticeshipStartDate.LastFridayOfSchool));
         Assert.That(result.ApprovingPartyName, Is.EqualTo(apprenticeshipStartDate.EmployerName));
         Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.ActualStartDate.Value.Date));
+        Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate!.Value.Date));
         Assert.That(result.PreviousAcademicYearEndDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.EndDate));
         Assert.That(result.PreviousAcademicYearHardCloseDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate));
         Assert.That(result.CurrentAcademicYearStartDate, Is.EqualTo(apprenticeshipStartDate.CurrentAcademicYear.StartDate));
