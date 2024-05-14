@@ -34,10 +34,10 @@
 
                             <div class="govuk-radios" data-module="govuk-radios">
                                 <component type="typeof(RadioOptionComponent)" param-Id='"useSuggestedDate-true"' param-name='"UseSuggestedDate"' param-Value='"true"' render-mode="Static"
-                                           param-Label='$"Confirm new planned traning date as {suggestedEndDate}"' />
+                                           param-Label='$"Confirm new planned traning date as {suggestedEndDate}"' param-checked='Model.UseSuggestedDate == true'/>
 
                                 <component type="typeof(RadioOptionComponent)" param-Id='"useSuggestedDate-false"' param-name='"UseSuggestedDate"' param-Value='"false"' param-Conditional='"conditional-date"' render-mode="Static"
-                                           param-Label='"Enter a new planned training end date"' />
+                                           param-Label='"Enter a new planned training end date"' param-checked='Model.UseSuggestedDate == false' />
 
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-date">
                                     <div class="govuk-form-group">

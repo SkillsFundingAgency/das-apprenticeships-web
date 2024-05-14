@@ -1,11 +1,11 @@
 ﻿<div class="govuk-radios__item">
     @if (string.IsNullOrEmpty(Conditional))
     {
-        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value">
+        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked">
     }
     else
     {
-        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" aria-controls="@Conditional" aria-expanded="false">
+        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked" aria-controls="@Conditional" aria-expanded="false">
     }
 
     <label class="govuk-label govuk-radios__label" for="@Id">
@@ -29,4 +29,6 @@
     [Parameter]
     public string Conditional { get; set; } = string.Empty;
 
+    [Parameter]
+    public bool Checked { get; set; } = false;
 }

@@ -6,7 +6,7 @@ public class ProviderPlannedEndDateModel : ProviderChangeOfStartDateModel
 {
     public DateTime? SuggestedEndDate => GetSuggestedEndDate();
     public DateTime? MiniumEndDate => ApprenticeshipActualStartDate?.Date?.AddDays(365);
-    public bool UseSuggestedDate { get; set; }
+    public bool? UseSuggestedDate { get; set; }
 
     private DateTime? GetSuggestedEndDate()
     {

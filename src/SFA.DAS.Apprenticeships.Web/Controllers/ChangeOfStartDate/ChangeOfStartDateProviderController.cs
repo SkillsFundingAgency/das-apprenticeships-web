@@ -80,7 +80,7 @@ public class ChangeOfStartDateProviderController : Controller
 
 	[HttpGet]
     [Route("edit")]
-    public IActionResult GetProviderEditChangeDetails(ProviderChangeOfStartDateModel model)
+    public IActionResult GetProviderEditChangeDetails(ProviderPlannedEndDateModel model)
     {
         var view = HttpContext.Request.Query["view"].ToString();
 
@@ -89,8 +89,7 @@ public class ChangeOfStartDateProviderController : Controller
             case "startDate":
                 return View(EnterNewStartDateViewName, model);
             case "endDate":
-                var providerPlannedEndDateModel = _mapper.Map<ProviderPlannedEndDateModel>(model);
-                return View(EnterNewEndDateViewName, providerPlannedEndDateModel);
+                return View(EnterNewEndDateViewName, model);
 
         }
 
@@ -120,7 +119,7 @@ public class ChangeOfStartDateProviderController : Controller
         }
 
         //  Apply endDate to change model
-        if(model.UseSuggestedDate)
+        if(model.UseSuggestedDate == true)
         {
             providerChangeOfStartDateModel.PlannedEndDate = new DateField(model.SuggestedEndDate);
         }
