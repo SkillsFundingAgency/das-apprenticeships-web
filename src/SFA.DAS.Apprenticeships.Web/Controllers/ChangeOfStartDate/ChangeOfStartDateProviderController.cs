@@ -126,7 +126,14 @@ public class ChangeOfStartDateProviderController : Controller
     [Route("submit")]
     public async Task<IActionResult> ProviderSubmitChangeDetails(ProviderChangeOfStartDateModel model)
     {
-        await _apprenticeshipService.CreateStartDateChange(model.ApprenticeshipKey, "Provider", HttpContext.User.Identity?.Name!, HttpUtility.HtmlEncode(model.ReasonForChangeOfStartDate), model.ApprenticeshipActualStartDate!.Date.GetValueOrDefault());
+        await _apprenticeshipService.CreateStartDateChange(
+            model.ApprenticeshipKey, 
+            "Provider", 
+            HttpContext.User.Identity?.Name!, 
+            HttpUtility.HtmlEncode(model.ReasonForChangeOfStartDate), 
+            model.ApprenticeshipActualStartDate!.Date.GetValueOrDefault(),
+            model.PlannedEndDate!.Date.GetValueOrDefault());
+
         var providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
         { 
             Controller = "", 

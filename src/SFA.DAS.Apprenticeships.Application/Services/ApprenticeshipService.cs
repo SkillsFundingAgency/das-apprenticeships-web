@@ -165,7 +165,7 @@ public class ApprenticeshipService : IApprenticeshipService
         return response.Body.PriceChangeStatus;
     }
 
-    public async Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate)
+    public async Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate, DateTime newPlannedEndDate)
     {
         var response = await _apiClient.Post<object>(new CreateChangeOfStartDateRequest(apprenticeshipKey,
             new CreateChangeOfStartDateData
@@ -173,7 +173,8 @@ public class ApprenticeshipService : IApprenticeshipService
             Initiator = initiator,
             UserId = userId,
             Reason = reason,
-            ActualStartDate = newActualStartDate
+            ActualStartDate = newActualStartDate,
+            PlannedEndDate = newPlannedEndDate
             }));
 
         if (!string.IsNullOrEmpty(response.ErrorContent))

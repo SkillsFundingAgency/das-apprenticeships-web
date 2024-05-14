@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId);
         Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId, decimal trainingPrice, decimal endPointAssessmentPrice);
         Task<ApprenticeshipStartDate?> GetApprenticeshipStartDate(string apprenticeshipHashId);
-        Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate);
+        Task CreateStartDateChange(Guid apprenticeshipKey, string initiator, string userId, string? reason, DateTime newActualStartDate, DateTime newPlannedEndDate);
         Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashId);
         Task ApprovePendingStartDateChange(Guid apprenticeshipKey, string userId);
 

@@ -23,5 +23,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests
         public string UserId { get; set; } = string.Empty;
         public string? Reason { get; set; }
         public DateTime ActualStartDate { get; set; }
+        public DateTime PlannedEndDate { get; set; }
     }
 }
