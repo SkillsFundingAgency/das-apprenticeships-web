@@ -110,27 +110,15 @@ public class ChangeOfStartDateProviderController : Controller
             return View(EnterNewEndDateViewName, model);
         }
 
-        //  Get change model
-        var providerChangeOfStartDateModel = await _cache.GetCacheModelAsync<ProviderChangeOfStartDateModel>(model!.CacheKey!);
-        if (providerChangeOfStartDateModel == null)
-        {
-            _logger.LogError("Cache model not found for key {cacheKey}", model.CacheKey);
-            return NotFound();
-        }
-
         //  Apply endDate to change model
         if(model.UseSuggestedDate == true)
         {
-            providerChangeOfStartDateModel.PlannedEndDate = new DateField(model.SuggestedEndDate);
+            model.PlannedEndDate = new DateField(model.SuggestedEndDate);
         }
-        else
-        {
-            providerChangeOfStartDateModel.PlannedEndDate = model.PlannedEndDate;
-        }
-        providerChangeOfStartDateModel.PlannedEndDate = model.PlannedEndDate;
-        await _cache.SetCacheModelAsync(providerChangeOfStartDateModel);
 
-        return View(CheckDetailsViewName, providerChangeOfStartDateModel);
+        await _cache.SetCacheModelAsync(model);
+
+        return View(CheckDetailsViewName, model);
     }
 
     [HttpPost]
