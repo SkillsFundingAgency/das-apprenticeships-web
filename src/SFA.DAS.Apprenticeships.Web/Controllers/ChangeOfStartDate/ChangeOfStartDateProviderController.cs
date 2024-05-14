@@ -61,7 +61,6 @@ public class ChangeOfStartDateProviderController : Controller
         return View(EnterNewStartDateViewName, model);
     }
 
-
 	[HttpPost]
 	[SetNavigationSection(NavigationSection.ManageApprentices)]
 	[Route("")]
@@ -75,8 +74,8 @@ public class ChangeOfStartDateProviderController : Controller
         }
 
         await _cache.SetCacheModelAsync(model);
-        var plannedEndDateModel = _mapper.Map<ProviderPlannedEndDateModel>(model);
-        return View(EnterNewEndDateViewName, plannedEndDateModel);
+        var providerPlannedEndDateModel = _mapper.Map<ProviderPlannedEndDateModel>(model);
+        return View(EnterNewEndDateViewName, providerPlannedEndDateModel);
     }
 
 	[HttpGet]
@@ -90,7 +89,8 @@ public class ChangeOfStartDateProviderController : Controller
             case "startDate":
                 return View(EnterNewStartDateViewName, model);
             case "endDate":
-                return View(EnterNewEndDateViewName, model);
+                var providerPlannedEndDateModel = _mapper.Map<ProviderPlannedEndDateModel>(model);
+                return View(EnterNewEndDateViewName, providerPlannedEndDateModel);
 
         }
 
@@ -101,17 +101,37 @@ public class ChangeOfStartDateProviderController : Controller
     [HttpPost]
     [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("checkDetails")]
-    public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfStartDateModel model)
+    public async Task<IActionResult> ProviderCheckDetails(ProviderPlannedEndDateModel model)
     {
+        //  Handle endDate input
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
 
         if (!ModelState.IsValid)
         {
-            return View(EnterNewStartDateViewName, model);
+            return View(EnterNewEndDateViewName, model);
         }
 
-        await _cache.SetCacheModelAsync(model);
-        return View(CheckDetailsViewName, model);
+        //  Get change model
+        var providerChangeOfStartDateModel = await _cache.GetCacheModelAsync<ProviderChangeOfStartDateModel>(model!.CacheKey!);
+        if (providerChangeOfStartDateModel == null)
+        {
+            _logger.LogError("Cache model not found for key {cacheKey}", model.CacheKey);
+            return NotFound();
+        }
+
+        //  Apply endDate to change model
+        if(model.UseSuggestedDate)
+        {
+            providerChangeOfStartDateModel.PlannedEndDate = new DateField(model.SuggestedEndDate);
+        }
+        else
+        {
+            providerChangeOfStartDateModel.PlannedEndDate = model.PlannedEndDate;
+        }
+        providerChangeOfStartDateModel.PlannedEndDate = model.PlannedEndDate;
+        await _cache.SetCacheModelAsync(providerChangeOfStartDateModel);
+
+        return View(CheckDetailsViewName, providerChangeOfStartDateModel);
     }
 
     [HttpPost]

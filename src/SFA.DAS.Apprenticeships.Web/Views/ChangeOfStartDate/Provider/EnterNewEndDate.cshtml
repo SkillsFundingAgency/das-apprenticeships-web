@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Confirm the planned training end date - Manage apprenticeships";
     var backlink = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfStartDate/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}&view=startDate";
+    var suggestedEndDate = Model.SuggestedEndDate?.ToString("d MMMM yyyy");
+    var minEndDate = Model.MiniumEndDate?.ToString("d MMMM yyyy");
 }
 
 <div class="govuk-width-container ">
@@ -16,7 +18,6 @@
         <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId/checkDetails">
             @Html.AntiForgeryToken()
             @Html.HiddenFor(m=> m.CacheKey)
-            @Html.HiddenFor(m=> m.ApprenticeshipKey)
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
 
@@ -24,7 +25,7 @@
 
                     <p class="govuk-inset-text" style="font-weight: bold;">
                         The old planned training end date was @Model.OriginalPlannedEndDate?.ToString("d MMMM yyyy"). 
-                        Due to the change of start date the planned training end date needs to be on or after @Model.SuggestedEndDate?.Date?.ToString("d MMMM yyyy").
+                        Due to the change of start date the planned training end date needs to be on or after @minEndDate.
                     </p>
 
 
@@ -32,63 +33,25 @@
                         <fieldset class="govuk-fieldset" aria-describedby="contact-hint">
 
                             <div class="govuk-radios" data-module="govuk-radios">
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="contact" name="contact" type="radio" value="confirm-date">
-                                    <label class="govuk-label govuk-radios__label" for="contact">
-                                        Confirm new planned traning date as 25 10 2024
-                                    </label>
-                                </div>
+                                <component type="typeof(RadioOptionComponent)" param-Id='"useSuggestedDate-true"' param-name='"UseSuggestedDate"' param-Value='"true"' render-mode="Static"
+                                           param-Label='$"Confirm new planned traning date as {suggestedEndDate}"' />
 
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="contact-2" name="contact" type="radio" value="enter-own" aria-controls="conditional-date" aria-expanded="false">
-                                    <label class="govuk-label govuk-radios__label" for="contact-2">
-                                        Enter a new planned training end date
-                                    </label>
-                                </div>
+                                <component type="typeof(RadioOptionComponent)" param-Id='"useSuggestedDate-false"' param-name='"UseSuggestedDate"' param-Value='"false"' param-Conditional='"conditional-date"' render-mode="Static"
+                                           param-Label='"Enter a new planned training end date"' />
+
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-date">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label" for="contact-by-phone">
-                                            <!-- Enter new date -->
-                                            The planned training end date needs to be on or after 25 10 2024.
+                                            The planned training end date needs to be on or after @minEndDate.
                                         </label>
-                                        <!-- start date feild -->
-                                        <div class="govuk-date-input" id="passport-issued">
-                                            <div class="govuk-date-input__item">
-                                                <div class="govuk-form-group">
-                                                    <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
-                                                        Day
-                                                    </label>
-                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="planned-end-day-tp-start" value="" type="text" inputmode="numeric">
-                                                </div>
-                                            </div>
-                                            <div class="govuk-date-input__item">
-                                                <div class="govuk-form-group">
-                                                    <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
-                                                        Month
-                                                    </label>
-                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="planned-end-month-tp-start" value="" type="text" inputmode="numeric">
-                                                </div>
-                                            </div>
-                                            <div class="govuk-date-input__item">
-                                                <div class="govuk-form-group">
-                                                    <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
-                                                        Year
-                                                    </label>
-                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="passport-issued-year" name="planned-end-year-tp-start" value="" type="text" inputmode="numeric">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- end date feild  -->
+                                        <component type="typeof(DateInputComponent)" param-Id='"plannedEndDate"' param-name='nameof(Model.PlannedEndDate)' param-Date='Model.PlannedEndDate' render-mode="Static" />
 
                                     </div>
                                 </div>
 
-
                             </div>
                         </fieldset>
                     </div>
-
 
                 </div>
 

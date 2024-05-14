@@ -2,13 +2,22 @@
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
-public class ProviderPlannedEndDateModel : BaseProviderChangeOfStartDateModel
+public class ProviderPlannedEndDateModel : ProviderChangeOfStartDateModel
 {
-    public DateField? SuggestedEndDate { get; set; }
-    public DateTime? OriginalPlannedEndDate { get; set; }
-    public DateField? PlannedEndDate { get; set; }
-}
+    public DateTime? SuggestedEndDate => GetSuggestedEndDate();
+    public DateTime? MiniumEndDate => ApprenticeshipActualStartDate?.Date?.AddDays(365);
+    public bool UseSuggestedDate { get; set; }
 
+    private DateTime? GetSuggestedEndDate()
+    {
+        if (!OriginalApprenticeshipActualStartDate.HasValue || !OriginalPlannedEndDate.HasValue || ApprenticeshipActualStartDate?.Date.HasValue != true)
+            return null;
+
+        var dateChange = ApprenticeshipActualStartDate.Date - OriginalApprenticeshipActualStartDate;
+
+        return OriginalPlannedEndDate.Value.AddDays(dateChange!.Value.Days);
+    }
+}
 
 public class ProviderPlannedEndDateModelMapper : IMapper<ProviderPlannedEndDateModel>
 {
@@ -31,22 +40,12 @@ public class ProviderPlannedEndDateModelMapper : IMapper<ProviderPlannedEndDateM
             CacheKey = sourceObject.CacheKey,
             ApprenticeshipHashedId = sourceObject.ApprenticeshipHashedId,
             ApprovingPartyName = sourceObject.ApprovingPartyName,
-            SuggestedEndDate = GetSuggestedEndDate(sourceObject),
+            ApprenticeshipActualStartDate = sourceObject.ApprenticeshipActualStartDate,
+            PlannedEndDate = sourceObject.PlannedEndDate,
+            OriginalApprenticeshipActualStartDate = sourceObject.OriginalApprenticeshipActualStartDate,
             OriginalPlannedEndDate = sourceObject.OriginalPlannedEndDate
         };
 
         return model;
-    }
-
-    private static DateField GetSuggestedEndDate(ProviderChangeOfStartDateModel sourceObject)
-    {
-        var originalStartDate = sourceObject.OriginalApprenticeshipActualStartDate.ValueOrThrow(nameof(ProviderChangeOfStartDateModel.OriginalApprenticeshipActualStartDate));
-        var newStartDate = sourceObject.ApprenticeshipActualStartDate!.Date.ValueOrThrow(nameof(ProviderChangeOfStartDateModel.ApprenticeshipActualStartDate));
-
-        var dateChange = newStartDate - originalStartDate;
-
-        var originalEndDate = sourceObject.OriginalPlannedEndDate.ValueOrThrow(nameof(ProviderChangeOfStartDateModel.OriginalPlannedEndDate));
-
-        return new DateField(originalEndDate.AddDays(dateChange.Days));
     }
 }

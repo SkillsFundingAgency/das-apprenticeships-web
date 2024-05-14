@@ -1,11 +1,14 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
+using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 public class ProviderChangeOfStartDateModel : BaseProviderChangeOfStartDateModel, ICacheModel, IRouteValuesProvider
 {
     public DateField? ApprenticeshipActualStartDate { get; set; }
+    public DateField? PlannedEndDate { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public DateTime? OriginalApprenticeshipActualStartDate { get; set; }
     public DateTime? OriginalPlannedEndDate { get; set; }
