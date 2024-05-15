@@ -9,7 +9,6 @@ namespace SFA.DAS.Apprenticeships.Web.Services
 	public interface ICacheService
 	{
 		public Task SetCacheModelAsync(ICacheModel cacheModel);
-		public Task<T?> GetCacheModelAsync<T>(string cacheKey) where T : class, ICacheModel, new();
 	}
 
 	public class CacheService : ICacheService
@@ -37,17 +36,6 @@ namespace SFA.DAS.Apprenticeships.Web.Services
 				AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_expirationInMinutes)
 			});
 		}
-
-		public async Task<T?> GetCacheModelAsync<T>(string cacheKey) where T : class, ICacheModel, new()
-		{
-            var json = await _distributedCache.GetStringAsync(cacheKey);
-            if (string.IsNullOrEmpty(json))
-			{
-                return default;
-            }
-
-            return JsonSerializer.Deserialize<T>(json);
-        }
 
 		private static byte[] ObjectToByteArray(Object obj)
 		{

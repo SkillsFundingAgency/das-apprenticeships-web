@@ -45,8 +45,8 @@ public class ProviderChangeOfStartDateModelMapperTests
         Assert.That(result.LatestStartDate, Is.EqualTo(apprenticeshipStartDate.LatestStartDate));
         Assert.That(result.LastFridayOfSchool, Is.EqualTo(apprenticeshipStartDate.LastFridayOfSchool));
         Assert.That(result.ApprovingPartyName, Is.EqualTo(apprenticeshipStartDate.EmployerName));
-        Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.ActualStartDate.Value.Date));
-        Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate!.Value.Date));
+        Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.ActualStartDate.Value));
+        Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate!.Value));
         Assert.That(result.PreviousAcademicYearEndDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.EndDate));
         Assert.That(result.PreviousAcademicYearHardCloseDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate));
         Assert.That(result.CurrentAcademicYearStartDate, Is.EqualTo(apprenticeshipStartDate.CurrentAcademicYear.StartDate));
