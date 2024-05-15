@@ -1,12 +1,6 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models.ChangeOfStartDate;
 
@@ -30,7 +24,7 @@ public class ProviderPlannedEndDateModelTests
         var result = model.SuggestedEndDate;
 
         // Assert
-        Assert.Null(result);
+        Assert.That(result, Is.Null);
     }
 
     [Test]

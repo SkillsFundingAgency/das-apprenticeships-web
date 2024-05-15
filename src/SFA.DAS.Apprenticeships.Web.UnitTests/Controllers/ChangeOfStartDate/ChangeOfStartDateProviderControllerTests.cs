@@ -260,7 +260,7 @@ public class ChangeOfStartDateProviderControllerTests
         var ukprn = _fixture.Create<long>();
         var controller = GetSubjectUnderTest();
         var httpContextMocks = controller.SetupHttpContext(ukprn, hashId);
-        httpContextMocks.SetQueryString(new KeyValuePair<string, string>[0]);
+        httpContextMocks.SetQueryString(Array.Empty<KeyValuePair<string, string>>());
         var createChangeOfStartDateModel = _fixture.Create<ProviderPlannedEndDateModel>();
 
         // Act

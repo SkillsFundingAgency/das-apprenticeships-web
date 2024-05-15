@@ -28,14 +28,17 @@ public class ProviderPlannedEndDateModelMapperTests
         var result = _mapper.Map(apprenticeshipStartDate);
 
         // Assert
-        Assert.That(result.ApprenticeshipKey, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipKey));
-        Assert.That(result.ProviderReferenceNumber, Is.EqualTo(apprenticeshipStartDate.ProviderReferenceNumber));
-        Assert.That(result.CacheKey, Is.EqualTo(apprenticeshipStartDate.CacheKey));
-        Assert.That(result.ApprenticeshipHashedId, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipHashedId));
-        Assert.That(result.ApprenticeshipActualStartDate?.Date, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipActualStartDate!.Date));
-        Assert.That(result.PlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate));
-        Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.OriginalApprenticeshipActualStartDate));
-        Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.OriginalPlannedEndDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ApprenticeshipKey, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipKey));
+            Assert.That(result.ProviderReferenceNumber, Is.EqualTo(apprenticeshipStartDate.ProviderReferenceNumber));
+            Assert.That(result.CacheKey, Is.EqualTo(apprenticeshipStartDate.CacheKey));
+            Assert.That(result.ApprenticeshipHashedId, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipHashedId));
+            Assert.That(result.ApprenticeshipActualStartDate?.Date, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipActualStartDate!.Date));
+            Assert.That(result.PlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate));
+            Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.OriginalApprenticeshipActualStartDate));
+            Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.OriginalPlannedEndDate));
+        });
     }
 
     [Test]
