@@ -8,22 +8,12 @@
 {
 	case DetailsRowType.Table:
 		<tr class="govuk-table__row">
-			<th scope="row" class="govuk-table__header">@Label</th>
-			@if (!string.IsNullOrEmpty(OriginalValue))
-			{
-				<td class="govuk-table__cell" id="@GetOriginalValueId()">@OriginalValue</td>
-			}
-            @if (ShowWarningOnNewValue)
+            <th scope="row" class="govuk-table__header">@Label</th>
+            @if (!string.IsNullOrEmpty(OriginalValue))
             {
-                <td class="govuk-table__cell" id="@GetNewValueId()" colspan="2">
-                    @Value
-					<WarningSvgComponent></WarningSvgComponent>
-                </td>
+                <td class="govuk-table__cell" id="@GetOriginalValueId()">@OriginalValue</td>
             }
-            else
-            {
-                <td class="govuk-table__cell" id="@GetNewValueId()" colspan="2">@Value</td>
-            }
+            <td class="govuk-table__cell" id="@GetNewValueId()" colspan="2">@Value</td>
 			<td class="govuk-table__cell" style="text-align: right;">
 				@if (!string.IsNullOrEmpty(Url))
 				{
@@ -41,17 +31,7 @@
 			@if (!string.IsNullOrEmpty(OriginalValue))
 			{
                 <td class="govuk-table__cell" id="@GetOriginalValueId()">@OriginalValue</td>
-                @if (ShowWarningOnNewValue)
-                {
-                    <td class="govuk-table__cell" id="@GetNewValueId()" colspan="2">
-                        @Value
-                        <WarningSvgComponent></WarningSvgComponent>
-                    </td>
-                }
-                else
-                {
-					<td class="govuk-table__cell" id="@GetNewValueId()">@Value</td>
-                }
+				<td class="govuk-table__cell" id="@GetNewValueId()">@Value</td>
 			}
 			else
 			{
@@ -94,9 +74,6 @@
 
 	[Parameter]
 	public DetailsRowType RowType { get; set; } = DetailsRowType.Table;
-
-    [Parameter]
-    public bool ShowWarningOnNewValue { get; set; } = false;
 
 	public enum DetailsRowType
 	{
