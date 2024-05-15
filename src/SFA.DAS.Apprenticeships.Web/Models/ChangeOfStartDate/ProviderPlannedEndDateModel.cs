@@ -1,6 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.Web.Extensions;
-
-namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
+﻿namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 public class ProviderPlannedEndDateModel : ProviderChangeOfStartDateModel
 {
