@@ -39,7 +39,6 @@ public class ProviderPlannedEndDateModelMapper : IMapper<ProviderPlannedEndDateM
             ProviderReferenceNumber = sourceObject.ProviderReferenceNumber,
             CacheKey = sourceObject.CacheKey,
             ApprenticeshipHashedId = sourceObject.ApprenticeshipHashedId,
-            ApprovingPartyName = sourceObject.ApprovingPartyName,
             ApprenticeshipActualStartDate = sourceObject.ApprenticeshipActualStartDate,
             PlannedEndDate = sourceObject.PlannedEndDate,
             OriginalApprenticeshipActualStartDate = sourceObject.OriginalApprenticeshipActualStartDate,
