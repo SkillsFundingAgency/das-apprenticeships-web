@@ -7,8 +7,6 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Provider.Shared.UI;
-using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
@@ -45,7 +43,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
     public async Task<IActionResult> GetEnterStartDatePage(string apprenticeshipHashedId)
     {
@@ -62,7 +59,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
 	[HttpPost]
-	[SetNavigationSection(NavigationSection.ManageApprentices)]
 	[Route("")]
 	public async Task<IActionResult> SubmitStartDate(ProviderChangeOfStartDateModel model)
 	{
@@ -98,7 +94,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("checkDetails")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderPlannedEndDateModel model)
     {
@@ -122,7 +117,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("submit")]
     public async Task<IActionResult> ProviderSubmitChangeDetails(ProviderChangeOfStartDateModel model)
     {
@@ -145,7 +139,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("pending")]
     public async Task<IActionResult> ViewPendingChangePage(long ukprn, string apprenticeshipHashedId)
     {
@@ -171,7 +164,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
 	[HttpPost]
-	[SetNavigationSection(NavigationSection.ManageApprentices)]
 	[Route("cancel")]
 	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
 	{
