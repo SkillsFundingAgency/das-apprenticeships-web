@@ -143,6 +143,6 @@ public class ChangeOfStartDateProviderController : Controller
 		}
 
 		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
-		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showStartDateChangeCancelled=true" }));
+		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners=startDateChangeCancelled" }));
 	}
 }
