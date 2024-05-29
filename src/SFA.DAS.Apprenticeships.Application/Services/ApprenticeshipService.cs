@@ -209,4 +209,13 @@ public class ApprenticeshipService : IApprenticeshipService
 		    throw new ServiceException(response.ErrorContent);
 	    }
     }
+
+    public async Task CancelPendingStartDateChange(Guid apprenticeshipKey)
+    {
+		var response = await _apiClient.Delete<object>(new CancelPendingStartDateChangeRequest(apprenticeshipKey));
+		if (!string.IsNullOrEmpty(response.ErrorContent))
+		{
+			throw new ServiceException(response.ErrorContent);
+		}
+	}
 }

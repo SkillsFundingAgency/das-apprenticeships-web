@@ -179,7 +179,8 @@ public class ChangeOfStartDateProviderController : Controller
 			return NotFound();
 		}
 
-		throw new NotImplementedException("To be completed in FLP-486");
+		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
+		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners=ChangeOfStartDateCancelled" }));
 	}
 
 }

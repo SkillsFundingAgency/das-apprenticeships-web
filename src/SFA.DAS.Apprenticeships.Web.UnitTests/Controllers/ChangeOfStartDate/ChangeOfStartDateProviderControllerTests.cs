@@ -270,6 +270,49 @@ public class ChangeOfStartDateProviderControllerTests
         var viewResult = result.ShouldBeOfType<NotFoundResult>();
     }
 
+    [Test]
+    public async Task CancelStartDateChange_KeepPendingChange_DoesNotCancelChange()
+    {
+        // Arrange
+        var hashId = "hashId";
+        var ukprn = _fixture.Create<long>();
+        var keepPendingChange = "0";
+        var controller = GetSubjectUnderTest();
+        controller.SetupHttpContext(ukprn, hashId);
+        var expectedUrl = _fixture.Create<string>();
+        _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
+
+        // Act
+        var result = await controller.CancelStartDateChange(ukprn, hashId, keepPendingChange);
+
+        // Assert
+        _mockApprenticeshipService.Verify(m => m.CancelPendingStartDateChange(It.IsAny<Guid>()), Times.Never);
+        var redirectResult = result.ShouldBeOfType<RedirectResult>();
+        redirectResult.Url.Should().Be(expectedUrl);
+    }
+
+    [Test]
+    public async Task CancelStartDateChange_CancelPendingChange_CancelsChange()
+    {
+        // Arrange
+        var hashId = "hashId";
+        var ukprn = _fixture.Create<long>();
+        var keepPendingChange = "1";
+        var controller = GetSubjectUnderTest();
+        controller.SetupHttpContext(ukprn, hashId);
+        var expectedUrl = _fixture.Create<string>();
+        _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
+        _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(hashId)).ReturnsAsync(Guid.NewGuid());
+
+        // Act
+        var result = await controller.CancelStartDateChange(ukprn, hashId, keepPendingChange);
+
+        // Assert
+        _mockApprenticeshipService.Verify(m => m.CancelPendingStartDateChange(It.IsAny<Guid>()), Times.Once);
+        var redirectResult = result.ShouldBeOfType<RedirectResult>();
+        redirectResult.Url.Should().Be(expectedUrl);
+    }
+
     private ChangeOfStartDateProviderController GetSubjectUnderTest()
     {
         return new ChangeOfStartDateProviderController(
