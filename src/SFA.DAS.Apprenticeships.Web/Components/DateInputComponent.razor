@@ -1,0 +1,46 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models
+
+<div class="govuk-date-input" id="@Id">
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="@Id-day">
+                Day
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="@Id-day" name="@NameDay" value="@DayValue" type="number" pattern="[0-9]*" inputmode="numeric">
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="@Id-month">
+                Month
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="@Id-month" name="@NameMonth" value="@MonthValue" type="number" pattern="[0-9]*" inputmode="numeric">
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="@Id-year">
+                Year
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="@Id-year" name="@NameYear" value="@YearValue" type="number" pattern="[0-9]*" inputmode="numeric">
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    public string NameDay => $"{Name}.Day";
+    public string NameMonth => $"{Name}.Month";
+    public string NameYear => $"{Name}.Year";
+    public string DayValue => Date?.Day.ToString() ?? string.Empty;
+    public string MonthValue => Date?.Month.ToString() ?? string.Empty;
+    public string YearValue => Date?.Year.ToString() ?? string.Empty;
+
+    [Parameter]
+    public DateField? Date { get; set; }
+}

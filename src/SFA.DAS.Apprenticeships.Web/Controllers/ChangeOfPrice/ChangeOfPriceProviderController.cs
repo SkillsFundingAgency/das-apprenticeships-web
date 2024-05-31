@@ -47,7 +47,6 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
     public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
     {
@@ -71,7 +70,6 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
     public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfPriceModel model)
     {
@@ -107,7 +105,6 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("pending")]
     public async Task<IActionResult> ViewPendingPriceChangePage(long ukprn, string apprenticeshipHashedId)
     {
@@ -135,7 +132,6 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("pending")]
     public async Task<IActionResult> ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges, string rejectReason = "")
     {
@@ -150,7 +146,6 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("approve")]
     public async Task<IActionResult> ConfirmPriceBreakdown(long ukprn, string apprenticeshipHashedId)
     {
@@ -162,7 +157,6 @@ public class ChangeOfPriceProviderController : Controller
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("approve")]
     public async Task<IActionResult> ConfirmApprovePendingPriceChange(ProviderConfirmPriceBreakdownPriceChangeModel model, long ukprn, string apprenticeshipHashedId)
     {
@@ -178,7 +172,6 @@ public class ChangeOfPriceProviderController : Controller
 
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("cancel")]
     public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
     {

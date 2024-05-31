@@ -6,9 +6,8 @@ using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
-public class ProviderCancelStartDateModel : BaseChangeOfStartDateModel, IRouteValuesProvider
+public class ProviderCancelStartDateModel : BaseProviderChangeOfStartDateModel, IRouteValuesProvider
 {
-    public long? ProviderReferenceNumber { get; set; }
 	public DateTime OriginalStartDate { get; set; }
 	public DateTime PendingStartDate { get; set; }
 }
