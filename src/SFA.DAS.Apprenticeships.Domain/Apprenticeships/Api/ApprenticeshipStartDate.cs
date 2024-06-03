@@ -10,4 +10,15 @@ public class ApprenticeshipStartDate
     public DateTime? EarliestStartDate { get; set; }
     public DateTime? LatestStartDate { get; set; }
     public DateTime LastFridayOfSchool { get; set; }
+    public StandardInfo Standard { get; set; } = null!;
+    public AcademicYearDetails CurrentAcademicYear { get; set; }
+    public AcademicYearDetails PreviousAcademicYear { get; set; }
+}
+
+public class AcademicYearDetails
+{
+    public string AcademicYear { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public DateTime HardCloseDate { get; set; }
 }

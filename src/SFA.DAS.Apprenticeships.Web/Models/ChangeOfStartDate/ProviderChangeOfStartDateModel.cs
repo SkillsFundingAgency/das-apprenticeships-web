@@ -12,6 +12,13 @@ public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICache
     public DateTime? EarliestStartDate { get; set; }
     public DateTime? LatestStartDate { get; set; }
     public DateTime LastFridayOfSchool { get; set; }
+    public DateTime? StandardEarliestDate { get; set; }
+    public DateTime? StandardLatestDate { get; set; }
+    public DateTime? StandardVersionEarliestDate { get; set; }
+    public DateTime? StandardVersionLatestDate { get; set; }
+    public DateTime PreviousAcademicYearEndDate { get; set; }
+    public DateTime PreviousAcademicYearHardCloseDate { get; set; }
+    public DateTime CurrentAcademicYearStartDate { get; set; }
 }
 
 public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStartDateModel>
@@ -34,7 +41,15 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
             ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey,
             EarliestStartDate = apprenticeshipStartDate.EarliestStartDate,
             LatestStartDate = apprenticeshipStartDate.LatestStartDate,
-            LastFridayOfSchool = apprenticeshipStartDate.LastFridayOfSchool
+            LastFridayOfSchool = apprenticeshipStartDate.LastFridayOfSchool,
+            ApprovingPartyName = apprenticeshipStartDate.EmployerName,
+            StandardEarliestDate = apprenticeshipStartDate.Standard.EffectiveFrom,
+            StandardLatestDate = apprenticeshipStartDate.Standard.EffectiveTo,
+            StandardVersionEarliestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionEarliestStartDate,
+            StandardVersionLatestDate = apprenticeshipStartDate.Standard.StandardVersion?.VersionLatestStartDate,
+            PreviousAcademicYearEndDate = apprenticeshipStartDate.PreviousAcademicYear.EndDate,
+            PreviousAcademicYearHardCloseDate = apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate,
+            CurrentAcademicYearStartDate = apprenticeshipStartDate.CurrentAcademicYear.StartDate
         };
 
         model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
