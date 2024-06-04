@@ -19,7 +19,6 @@
         <form method="post" action="/employer/@Model.EmployerAccountId/PaymentsFreeze/@Model.ApprenticeshipHashedId">
             @Html.AntiForgeryToken()
             @Html.HiddenFor(m => m.ApprenticeshipKey)
-            @Html.HiddenFor(m => m.FreezePayments)
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
 
@@ -48,12 +47,9 @@
                             </legend>
                             
                             <div class="govuk-radios">
-                                <div class="govuk-radios__item" id="radio-item-yes">
-                                    <input class="govuk-radios__input" type="radio" id="option-yes" name="FreezePayments" value="1" onchange="javascript: showHideFreezeReason();">
-                                    <label class="govuk-label govuk-radios__label" for="option-yes">Yes, freeze future payments</label>
-                                </div>
-                                @* <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="freezeReasonContainer"> *@
-                                <div id="freezeReasonContainer">
+                                <component type="typeof(RadioOptionComponent)" param-Id='"freezePayments-true"' param-name='"FreezePayments"' param-Value='"true"' render-mode="Static" param-onchange='"javascript: showHideFreezeReason();"'
+                                           param-Label='"Yes, freeze future payments"' param-checked='Model.FreezePayments == true' />
+                                <div id="reason-for-freeze-section">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label">
                                             Specify reason for freezing training provider payments (optional)
@@ -74,10 +70,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="govuk-radios__item" id="radio-item-no">
-                                    <input class="govuk-radios__input" type="radio" id="option-no" name="FreezePayments" value="0" onchange="javascript: showHideFreezeReason();">
-                                    <label class="govuk-label govuk-radios__label" for="option-no">No</label>
-                                </div>
+                                <component type="typeof(RadioOptionComponent)" param-Id='"freezePayments-false"' param-name='"FreezePayments"' param-Value='"false"' render-mode="Static" param-onchange='"javascript: showHideFreezeReason();"'
+                                           param-Label='"No"' param-checked='Model.FreezePayments == false' />
                             </div>
                         </fieldset>
                     </div>
@@ -93,11 +87,11 @@
 
 <script type="text/javascript">
     function showHideFreezeReason() {
-        console.log(document.getElementById("option-yes").checked);
-        if (!document.getElementById("option-yes").checked) {
-            document.getElementById("freezeReasonContainer").style.display = "none";
+        console.log(document.getElementById("freezePayments-true").checked);
+        if (!document.getElementById("freezePayments-true").checked) {
+            document.getElementById("reason-for-freeze-section").style.display = "none";
         } else {
-            document.getElementById("freezeReasonContainer").style.display = "block";
+            document.getElementById("reason-for-freeze-section").style.display = "block";
         }
     }
 

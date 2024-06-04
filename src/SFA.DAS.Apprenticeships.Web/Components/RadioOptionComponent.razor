@@ -1,11 +1,19 @@
 ﻿<div class="govuk-radios__item">
-    @if (string.IsNullOrEmpty(Conditional))
+    @if (!string.IsNullOrEmpty(Conditional) && !string.IsNullOrEmpty(OnChange))
     {
-        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked">
+        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked" aria-controls="@Conditional" aria-expanded="false" onchange="@OnChange">
+    }
+    else if(!string.IsNullOrEmpty(Conditional) && string.IsNullOrEmpty(OnChange))
+    {
+        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked" aria-controls="@Conditional" aria-expanded="false">
+    }
+    else if (string.IsNullOrEmpty(Conditional) && !string.IsNullOrEmpty(OnChange))
+    {
+        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked" onchange="@OnChange">
     }
     else
     {
-        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked" aria-controls="@Conditional" aria-expanded="false">
+        <input class="govuk-radios__input" id="@Id" name="@Name" type="radio" value="@Value" checked="@Checked">
     }
 
     <label class="govuk-label govuk-radios__label" for="@Id">
@@ -31,4 +39,7 @@
 
     [Parameter]
     public bool Checked { get; set; } = false;
+
+    [Parameter]
+    public string OnChange { get; set; } = string.Empty;
 }
