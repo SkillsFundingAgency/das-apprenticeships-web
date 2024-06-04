@@ -8,9 +8,7 @@ using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Provider.Shared.UI.Attributes;
 using System.Web;
-using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -45,7 +43,6 @@ public class ChangeOfPriceEmployerController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
     public async Task<IActionResult> GetEmployerEnterChangeDetails(string apprenticeshipHashedId)
     {
@@ -69,7 +66,6 @@ public class ChangeOfPriceEmployerController : Controller
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
     public async Task<IActionResult> EmployerCheckDetails(EmployerChangeOfPriceModel model)
     {

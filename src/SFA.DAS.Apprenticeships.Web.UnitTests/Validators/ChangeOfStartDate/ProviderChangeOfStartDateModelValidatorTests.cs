@@ -226,6 +226,7 @@ public class ProviderChangeOfStartDateModelValidatorTests
         return new ProviderChangeOfStartDateModel
         {
             OriginalApprenticeshipActualStartDate = originalStartDate,
+            OriginalPlannedEndDate = originalStartDate.AddMonths(22),
             ApprenticeshipActualStartDate = new DateField
             {
                 Year = originalStartDate.Year,

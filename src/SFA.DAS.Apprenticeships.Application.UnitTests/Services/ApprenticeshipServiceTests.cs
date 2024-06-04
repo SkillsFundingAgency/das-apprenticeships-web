@@ -326,7 +326,7 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, HttpStatusCode.OK, ""));
 
         // Act
-        await _apprenticeshipService.CreateStartDateChange(apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate);
+        await _apprenticeshipService.CreateStartDateChange(apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate, data.PlannedEndDate);
 
         // Assert
         _apiClientMock.Verify(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>()), Times.Once);
@@ -342,7 +342,7 @@ public class ApprenticeshipServiceTests
 
         // Act / Assert
         Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CreateStartDateChange(
-            apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate));
+            apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate, data.PlannedEndDate));
     }
 
     [Test]

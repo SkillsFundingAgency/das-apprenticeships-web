@@ -1,0 +1,65 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@model ProviderPlannedEndDateModel
+@{
+    ViewData["Title"] = "Confirm the planned training end date - Manage apprenticeships";
+    var backlink = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfStartDate/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}&view=startDate";
+    var suggestedEndDate = Model.SuggestedEndDate?.ToString("d MMMM yyyy");
+    var minEndDate = Model.MiniumEndDate?.ToString("d MMMM yyyy");
+}
+
+<div class="govuk-width-container ">
+
+    <a href=@backlink class="govuk-back-link">Back</a>
+
+    @await Html.PartialAsync("_validationSummary")
+
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId/checkDetails">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m=> m.CacheKey)
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-l">Confirm the planned training end date</h1>
+
+                    <p class="govuk-inset-text" style="font-weight: bold;">
+                        The old planned training end date was @Model.OriginalPlannedEndDate?.ToString("d MMMM yyyy"). 
+                        Due to the change of start date the planned training end date needs to be on or after @minEndDate.
+                    </p>
+
+
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset" aria-describedby="contact-hint">
+
+                            <div class="govuk-radios" data-module="govuk-radios">
+                                <component type="typeof(RadioOptionComponent)" param-Id='"useSuggestedDate-true"' param-name='"UseSuggestedDate"' param-Value='"true"' render-mode="Static"
+                                           param-Label='$"Confirm new planned traning date as {suggestedEndDate}"' param-checked='Model.UseSuggestedDate == true'/>
+
+                                <component type="typeof(RadioOptionComponent)" param-Id='"useSuggestedDate-false"' param-name='"UseSuggestedDate"' param-Value='"false"' param-Conditional='"conditional-date"' render-mode="Static"
+                                           param-Label='"Enter a new planned training end date"' param-checked='Model.UseSuggestedDate == false' />
+
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-date">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label" for="contact-by-phone">
+                                            The planned training end date needs to be on or after @minEndDate.
+                                        </label>
+                                        <component type="typeof(DateInputComponent)" param-Id='"plannedEndDate"' param-name='nameof(Model.PlannedEndDate)' param-Date='Model.PlannedEndDate' render-mode="Static" />
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+
+                </div>
+
+            </div>
+            <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                Continue
+            </button>
+
+        </form>
+    </main>
+</div>

@@ -7,8 +7,6 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Provider.Shared.UI;
-using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
@@ -25,8 +23,9 @@ public class ChangeOfStartDateProviderController : Controller
     private readonly ICacheService _cache;
     private readonly IExternalUrlHelper _externalProviderUrlHelper;
 
-    public const string EnterChangeDetailsViewName = "~/Views/ChangeOfStartDate/Provider/EnterChangeDetails.cshtml";
-    public const string CheckDetailsViewName = "~/Views/ChangeOfStartDate/Provider/CheckDetails.cshtml";
+    public const string EnterNewStartDateViewName = "~/Views/ChangeOfStartDate/Provider/EnterNewStartDate.cshtml";
+	public const string EnterNewEndDateViewName = "~/Views/ChangeOfStartDate/Provider/EnterNewEndDate.cshtml";
+	public const string CheckDetailsViewName = "~/Views/ChangeOfStartDate/Provider/CheckDetails.cshtml";
     public const string ProviderCancelPendingChangeViewName = "~/Views/ChangeOfStartDate/Provider/CancelPendingChange.cshtml";
 
     public ChangeOfStartDateProviderController(
@@ -44,9 +43,8 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("")]
-    public async Task<IActionResult> GetProviderEnterChangeDetails(string apprenticeshipHashedId)
+    public async Task<IActionResult> GetEnterStartDatePage(string apprenticeshipHashedId)
     {
         var apprenticeshipStartDate = await _apprenticeshipService.GetApprenticeshipStartDate(apprenticeshipHashedId);
         if (apprenticeshipStartDate == null)
@@ -57,38 +55,79 @@ public class ChangeOfStartDateProviderController : Controller
         var model = _mapper.Map<ProviderChangeOfStartDateModel>(apprenticeshipStartDate);
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
         await _cache.SetCacheModelAsync(model);
-        return View(EnterChangeDetailsViewName, model);
+        return View(EnterNewStartDateViewName, model);
     }
 
-    [HttpGet]
-    [Route("edit")]
-    public IActionResult GetProviderEditChangeDetails(ProviderChangeOfStartDateModel model)
-    {
-        return View(EnterChangeDetailsViewName, model);
-    }
-
-    [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
-    [Route("")]
-    public async Task<IActionResult> ProviderCheckDetails(ProviderChangeOfStartDateModel model)
-    {
+	[HttpPost]
+	[Route("")]
+	public async Task<IActionResult> SubmitStartDate(ProviderChangeOfStartDateModel model)
+	{
         RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
 
         if (!ModelState.IsValid)
         {
-            return View(EnterChangeDetailsViewName, model);
+            return View(EnterNewStartDateViewName, model);
         }
 
         await _cache.SetCacheModelAsync(model);
+        var providerPlannedEndDateModel = _mapper.Map<ProviderPlannedEndDateModel>(model);
+        return View(EnterNewEndDateViewName, providerPlannedEndDateModel);
+    }
+
+	[HttpGet]
+    [Route("edit")]
+    public IActionResult GetProviderEditChangeDetails(ProviderPlannedEndDateModel model)
+    {
+        var view = HttpContext.Request.Query["view"].ToString();
+
+        switch(view)
+        {
+            case "startDate":
+                return View(EnterNewStartDateViewName, model);
+            case "endDate":
+                return View(EnterNewEndDateViewName, model);
+
+        }
+
+        _logger.LogError("Invalid view {view} requested for edit", view);
+        return NotFound();
+    }
+
+    [HttpPost]
+    [Route("checkDetails")]
+    public async Task<IActionResult> ProviderCheckDetails(ProviderPlannedEndDateModel model)
+    {
+        //  Handle endDate input
+        RouteValuesHelper.PopulateProviderRouteValues(model, HttpContext);
+
+        if (!ModelState.IsValid)
+        {
+            return View(EnterNewEndDateViewName, model);
+        }
+
+        //  Apply endDate to change model
+        if(model.UseSuggestedDate == true)
+        {
+            model.PlannedEndDate = new DateField(model.SuggestedEndDate);
+        }
+
+        await _cache.SetCacheModelAsync(model);
+
         return View(CheckDetailsViewName, model);
     }
 
     [HttpPost]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("submit")]
     public async Task<IActionResult> ProviderSubmitChangeDetails(ProviderChangeOfStartDateModel model)
     {
-        await _apprenticeshipService.CreateStartDateChange(model.ApprenticeshipKey, "Provider", HttpContext.User.Identity?.Name!, HttpUtility.HtmlEncode(model.ReasonForChangeOfStartDate), model.ApprenticeshipActualStartDate!.Date.GetValueOrDefault());
+        await _apprenticeshipService.CreateStartDateChange(
+            model.ApprenticeshipKey, 
+            "Provider", 
+            HttpContext.User.Identity?.Name!, 
+            HttpUtility.HtmlEncode(model.ReasonForChangeOfStartDate), 
+            model.ApprenticeshipActualStartDate!.Date.GetValueOrDefault(),
+            model.PlannedEndDate!.Date.GetValueOrDefault());
+
         var providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
         { 
             Controller = "", 
@@ -100,7 +139,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
     [HttpGet]
-    [SetNavigationSection(NavigationSection.ManageApprentices)]
     [Route("pending")]
     public async Task<IActionResult> ViewPendingChangePage(long ukprn, string apprenticeshipHashedId)
     {
@@ -126,7 +164,6 @@ public class ChangeOfStartDateProviderController : Controller
     }
 
 	[HttpPost]
-	[SetNavigationSection(NavigationSection.ManageApprentices)]
 	[Route("cancel")]
 	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
 	{
@@ -145,4 +182,5 @@ public class ChangeOfStartDateProviderController : Controller
 		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
 		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners=ChangeOfStartDateCancelled" }));
 	}
+
 }

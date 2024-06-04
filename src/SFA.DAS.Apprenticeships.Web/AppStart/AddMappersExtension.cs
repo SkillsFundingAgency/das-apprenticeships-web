@@ -19,7 +19,7 @@ public static class AddMappersExtension
         services.AddTransient<IMapper<ProviderChangeOfStartDateModel>, ProviderChangeOfStartDateModelMapper>();
         services.AddTransient<IMapper<EmployerViewPendingStartDateChangeModel>, EmployerViewPendingStartDateChangeModelMapper>();
         services.AddTransient<IMapper<ProviderCancelStartDateModel>, ProviderCancelStartDateModelMapper>();
-
+        services.AddTransient<IMapper<ProviderPlannedEndDateModel>, ProviderPlannedEndDateModelMapper>();
 
 
         services.AddTransient<IMapper>((serviceProvider) =>
@@ -36,6 +36,7 @@ public static class AddMappersExtension
             mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderChangeOfStartDateModel>>()!);
             mapperResolver.Register(serviceProvider.GetService<IMapper<EmployerViewPendingStartDateChangeModel>>()!);
             mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderCancelStartDateModel>>()!);
+            mapperResolver.Register(serviceProvider.GetService<IMapper<ProviderPlannedEndDateModel>>()!);
             return mapperResolver;
         });
     }

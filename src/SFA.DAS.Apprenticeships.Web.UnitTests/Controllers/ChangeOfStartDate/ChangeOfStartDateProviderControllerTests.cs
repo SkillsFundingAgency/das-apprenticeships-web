@@ -6,10 +6,8 @@ using Moq;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Models;
-using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
@@ -41,7 +39,7 @@ public class ChangeOfStartDateProviderControllerTests
     }
 
     [Test]
-    public async Task GetProviderEnterChangeDetails_ReturnsMappedModel()
+    public async Task GetEnterStartDatePage_ReturnsMappedModel()
     {
         // Arrange
         var apprenticeshipHashedId = _fixture.Create<string>();
@@ -57,16 +55,16 @@ public class ChangeOfStartDateProviderControllerTests
         controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
 
         // Act
-        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        var result = await controller.GetEnterStartDatePage(apprenticeshipHashedId);
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewStartDateViewName);
         viewResult.Model.Should().BeEquivalentTo(expectedModel);
     }
 
     [Test]
-    public async Task GetProviderEnterChangeDetails_ReturnsNotFound_WhenApprenticeshipKeyNotFound()
+    public async Task GetEnterStartDatePage_WhenApprenticeshipKeyNotFound_ReturnsNotFound()
     {
         // Arrange
         var apprenticeshipHashedId = _fixture.Create<string>();
@@ -75,14 +73,14 @@ public class ChangeOfStartDateProviderControllerTests
             .ReturnsAsync(Guid.Empty);
 
         // Act
-        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        var result = await controller.GetEnterStartDatePage(apprenticeshipHashedId);
 
         // Assert
         result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]
-    public async Task GetProviderEnterChangeDetails_ReturnsNotFound_WhenApprenticeshipStartDateNotFound()
+    public async Task GetEnterStartDatePage_WhenApprenticeshipStartDateNotFound_ReturnsNotFound()
     {
         // Arrange
         var apprenticeshipHashedId = _fixture.Create<string>();
@@ -91,10 +89,49 @@ public class ChangeOfStartDateProviderControllerTests
         SetupGetStartDate(apprenticeshipHashedId, null);
 
         // Act
-        var result = await controller.GetProviderEnterChangeDetails(apprenticeshipHashedId);
+        var result = await controller.GetEnterStartDatePage(apprenticeshipHashedId);
 
         // Assert
         result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
+    public async Task SubmitStartDate_ValidModel_ReturnsEnterNewEndDateView()
+    {
+        // Arrange
+        var controller = GetSubjectUnderTest();
+        var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+        var expectedModel = _fixture.Create<ProviderPlannedEndDateModel>();
+        _mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ProviderChangeOfStartDateModel>())).Returns(expectedModel);
+
+        controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>());
+
+        // Act
+        var result = await controller.SubmitStartDate(model);
+
+        // Assert
+        var viewResult = result.ShouldBeOfType<ViewResult>();
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewEndDateViewName);
+        viewResult.Model.Should().BeEquivalentTo(expectedModel);
+    }
+
+    [Test]
+    public async Task SubmitStartDate_InValidModel_ReturnsEnterNewStartDateView()
+    {         
+        // Arrange
+        var controller = GetSubjectUnderTest();
+        var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+
+        controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>());
+        controller.ModelState.AddModelError("key", "error message");
+
+        // Act
+        var result = await controller.SubmitStartDate(model);
+
+        // Assert
+        var viewResult = result.ShouldBeOfType<ViewResult>();
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewStartDateViewName);
+        viewResult.Model.Should().BeEquivalentTo(model);
     }
 
     [Test]
@@ -104,7 +141,7 @@ public class ChangeOfStartDateProviderControllerTests
 		var controller = GetSubjectUnderTest();
 		_mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ApprenticeshipStartDate>()));
 
-        var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+        var model = _fixture.Create<ProviderPlannedEndDateModel>();
 
         controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>());
 
@@ -124,7 +161,7 @@ public class ChangeOfStartDateProviderControllerTests
 		var controller = GetSubjectUnderTest();
 		_mockMapper.Setup(m => m.Map<ProviderChangeOfStartDateModel>(It.IsAny<ApprenticeshipStartDate>()));
 
-        var model = _fixture.Create<ProviderChangeOfStartDateModel>();
+        var model = _fixture.Create<ProviderPlannedEndDateModel>();
 
         controller.SetupHttpContext(_fixture.Create<long>(), _fixture.Create<string>());
         controller.ModelState.AddModelError("key", "error message");
@@ -134,7 +171,7 @@ public class ChangeOfStartDateProviderControllerTests
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterNewEndDateViewName);
         viewResult.Model.Should().BeEquivalentTo(model);
     }
 
@@ -195,23 +232,42 @@ public class ChangeOfStartDateProviderControllerTests
         Assert.That(viewResult.ViewName, Is.EqualTo(ChangeOfStartDateProviderController.ProviderCancelPendingChangeViewName));
     }
 
-    [Test]
-    public void GetProviderInitiatedEditPage_ReturnsProviderInitiatedViewName()
+    [TestCase("startDate", ChangeOfStartDateProviderController.EnterNewStartDateViewName)]
+    [TestCase("endDate", ChangeOfStartDateProviderController.EnterNewEndDateViewName)]
+    public void GetProviderInitiatedEditPage_ReturnsExpectedView(string urlQueryParameter, string expectedViewName)
     {
         // Arrange
         var hashId = "hashId";
         var ukprn = _fixture.Create<long>();
         var controller = GetSubjectUnderTest();
-        controller.SetupHttpContext(ukprn, hashId);
-
-        var createChangeOfStartDateModel = _fixture.Create<ProviderChangeOfStartDateModel>();
+        var httpContextMocks = controller.SetupHttpContext(ukprn, hashId);
+        httpContextMocks.SetQueryString(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("view", urlQueryParameter) });
+        var createChangeOfStartDateModel = _fixture.Create<ProviderPlannedEndDateModel>();
 
         // Act
         var result = controller.GetProviderEditChangeDetails(createChangeOfStartDateModel);
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.EnterChangeDetailsViewName);
+        viewResult.ViewName.Should().Be(expectedViewName);
+    }
+
+    [Test]
+    public void GetProviderInitiatedEditPage_WhenQueryParameterNotPresent_ReturnsNotFound()
+    {
+        // Arrange
+        var hashId = "hashId";
+        var ukprn = _fixture.Create<long>();
+        var controller = GetSubjectUnderTest();
+        var httpContextMocks = controller.SetupHttpContext(ukprn, hashId);
+        httpContextMocks.SetQueryString(Array.Empty<KeyValuePair<string, string>>());
+        var createChangeOfStartDateModel = _fixture.Create<ProviderPlannedEndDateModel>();
+
+        // Act
+        var result = controller.GetProviderEditChangeDetails(createChangeOfStartDateModel);
+
+        // Assert
+        var viewResult = result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]
