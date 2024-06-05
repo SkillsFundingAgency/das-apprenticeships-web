@@ -218,4 +218,13 @@ public class ApprenticeshipService : IApprenticeshipService
 			throw new ServiceException(response.ErrorContent);
 		}
 	}
+
+    public async Task FreezePayments(Guid apprenticeshipKey, string? reason)
+    {
+        var response = await _apiClient.Post<object>(new FreezePaymentsRequest(apprenticeshipKey, new FreezePaymentsData{ Reason = reason}));
+        if (!string.IsNullOrEmpty(response.ErrorContent))
+        {
+            throw new ServiceException(response.ErrorContent);
+        }
+    }
 }
