@@ -41,8 +41,6 @@ public class EmployerPaymentsFreezeControllerTests
         var apprenticeshipKey = _fixture.Create<Guid>();
 
         _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
-        //_mockExternalEmployerUrlHelper.Setup(x => x.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()))
-        //    .Returns(_expectedEmployerCommitmentsUrl);
 
         var controller = new EmployerPaymentsFreezeController(_mockLogger.Object, _mockApprenticeshipService.Object, GetUrlBuilder());
         controller.SetupHttpContext(null, apprenticeshipHashedId, null, employerAccountId);

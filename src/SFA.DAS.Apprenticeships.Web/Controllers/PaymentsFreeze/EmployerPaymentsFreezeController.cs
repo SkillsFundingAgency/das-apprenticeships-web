@@ -7,7 +7,7 @@ using SFA.DAS.Apprenticeships.Web.Models.PaymentsFreeze;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.PaymentsFreeze;
 
-[Authorize]
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("employer/{employerAccountId}/PaymentsFreeze/{apprenticeshipHashedId}")]
 public class EmployerPaymentsFreezeController : Controller
 {
@@ -25,7 +25,6 @@ public class EmployerPaymentsFreezeController : Controller
     }
 
     [HttpGet]
-    [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("")]
     public async Task<IActionResult> FreezeProviderPaymentsPage(string employerAccountId, string apprenticeshipHashedId)
     {
@@ -43,7 +42,6 @@ public class EmployerPaymentsFreezeController : Controller
     }
 
     [HttpPost]
-    [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("")]
     public async Task<IActionResult> FreezeProviderPaymentsPage(FreezeProviderPaymentsModel model)
     {
