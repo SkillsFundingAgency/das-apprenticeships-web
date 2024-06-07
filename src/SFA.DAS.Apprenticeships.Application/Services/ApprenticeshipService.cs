@@ -227,4 +227,13 @@ public class ApprenticeshipService : IApprenticeshipService
             throw new ServiceException(response.ErrorContent);
         }
     }
+
+    public async Task UnfreezePayments(Guid apprenticeshipKey)
+    {
+        var response = await _apiClient.Post<object>(new UnfreezePaymentsRequest(apprenticeshipKey));
+        if (!string.IsNullOrEmpty(response.ErrorContent))
+        {
+            throw new ServiceException(response.ErrorContent);
+        }
+    }
 }

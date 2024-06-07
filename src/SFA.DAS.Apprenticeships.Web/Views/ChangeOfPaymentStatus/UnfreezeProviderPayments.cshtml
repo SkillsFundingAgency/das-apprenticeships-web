@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SFA.DAS.Provider.Shared.UI.TagHelpers
+@model SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus.UnfreezeProviderPaymentsModel
+@{
+    ViewData["Title"] = "Unfreeze provider payments - Manage apprenticeships";
+}
+
+<div class="govuk-width-container ">
+
+    @*Renders href as href="https://approvals.{domain}/{ProviderReferenceNumber}/apprentices/{ApprenticeshipHashedId}" *@
+    <a class="govuk-back-link" href="@Model.BackLinkUrl">
+        Back
+    </a>
+
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+        <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPaymentStatus/@Model.ApprenticeshipHashedId/unfreeze">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CacheKey)
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-l">Unfreeze provider payments</h1>
+                    <p>
+                        The learner status will not be changed. If you need to change learner status, contact the training provider.
+                    </p>
+                    <div class="govuk-form-group govuk-!-margin-top-7 @ViewContext.DisplayFormGroupError(nameof(Model.UnfreezePayments))">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                Do you want to unfreeze training provider payments?
+                            </legend>
+                            
+                            <div class="govuk-radios">
+                                <component type="typeof(RadioOptionComponent)" param-Id='"UnfreezePayments-true"' param-name='"UnfreezePayments"' param-Value='"true"' render-mode="Static"
+                                           param-Label='"Yes, unfreeze future payments"' param-checked='Model.UnfreezePayments == true' />
+                                <component type="typeof(RadioOptionComponent)" param-Id='"UnfreezePayments-false"' param-name='"UnfreezePayments"' param-Value='"false"' render-mode="Static"
+                                           param-Label='"No"' param-checked='Model.UnfreezePayments == false' />
+                            </div>
+                            @Html.ValidationMessageFor(m => m.UnfreezePayments, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.UnfreezePayments) })
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">
+                Confirm changes
+            </button>
+
+        </form>
+    </main>
+</div>

@@ -16,7 +16,7 @@
 
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
-        <form method="post" action="/employer/@Model.EmployerAccountId/PaymentsFreeze/@Model.ApprenticeshipHashedId/freeze">
+        <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPaymentStatus/@Model.ApprenticeshipHashedId/freeze">
             @Html.AntiForgeryToken()
             @Html.HiddenFor(m => m.ApprenticeshipKey)
             <div class="govuk-grid-row">
