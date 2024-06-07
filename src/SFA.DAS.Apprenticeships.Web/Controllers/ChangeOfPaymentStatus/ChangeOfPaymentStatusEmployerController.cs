@@ -3,21 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Apprenticeships.Web.Models.PaymentsFreeze;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 
-namespace SFA.DAS.Apprenticeships.Web.Controllers.PaymentsFreeze;
+namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPaymentStatus;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("employer/{employerAccountId}/PaymentsFreeze/{apprenticeshipHashedId}")]
-public class EmployerPaymentsFreezeController : Controller
+public class ChangeOfPaymentStatusEmployerController : Controller
 {
-    private readonly ILogger<EmployerPaymentsFreezeController> _logger;
+    private readonly ILogger<ChangeOfPaymentStatusEmployerController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
     private readonly UrlBuilder _externalEmployerUrlHelper;
 
-    public const string FreezeProviderPaymentsViewName = "~/Views/PaymentsFreeze/FreezeProviderPayments.cshtml";
+    public const string FreezeProviderPaymentsViewName = "~/Views/ChangeOfPaymentStatus/FreezeProviderPayments.cshtml";
 
-    public EmployerPaymentsFreezeController(ILogger<EmployerPaymentsFreezeController> logger, IApprenticeshipService apprenticeshipService, UrlBuilder externalEmployerUrlHelper)
+    public ChangeOfPaymentStatusEmployerController(ILogger<ChangeOfPaymentStatusEmployerController> logger, IApprenticeshipService apprenticeshipService, UrlBuilder externalEmployerUrlHelper)
     {
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
@@ -42,11 +42,16 @@ public class EmployerPaymentsFreezeController : Controller
     }
 
     [HttpPost]
-    [Route("")]
+    [Route("freeze")]
     public async Task<IActionResult> FreezeProviderPaymentsPage(FreezeProviderPaymentsModel model)
     {
-        await _apprenticeshipService.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze);
+        if (model.FreezePayments == true)
+        {
+            await _apprenticeshipService.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze);
 
-        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()) + "?showProviderPaymentsInactive=true");
+            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()) + "?showProviderPaymentsInactive=true");
+        }
+
+        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()));
     }
 }

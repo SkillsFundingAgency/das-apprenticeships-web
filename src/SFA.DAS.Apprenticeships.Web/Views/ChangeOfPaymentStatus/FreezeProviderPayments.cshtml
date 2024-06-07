@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using SFA.DAS.Provider.Shared.UI.TagHelpers
-@model SFA.DAS.Apprenticeships.Web.Models.PaymentsFreeze.FreezeProviderPaymentsModel
+@model SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus.FreezeProviderPaymentsModel
 @{
     ViewData["Title"] = "Freeze provider payments - Manage apprenticeships";
     const int MaxCharacters = 200;
@@ -16,7 +16,7 @@
 
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
-        <form method="post" action="/employer/@Model.EmployerAccountId/PaymentsFreeze/@Model.ApprenticeshipHashedId">
+        <form method="post" action="/employer/@Model.EmployerAccountId/PaymentsFreeze/@Model.ApprenticeshipHashedId/freeze">
             @Html.AntiForgeryToken()
             @Html.HiddenFor(m => m.ApprenticeshipKey)
             <div class="govuk-grid-row">
