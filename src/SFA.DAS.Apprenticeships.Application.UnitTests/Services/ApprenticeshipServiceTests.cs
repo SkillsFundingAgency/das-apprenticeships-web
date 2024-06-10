@@ -416,7 +416,6 @@ public class ApprenticeshipServiceTests
     {
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var reason = _fixture.Create<string>();
         var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "");
 
         _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingStartDateChangeRequest>()))
@@ -434,7 +433,6 @@ public class ApprenticeshipServiceTests
     {
         // Arrange
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var reason = _fixture.Create<string>();
         var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.BadRequest, _fixture.Create<string>());
 
         _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingStartDateChangeRequest>()))
@@ -442,6 +440,68 @@ public class ApprenticeshipServiceTests
 
         // Act & Assert
         Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey));
+    }
+
+    [Test]
+    public async Task FreezePayments_WhenCalled_SendsPostRequest()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var reason = _fixture.Create<string>();
+        var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "");
+
+        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<FreezePaymentsRequest>()))
+            .ReturnsAsync(responseData);
+
+        // Act
+        await _apprenticeshipService.FreezePayments(apprenticeshipKey, reason);
+
+        // Assert
+        _apiClientMock.Verify(x => x.Post<object>(It.IsAny<FreezePaymentsRequest>()), Times.Once);
+    }
+
+    [Test]
+    public void FreezePayments_WhenCalled_ThrowsServiceExceptionOnError()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var reason = _fixture.Create<string>();
+        var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.BadRequest, _fixture.Create<string>());
+
+        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<FreezePaymentsRequest>())).ReturnsAsync(responseData);
+
+        // Act & Assert
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.FreezePayments(apprenticeshipKey, reason));
+    }
+
+    [Test]
+    public async Task UnfreezePayments_WhenCalled_SendsPostRequest()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.OK, "");
+
+        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<UnfreezePaymentsRequest>()))
+            .ReturnsAsync(responseData);
+
+        // Act
+        await _apprenticeshipService.UnfreezePayments(apprenticeshipKey);
+
+        // Assert
+        _apiClientMock.Verify(x => x.Post<object>(It.IsAny<UnfreezePaymentsRequest>()), Times.Once);
+    }
+
+    [Test]
+    public void UnfreezePayments_WhenCalled_ThrowsServiceExceptionOnError()
+    {
+        // Arrange
+        var apprenticeshipKey = _fixture.Create<Guid>();
+        var responseData = new ApiResponse<object>(string.Empty, HttpStatusCode.BadRequest, _fixture.Create<string>());
+
+        _apiClientMock.Setup(x => x.Post<object>(It.IsAny<UnfreezePaymentsRequest>())).ReturnsAsync(responseData);
+
+        // Act & Assert
+        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.UnfreezePayments(apprenticeshipKey));
     }
 
     private void MockGetApprenticeshipKey(string apprenticeshipHashId, Guid? apprenticeshipKey = null)
