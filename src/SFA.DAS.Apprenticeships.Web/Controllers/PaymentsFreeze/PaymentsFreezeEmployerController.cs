@@ -7,21 +7,21 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 
-namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPaymentStatus;
+namespace SFA.DAS.Apprenticeships.Web.Controllers.PaymentsFreeze;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-[Route("employer/{employerAccountId}/ChangeOfPaymentStatus/{apprenticeshipHashedId}")]
-public class ChangeOfPaymentStatusEmployerController : Controller
+[Route("employer/{employerAccountId}/PaymentsFreeze/{apprenticeshipHashedId}")]
+public class PaymentsFreezeEmployerController : Controller
 {
-    private readonly ILogger<ChangeOfPaymentStatusEmployerController> _logger;
+    private readonly ILogger<PaymentsFreezeEmployerController> _logger;
     private readonly IApprenticeshipService _apprenticeshipService;
     private readonly ICacheService _cache;
     private readonly UrlBuilder _externalEmployerUrlHelper;
 
-    public const string FreezeProviderPaymentsViewName = "~/Views/ChangeOfPaymentStatus/FreezeProviderPayments.cshtml";
-    public const string UnfreezeProviderPaymentsViewName = "~/Views/ChangeOfPaymentStatus/UnfreezeProviderPayments.cshtml";
+    public const string FreezeProviderPaymentsViewName = "~/Views/PaymentsFreeze/FreezeProviderPayments.cshtml";
+    public const string UnfreezeProviderPaymentsViewName = "~/Views/PaymentsFreeze/UnfreezeProviderPayments.cshtml";
 
-    public ChangeOfPaymentStatusEmployerController(ILogger<ChangeOfPaymentStatusEmployerController> logger, IApprenticeshipService apprenticeshipService, ICacheService cacheService, UrlBuilder externalEmployerUrlHelper)
+    public PaymentsFreezeEmployerController(ILogger<PaymentsFreezeEmployerController> logger, IApprenticeshipService apprenticeshipService, ICacheService cacheService, UrlBuilder externalEmployerUrlHelper)
     {
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
@@ -30,7 +30,7 @@ public class ChangeOfPaymentStatusEmployerController : Controller
     }
 
     [HttpGet]
-    [Route("freeze")]
+    [Route("")]
     public async Task<IActionResult> FreezeProviderPaymentsPage(string employerAccountId, string apprenticeshipHashedId)
     {
         var response = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
@@ -47,7 +47,7 @@ public class ChangeOfPaymentStatusEmployerController : Controller
     }
 
     [HttpPost]
-    [Route("freeze")]
+    [Route("")]
     public async Task<IActionResult> FreezeProviderPaymentsPage(FreezeProviderPaymentsModel model)
     {
         if (model.FreezePayments == true)

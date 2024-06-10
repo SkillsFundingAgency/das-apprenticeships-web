@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Application.Exceptions;
+using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
@@ -222,18 +223,19 @@ public class ApprenticeshipService : IApprenticeshipService
     public async Task FreezePayments(Guid apprenticeshipKey, string? reason)
     {
         var response = await _apiClient.Post<object>(new FreezePaymentsRequest(apprenticeshipKey, new FreezePaymentsData{ Reason = reason}));
-        if (!string.IsNullOrEmpty(response.ErrorContent))
+        if (!response.IsSuccessStatusCode)
         {
-            throw new ServiceException(response.ErrorContent);
+            throw new ServiceException($"Failed to {nameof(FreezePayments)} Status:{response.StatusCode} Content: {response.ErrorContent}");
         }
     }
 
     public async Task UnfreezePayments(Guid apprenticeshipKey)
     {
         var response = await _apiClient.Post<object>(new UnfreezePaymentsRequest(apprenticeshipKey));
-        if (!string.IsNullOrEmpty(response.ErrorContent))
+        if (!response.IsSuccessStatusCode)
         {
-            throw new ServiceException(response.ErrorContent);
+            throw new ServiceException($"Failed to {nameof(UnfreezePayments)} Status:{response.StatusCode} Content: {response.ErrorContent}");
         }
     }
+
 }

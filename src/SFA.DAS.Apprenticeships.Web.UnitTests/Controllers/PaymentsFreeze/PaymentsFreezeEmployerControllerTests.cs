@@ -4,27 +4,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
-using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPaymentStatus;
+using SFA.DAS.Apprenticeships.Web.Controllers.PaymentsFreeze;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
 
-namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPaymentStatus;
+namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.PaymentsFreeze;
 
 [TestFixture]
-public class ChangeOfPaymentStatusEmployerControllerTests
+public class PaymentsFreezeEmployerControllerTests
 {
     private readonly Fixture _fixture;
-    private readonly Mock<ILogger<ChangeOfPaymentStatusEmployerController>> _mockLogger;
+    private readonly Mock<ILogger<PaymentsFreezeEmployerController>> _mockLogger;
     private Mock<IApprenticeshipService> _mockApprenticeshipService = null!;
     private Mock<ICacheService> _mockCacheService;
     private string _expectedEmployerCommitmentsUrl = null!;
 
-    public ChangeOfPaymentStatusEmployerControllerTests()
+    public PaymentsFreezeEmployerControllerTests()
     {
         _fixture = new Fixture();
-        _mockLogger = new Mock<ILogger<ChangeOfPaymentStatusEmployerController>>();
+        _mockLogger = new Mock<ILogger<PaymentsFreezeEmployerController>>();
         _mockCacheService = new Mock<ICacheService>();
     }
 
@@ -46,7 +46,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
 
         _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
-        var controller = new ChangeOfPaymentStatusEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
+        var controller = new PaymentsFreezeEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
         controller.SetupHttpContext(null, apprenticeshipHashedId, null, employerAccountId);
 
         // Act
@@ -70,7 +70,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
 
         _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(Guid.Empty);
 
-        var controller = new ChangeOfPaymentStatusEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
+        var controller = new PaymentsFreezeEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
 
         // Act
         var result = await controller.FreezeProviderPaymentsPage(employerAccountId, apprenticeshipHashedId);
@@ -85,7 +85,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
         // Arrange
         var model = _fixture.Create<FreezeProviderPaymentsModel>();
 
-        var controller = new ChangeOfPaymentStatusEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
+        var controller = new PaymentsFreezeEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
 
         // Act
         var result = await controller.FreezeProviderPaymentsPage(model);
@@ -106,7 +106,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
 
         _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(apprenticeshipKey);
 
-        var controller = new ChangeOfPaymentStatusEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
+        var controller = new PaymentsFreezeEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
         controller.SetupHttpContext(null, apprenticeshipHashedId, null, employerAccountId);
 
         // Act
@@ -130,7 +130,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
 
         _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(apprenticeshipHashedId)).ReturnsAsync(Guid.Empty);
 
-        var controller = new ChangeOfPaymentStatusEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
+        var controller = new PaymentsFreezeEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
 
         // Act
         var result = await controller.UnfreezeProviderPaymentsPage(employerAccountId, apprenticeshipHashedId);
@@ -146,7 +146,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
         var model = _fixture.Create<UnfreezeProviderPaymentsModel>();
         model.UnfreezePayments = true;
 
-        var controller = new ChangeOfPaymentStatusEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
+        var controller = new PaymentsFreezeEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockCacheService.Object, GetUrlBuilder());
 
         // Act
         var result = await controller.UnfreezeProviderPaymentsPage(model);
