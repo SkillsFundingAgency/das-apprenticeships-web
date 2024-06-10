@@ -1,11 +1,11 @@
 ﻿namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 
-public class UnfreezeProviderPaymentsModel : ICacheModel
+public class FreezeProviderPaymentsModel
 {
-    public string EmployerAccountId { get; set; } = string.Empty;
-    public string ApprenticeshipHashedId { get; set; } = string.Empty;
-    public string BackLinkUrl { get; set; } = string.Empty;
+    public string EmployerAccountId { get; set; }
+    public string? ApprenticeshipHashedId { get; set; }
+    public string BackLinkUrl { get; set; }
     public Guid ApprenticeshipKey { get; set; }
-    public bool? UnfreezePayments { get; set; }
-    public string? CacheKey { get; set; }
+    public string? ReasonForFreeze { get; set; }
+    public bool? FreezePayments { get; set; }
 }
