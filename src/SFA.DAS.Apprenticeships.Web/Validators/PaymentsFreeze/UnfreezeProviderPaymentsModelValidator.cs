@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 
-namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPaymentStatus;
+namespace SFA.DAS.Apprenticeships.Web.Validators.PaymentsFreeze;
 
 public class UnfreezeProviderPaymentsModelValidator : AbstractValidator<UnfreezeProviderPaymentsModel>
 {
@@ -11,6 +11,4 @@ public class UnfreezeProviderPaymentsModelValidator : AbstractValidator<Unfreeze
             .NotNull()
             .WithMessage("You must select an option");
     }
-
-
 }
