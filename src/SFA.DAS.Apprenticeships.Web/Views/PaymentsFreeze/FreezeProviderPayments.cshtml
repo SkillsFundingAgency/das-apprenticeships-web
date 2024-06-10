@@ -18,7 +18,7 @@
 
         <form method="post" action="/employer/@Model.EmployerAccountId/PaymentsFreeze/@Model.ApprenticeshipHashedId">
             @Html.AntiForgeryToken()
-            @Html.HiddenFor(m => m.ApprenticeshipKey)
+            @Html.HiddenFor(m => m.CacheKey)
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
 
@@ -40,7 +40,7 @@
                             payment day, no funds will be transferred to the provider for that specific period.
                         </div>
                     </details>
-                    <div class="govuk-form-group govuk-!-margin-top-7">
+                    <div class="govuk-form-group govuk-!-margin-top-7  @ViewContext.DisplayFormGroupError(nameof(Model.FreezePayments))">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                                 Do you want to freeze training provider payments?
@@ -72,6 +72,7 @@
                                 </div>
                                 <component type="typeof(RadioOptionComponent)" param-Id='"freezePayments-false"' param-name='"FreezePayments"' param-Value='"false"' render-mode="Static" param-onchange='"javascript: showHideFreezeReason();"'
                                            param-Label='"No"' param-checked='Model.FreezePayments == false' />
+                                @Html.ValidationMessageFor(m => m.FreezePayments, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.FreezePayments) })
                             </div>
                         </fieldset>
                     </div>

@@ -42,6 +42,7 @@ public class PaymentsFreezeEmployerController : Controller
         var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
 
         var model = new FreezeProviderPaymentsModel{ ApprenticeshipKey = response, ApprenticeshipHashedId = apprenticeshipHashedId, BackLinkUrl = backLink, EmployerAccountId = employerAccountId };
+        await _cache.SetCacheModelAsync(model);
 
         return View(FreezeProviderPaymentsViewName, model);
     }
@@ -50,6 +51,12 @@ public class PaymentsFreezeEmployerController : Controller
     [Route("")]
     public async Task<IActionResult> FreezeProviderPaymentsPage(FreezeProviderPaymentsModel model)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("ModelState is invalid for {method} {validationErrors}", nameof(FreezeProviderPaymentsPage), ModelState.GetErrorSummary());
+            return View(FreezeProviderPaymentsViewName, model);
+        }
+
         if (model.FreezePayments == true)
         {
             await _apprenticeshipService.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze);
