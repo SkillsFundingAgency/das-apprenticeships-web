@@ -3,12 +3,13 @@ using SFA.DAS.Apprenticeships.Web.Models.Enums;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
-public class ProviderChangeOfStartDateModel : BaseChangeOfStartDateModel, ICacheModel, IRouteValuesProvider
+public class ProviderChangeOfStartDateModel : BaseProviderChangeOfStartDateModel, ICacheModel, IRouteValuesProvider
 {
     public DateField? ApprenticeshipActualStartDate { get; set; }
-    public long? ProviderReferenceNumber { get; set; }
+    public DateField? PlannedEndDate { get; set; }
     public InitiatedBy InitiatedBy => InitiatedBy.Provider;
     public DateTime? OriginalApprenticeshipActualStartDate { get; set; }
+    public DateTime? OriginalPlannedEndDate { get; set; }
     public DateTime? EarliestStartDate { get; set; }
     public DateTime? LatestStartDate { get; set; }
     public DateTime LastFridayOfSchool { get; set; }
@@ -38,6 +39,8 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
         var model = new ProviderChangeOfStartDateModel
         {
             ApprenticeshipActualStartDate = new DateField(apprenticeshipStartDate.ActualStartDate),
+            OriginalApprenticeshipActualStartDate = apprenticeshipStartDate.ActualStartDate,
+            OriginalPlannedEndDate = apprenticeshipStartDate.PlannedEndDate,
             ApprenticeshipKey = apprenticeshipStartDate.ApprenticeshipKey,
             EarliestStartDate = apprenticeshipStartDate.EarliestStartDate,
             LatestStartDate = apprenticeshipStartDate.LatestStartDate,
@@ -51,8 +54,6 @@ public class ProviderChangeOfStartDateModelMapper : IMapper<ProviderChangeOfStar
             PreviousAcademicYearHardCloseDate = apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate,
             CurrentAcademicYearStartDate = apprenticeshipStartDate.CurrentAcademicYear.StartDate
         };
-
-        model.OriginalApprenticeshipActualStartDate = model.ApprenticeshipActualStartDate.Date;
 
         return model;
     }
