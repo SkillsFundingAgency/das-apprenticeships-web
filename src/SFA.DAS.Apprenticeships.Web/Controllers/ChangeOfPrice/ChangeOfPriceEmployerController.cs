@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using System.Web;
+using SFA.DAS.Employer.Shared.UI.Models.Flags;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -84,7 +85,7 @@ public class ChangeOfPriceEmployerController : Controller
     {
         await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
-        var employerCommitmentsReturnUrl = $"{_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())}?showChangeOfPriceRequestSent=true";
+        var employerCommitmentsReturnUrl = $"{_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())}".AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRequestSent);
         return Redirect(employerCommitmentsReturnUrl);
     }
 
@@ -159,11 +160,11 @@ public class ChangeOfPriceEmployerController : Controller
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeApproved=true");
+            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceApproved));
         }
 
         await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeRejected=true");
+        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRejected));
     }
 
 }
