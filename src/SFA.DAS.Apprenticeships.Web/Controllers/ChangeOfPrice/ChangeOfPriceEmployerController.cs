@@ -85,8 +85,10 @@ public class ChangeOfPriceEmployerController : Controller
     {
         await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
-        var employerCommitmentsReturnUrl = $"{_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())}".AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRequestSent);
-        return Redirect(employerCommitmentsReturnUrl);
+        var redirectUrl = _externalEmployerUrlHelper
+            .CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
+            .AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRequestSent);
+        return Redirect(redirectUrl);
     }
 
     [HttpGet]
@@ -156,15 +158,19 @@ public class ChangeOfPriceEmployerController : Controller
             return NotFound();
         }
 
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+
         if (ApproveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceApproved));
+            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceApproved);
+            return Redirect(redirectUrl);
         }
 
         await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRejected));
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRejected);
+        return Redirect(redirectUrl);
     }
 
 }

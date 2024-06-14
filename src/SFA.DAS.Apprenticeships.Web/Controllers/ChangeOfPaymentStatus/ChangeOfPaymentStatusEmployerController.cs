@@ -50,7 +50,10 @@ public class ChangeOfPaymentStatusEmployerController : Controller
         {
             await _apprenticeshipService.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze);
 
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ProviderPaymentsInactive));
+            var redirectUrl = _externalEmployerUrlHelper
+                .CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
+                .AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ProviderPaymentsInactive);
+            return Redirect(redirectUrl);
         }
 
         return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()));

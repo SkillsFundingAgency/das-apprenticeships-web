@@ -75,15 +75,21 @@ public class ChangeOfStartDateEmployerController : Controller
             return NotFound();
         }
 
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+
         if (approveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateApproved));
+
+            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateApproved);
+            return Redirect(redirectUrl);
 		}
 
 		await _apprenticeshipService.RejectPendingStartDateChange(apprenticeshipKey, rejectReason);
-		return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateRejected));
+
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateRejected);
+        return Redirect(redirectUrl);
 	}
 
 }

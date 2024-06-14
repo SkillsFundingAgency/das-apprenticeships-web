@@ -168,9 +168,11 @@ public class ChangeOfStartDateProviderController : Controller
 	[Route("cancel")]
 	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
 	{
-		if (CancelRequest != "1")
+        var redirectUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" });
+
+        if (CancelRequest != "1")
 		{
-			return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
+			return Redirect(redirectUrl);
 		}
 
 		var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
@@ -181,7 +183,9 @@ public class ChangeOfStartDateProviderController : Controller
 		}
 
 		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
-		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateCancelled));
-	}
+
+        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateCancelled);
+        return Redirect(redirectUrl);
+    }
 
 }
