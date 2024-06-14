@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Employer.Shared.UI.Models.Flags;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate;
 
@@ -127,7 +128,7 @@ public class ChangeOfStartDateEmployerControllerTests
         _apprenticeshipServiceMock.Verify(x => x.ApprovePendingStartDateChange(apprenticeshipKey, userId), Times.Once);
         result.ShouldBeOfType<RedirectResult>();
         var redirectResult = (RedirectResult)result;
-        redirectResult.Url.Should().ContainAll(employerAccountId, apprenticeshipHashedId.ToUpper(), "showStartDateChangeApproved=true");
+        redirectResult.Url.Should().ContainAll(employerAccountId, apprenticeshipHashedId.ToUpper(), $"banners={ApprenticeDetailsBanners.ChangeOfStartDateApproved}");
     }
 
     [Test]
@@ -149,7 +150,7 @@ public class ChangeOfStartDateEmployerControllerTests
 	    _apprenticeshipServiceMock.Verify(x => x.RejectPendingStartDateChange(apprenticeshipKey, rejectReason), Times.Once);
 	    result.ShouldBeOfType<RedirectResult>();
 	    var redirectResult = (RedirectResult)result;
-	    redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?showStartDateChangeRejected=true");
+	    redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={ApprenticeDetailsBanners.ChangeOfStartDateRejected}");
     }
 
 	private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)

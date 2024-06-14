@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
+using SFA.DAS.Employer.Shared.UI.Models.Flags;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPaymentStatus;
 
@@ -49,7 +50,7 @@ public class ChangeOfPaymentStatusEmployerController : Controller
         {
             await _apprenticeshipService.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze);
 
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()) + "?showProviderPaymentsInactive=true");
+            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()).AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ProviderPaymentsInactive));
         }
 
         return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()));
