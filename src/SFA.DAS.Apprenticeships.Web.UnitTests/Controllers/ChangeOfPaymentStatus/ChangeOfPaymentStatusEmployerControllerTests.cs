@@ -90,7 +90,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
         // Assert
         _mockApprenticeshipService.Verify(x => x.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze), Times.Once);
         result.ShouldBeOfType<RedirectResult>();
-        ((RedirectResult)result).Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{model.EmployerAccountId}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}/details?banners={ApprenticeDetailsBanners.ProviderPaymentsInactive}");
+        ((RedirectResult)result).Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{model.EmployerAccountId}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}/details?banners={(ulong)ApprenticeDetailsBanners.ProviderPaymentsInactive}");
     }
 
     private UrlBuilder GetUrlBuilder()

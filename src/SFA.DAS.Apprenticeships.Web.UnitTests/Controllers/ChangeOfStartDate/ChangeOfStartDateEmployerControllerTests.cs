@@ -128,7 +128,7 @@ public class ChangeOfStartDateEmployerControllerTests
         _apprenticeshipServiceMock.Verify(x => x.ApprovePendingStartDateChange(apprenticeshipKey, userId), Times.Once);
         result.ShouldBeOfType<RedirectResult>();
         var redirectResult = (RedirectResult)result;
-        redirectResult.Url.Should().ContainAll(employerAccountId, apprenticeshipHashedId.ToUpper(), $"banners={ApprenticeDetailsBanners.ChangeOfStartDateApproved}");
+        redirectResult.Url.Should().ContainAll(employerAccountId, apprenticeshipHashedId.ToUpper(), $"banners={(ulong)ApprenticeDetailsBanners.ChangeOfStartDateApproved}");
     }
 
     [Test]
@@ -150,7 +150,7 @@ public class ChangeOfStartDateEmployerControllerTests
 	    _apprenticeshipServiceMock.Verify(x => x.RejectPendingStartDateChange(apprenticeshipKey, rejectReason), Times.Once);
 	    result.ShouldBeOfType<RedirectResult>();
 	    var redirectResult = (RedirectResult)result;
-	    redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={ApprenticeDetailsBanners.ChangeOfStartDateRejected}");
+	    redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={(ulong)ApprenticeDetailsBanners.ChangeOfStartDateRejected}");
     }
 
 	private void MocksSetupGetPendingStartDateApis(GetPendingStartDateChangeResponse getPendingStartDateChangeResponse)

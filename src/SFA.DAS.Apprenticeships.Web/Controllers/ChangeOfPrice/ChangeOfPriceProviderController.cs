@@ -94,12 +94,12 @@ public class ChangeOfPriceProviderController : Controller
         if (priceChangeStatus == "Approved")
         {
             providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?banners{ApprenticeDetailsBanners.ChangeOfPriceAutoApproved}" });
+                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}"}).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceAutoApproved);
         }
         else
         {
             providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?banners{ApprenticeDetailsBanners.ChangeOfPriceRequestSent}" });
+                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}" }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRequestSent);
         }
 
         return Redirect(providerCommitmentsReturnUrl);
@@ -143,7 +143,7 @@ public class ChangeOfPriceProviderController : Controller
 
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
         await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners{ApprenticeDetailsBanners.ChangeOfPriceRejected}" }));
+        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRejected));
     }
 
     [HttpGet]
@@ -168,7 +168,7 @@ public class ChangeOfPriceProviderController : Controller
 
         var userId = HttpContext.User.Identity?.Name!;
         await _apprenticeshipService.ApprovePendingPriceChange(model.ApprenticeshipKey, userId, model.ApprenticeshipTrainingPrice.GetValueOrDefault(), model.ApprenticeshipEndPointAssessmentPrice.GetValueOrDefault());
-        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}??banners{ApprenticeDetailsBanners.ChangeOfPriceApproved}" }));
+        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceApproved));
     }
 
 
@@ -189,6 +189,6 @@ public class ChangeOfPriceProviderController : Controller
         }
 
         await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners{ApprenticeDetailsBanners.ChangeOfPriceCancelled}" }));
+        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceCancelled));
     }
 }

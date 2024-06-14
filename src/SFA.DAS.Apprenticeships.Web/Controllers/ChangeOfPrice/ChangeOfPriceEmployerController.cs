@@ -140,7 +140,7 @@ public class ChangeOfPriceEmployerController : Controller
         }
 
         await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-        redirectUrl += $"?banners={ApprenticeDetailsBanners.ChangeOfPriceCancelled}";
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
     }
 

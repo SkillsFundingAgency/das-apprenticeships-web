@@ -17,6 +17,7 @@ using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Security.Claims;
 using System.Web;
+using SFA.DAS.Provider.Shared.UI.Models.Flags;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
 {
@@ -169,7 +170,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
                 It.IsAny<string>(),
                 createChangeOfPriceModel.EffectiveFromDate.Date.GetValueOrDefault()));
             result.ShouldBeOfType<RedirectResult>();
-            ((RedirectResult)result).Url.Should().Be(expectedUrl);
+            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceRequestSent}");
         }
 
         [Test]
@@ -234,7 +235,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             // Assert
             _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
-            ((RedirectResult)result).Url.Should().Be(expectedUrl);
+            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceCancelled}");
         }
 
         [Test]
@@ -304,7 +305,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             // Assert
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason));
             var redirectToActionResult = result.ShouldBeOfType<RedirectResult>();
-            redirectToActionResult.Url.Should().Be(expectedUrl);
+            redirectToActionResult.Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceRejected}");
         }
 
         [Test]
@@ -373,7 +374,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
 
             // Assert
             var redirectResult = result.ShouldBeOfType<RedirectResult>();
-            redirectResult.Url.Should().Be(_expectedProviderCommitmentsUrl);
+            redirectResult.Url.Should().Be($"{_expectedProviderCommitmentsUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceApproved}");
         }
 
         [Test]

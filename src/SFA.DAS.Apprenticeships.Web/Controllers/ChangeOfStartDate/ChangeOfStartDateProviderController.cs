@@ -133,8 +133,8 @@ public class ChangeOfStartDateProviderController : Controller
         { 
             Controller = "", 
             SubDomain = Subdomains.Approvals, 
-            RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?banners={ApprenticeDetailsBanners.ChangeOfPriceRequestSent}" 
-        });
+            RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}"
+        }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateSent);
 
         return Redirect(providerCommitmentsReturnUrl);
     }
@@ -181,7 +181,7 @@ public class ChangeOfStartDateProviderController : Controller
 		}
 
 		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
-		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners={ApprenticeDetailsBanners.ChangeOfStartDateCancelled}" }));
+		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateCancelled));
 	}
 
 }

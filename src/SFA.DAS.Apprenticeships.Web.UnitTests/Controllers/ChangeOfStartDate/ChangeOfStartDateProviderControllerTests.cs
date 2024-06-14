@@ -13,6 +13,7 @@ using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
+using SFA.DAS.Provider.Shared.UI.Models.Flags;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate;
 
@@ -193,7 +194,7 @@ public class ChangeOfStartDateProviderControllerTests
 
         // Assert
         var redirectResult = result.ShouldBeOfType<RedirectResult>();
-        redirectResult.Url.Should().Be(expectedRedirectUrl);
+        redirectResult.Url.Should().Be($"{expectedRedirectUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfStartDateSent}");
     }
 
 	[Test]
@@ -310,7 +311,7 @@ public class ChangeOfStartDateProviderControllerTests
         // Assert
         _mockApprenticeshipService.Verify(m => m.CancelPendingStartDateChange(It.IsAny<Guid>()), Times.Once);
         var redirectResult = result.ShouldBeOfType<RedirectResult>();
-        redirectResult.Url.Should().Be(expectedUrl);
+        redirectResult.Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfStartDateCancelled}");
     }
 
     private ChangeOfStartDateProviderController GetSubjectUnderTest()
