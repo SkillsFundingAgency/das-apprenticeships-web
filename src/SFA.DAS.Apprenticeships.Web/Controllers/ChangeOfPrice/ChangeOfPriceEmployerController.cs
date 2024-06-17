@@ -9,7 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using System.Web;
-using SFA.DAS.Employer.Shared.UI.Models.Flags;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -87,7 +87,7 @@ public class ChangeOfPriceEmployerController : Controller
 
         var redirectUrl = _externalEmployerUrlHelper
             .CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
-            .AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRequestSent);
+            .AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRequestSent);
         return Redirect(redirectUrl);
     }
 
@@ -142,7 +142,7 @@ public class ChangeOfPriceEmployerController : Controller
         }
 
         await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceCancelled);
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
     }
 
@@ -164,12 +164,12 @@ public class ChangeOfPriceEmployerController : Controller
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
-            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceApproved);
+            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceApproved);
             return Redirect(redirectUrl);
         }
 
         await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRejected);
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRejected);
         return Redirect(redirectUrl);
     }
 

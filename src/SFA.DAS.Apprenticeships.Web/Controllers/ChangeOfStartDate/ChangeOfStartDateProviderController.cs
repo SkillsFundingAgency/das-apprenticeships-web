@@ -6,11 +6,12 @@ using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
-using SFA.DAS.Provider.Shared.UI.Models.Flags;
+using SFA.DAS.Apprenticeships.Web.Extensions;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
@@ -134,7 +135,7 @@ public class ChangeOfStartDateProviderController : Controller
             Controller = "", 
             SubDomain = Subdomains.Approvals, 
             RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}"
-        }).AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateSent);
+        }).AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfStartDateSent);
 
         return Redirect(providerCommitmentsReturnUrl);
     }
@@ -184,7 +185,7 @@ public class ChangeOfStartDateProviderController : Controller
 
 		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
 
-        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateCancelled);
+        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfStartDateCancelled);
         return Redirect(redirectUrl);
     }
 

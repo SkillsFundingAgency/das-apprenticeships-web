@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
@@ -17,7 +18,6 @@ using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Security.Claims;
 using System.Web;
-using SFA.DAS.Provider.Shared.UI.Models.Flags;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
 {
@@ -170,7 +170,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
                 It.IsAny<string>(),
                 createChangeOfPriceModel.EffectiveFromDate.Date.GetValueOrDefault()));
             result.ShouldBeOfType<RedirectResult>();
-            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceRequestSent}");
+            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfPriceRequestSent}");
         }
 
         [Test]
@@ -235,7 +235,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             // Assert
             _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
-            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceCancelled}");
+            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfPriceCancelled}");
         }
 
         [Test]
@@ -305,7 +305,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             // Assert
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason));
             var redirectToActionResult = result.ShouldBeOfType<RedirectResult>();
-            redirectToActionResult.Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceRejected}");
+            redirectToActionResult.Url.Should().Be($"{expectedUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfPriceRejected}");
         }
 
         [Test]
@@ -374,7 +374,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
 
             // Assert
             var redirectResult = result.ShouldBeOfType<RedirectResult>();
-            redirectResult.Url.Should().Be($"{_expectedProviderCommitmentsUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceApproved}");
+            redirectResult.Url.Should().Be($"{_expectedProviderCommitmentsUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfPriceApproved}");
         }
 
         [Test]

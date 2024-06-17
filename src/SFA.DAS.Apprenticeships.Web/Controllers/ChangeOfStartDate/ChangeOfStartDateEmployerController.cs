@@ -7,7 +7,7 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Models.Flags;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
@@ -82,13 +82,13 @@ public class ChangeOfStartDateEmployerController : Controller
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
 
-            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateApproved);
+            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfStartDateApproved);
             return Redirect(redirectUrl);
 		}
 
 		await _apprenticeshipService.RejectPendingStartDateChange(apprenticeshipKey, rejectReason);
 
-        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(ApprenticeDetailsBanners.ChangeOfStartDateRejected);
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfStartDateRejected);
         return Redirect(redirectUrl);
 	}
 

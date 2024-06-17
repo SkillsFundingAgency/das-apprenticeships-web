@@ -13,7 +13,7 @@ using SFA.DAS.Apprenticeships.Web.Helpers;
 using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Provider.Shared.UI.Models.Flags;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -95,13 +95,13 @@ public class ChangeOfPriceProviderController : Controller
         {
             providerCommitmentsReturnUrl = _externalProviderUrlHelper
                 .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}"})
-                .AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceAutoApproved);
+                .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceAutoApproved);
         }
         else
         {
             providerCommitmentsReturnUrl = _externalProviderUrlHelper
                 .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}" })
-                .AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRequestSent);
+                .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceRequestSent);
         }
 
         return Redirect(providerCommitmentsReturnUrl);
@@ -148,7 +148,7 @@ public class ChangeOfPriceProviderController : Controller
 
         var redirectUrl = _externalProviderUrlHelper
             .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" })
-            .AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceRejected);
+            .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceRejected);
         return Redirect(redirectUrl);
     }
 
@@ -177,7 +177,7 @@ public class ChangeOfPriceProviderController : Controller
 
         var redirectUrl = _externalProviderUrlHelper
             .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" })
-            .AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceApproved);
+            .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceApproved);
         return Redirect(redirectUrl);
     }
 
@@ -202,7 +202,7 @@ public class ChangeOfPriceProviderController : Controller
 
         await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
 
-        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ApprenticeDetailsBanners.ChangeOfPriceCancelled);
+        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
     }
 }

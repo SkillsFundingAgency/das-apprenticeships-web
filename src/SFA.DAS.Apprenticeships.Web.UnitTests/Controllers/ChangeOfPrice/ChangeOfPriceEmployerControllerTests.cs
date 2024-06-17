@@ -12,7 +12,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Models.Flags;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 
@@ -119,7 +119,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
                 It.IsAny<string>(),
                 createChangeOfPriceModel.EffectiveFromDate.Date.GetValueOrDefault()));
             result.ShouldBeOfType<RedirectResult>();
-            ((RedirectResult)result).Url.Should().EndWith($"?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceRequestSent}");
+            ((RedirectResult)result).Url.Should().EndWith($"?banners={(ulong)EmployerApprenticeDetailsBanners.ChangeOfPriceRequestSent}");
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
             var redirectResult = (RedirectResult)result;
-            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceRejected}");
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={(ulong)EmployerApprenticeDetailsBanners.ChangeOfPriceRejected}");
         }
 
         [Test]
@@ -207,7 +207,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             _mockApprenticeshipService.Verify(x => x.ApprovePendingPriceChange(apprenticeshipKey, userId), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
             var redirectResult = (RedirectResult)result;
-            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceApproved}");
+            redirectResult.Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details?banners={(ulong)EmployerApprenticeDetailsBanners.ChangeOfPriceApproved}");
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             // Assert
             _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Once);
             result.ShouldBeOfType<RedirectResult>();
-            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ApprenticeDetailsBanners.ChangeOfPriceCancelled}");
+            ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)EmployerApprenticeDetailsBanners.ChangeOfPriceCancelled}");
         }
 
         [Test]

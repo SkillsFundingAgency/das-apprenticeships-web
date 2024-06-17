@@ -8,7 +8,7 @@ using SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPaymentStatus;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Models.Flags;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPaymentStatus;
 
@@ -90,7 +90,7 @@ public class ChangeOfPaymentStatusEmployerControllerTests
         // Assert
         _mockApprenticeshipService.Verify(x => x.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze), Times.Once);
         result.ShouldBeOfType<RedirectResult>();
-        ((RedirectResult)result).Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{model.EmployerAccountId}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}/details?banners={(ulong)ApprenticeDetailsBanners.ProviderPaymentsInactive}");
+        ((RedirectResult)result).Url.Should().Be($"https://approvals.at-eas.apprenticeships.education.gov.uk/{model.EmployerAccountId}/apprentices/{model.ApprenticeshipHashedId.ToUpper()}/details?banners={(ulong)EmployerApprenticeDetailsBanners.ProviderPaymentsInactive}");
     }
 
     private UrlBuilder GetUrlBuilder()
