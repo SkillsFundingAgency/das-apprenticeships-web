@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Employer.Shared.UI;
@@ -36,7 +37,7 @@ public class ChangeOfPaymentStatusEmployerController : Controller
             return NotFound();
         }
 
-        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
 
         var model = new FreezeProviderPaymentsModel{ ApprenticeshipKey = response, ApprenticeshipHashedId = apprenticeshipHashedId, BackLinkUrl = backLink, EmployerAccountId = employerAccountId };
 
@@ -52,11 +53,11 @@ public class ChangeOfPaymentStatusEmployerController : Controller
             await _apprenticeshipService.FreezePayments(model.ApprenticeshipKey, model.ReasonForFreeze);
 
             var redirectUrl = _externalEmployerUrlHelper
-                .CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
+                .CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
                 .AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ProviderPaymentsInactive);
             return Redirect(redirectUrl);
         }
 
-        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()));
+        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper()));
     }
 }

@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
@@ -45,7 +46,7 @@ public class ChangeOfStartDateEmployerController : Controller
             return NotFound();
         }
 
-        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
 
         switch (response.PendingStartDateChange!.Initiator.GetChangeInitiator())
         {
@@ -75,7 +76,7 @@ public class ChangeOfStartDateEmployerController : Controller
             return NotFound();
         }
 
-        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
 
         if (approveChanges != "0")
         {
