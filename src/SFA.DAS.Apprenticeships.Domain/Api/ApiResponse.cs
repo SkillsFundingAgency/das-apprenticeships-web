@@ -6,6 +6,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
     {
         public TResponse Body { get;  }
         public HttpStatusCode StatusCode { get; }
+        public bool IsSuccessStatusCode => (int)StatusCode >= 200 && (int)StatusCode <= 299;
         public string ErrorContent { get ; }
 
         public ApiResponse (TResponse body, HttpStatusCode statusCode, string errorContent)
