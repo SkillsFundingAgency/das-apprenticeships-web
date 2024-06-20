@@ -30,5 +30,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Interfaces
         Task RejectPendingStartDateChange(Guid apprenticeshipKey, string reason);
         Task CancelPendingStartDateChange(Guid apprenticeshipKey);
         Task FreezePayments(Guid apprenticeshipKey, string? reason);
+        Task UnfreezePayments(Guid apprenticeshipKey);
     }
 }
