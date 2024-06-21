@@ -32,6 +32,13 @@
                                param-OriginalValue='Model.OriginalActualStartDate.ToString("dd MMMM yyyy")'
                                param-Value='Model.PendingActualStartDate.ToString("dd MMMM yyyy")'
                                render-mode="Static" />
+
+                    <component type="typeof(DetailsRowComponent)"
+                               param-Id='"PlannedEndDate"'
+                               param-Label='"Planned training end date"'
+                               param-OriginalValue='Model.OriginalPlannedEndDate.ToString("dd MMMM yyyy")'
+                               param-Value='Model.PendingPlannedEndDate.ToString("dd MMMM yyyy")'
+                               render-mode="Static" />
                 </tbody>
             </table>
 

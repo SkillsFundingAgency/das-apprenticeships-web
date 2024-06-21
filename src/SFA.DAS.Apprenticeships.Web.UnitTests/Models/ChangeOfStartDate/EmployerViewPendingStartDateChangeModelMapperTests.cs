@@ -59,5 +59,7 @@ public class EmployerViewPendingStartDateChangeModelMapperTests
         Assert.That(result.ProviderName, Is.EqualTo(sourceObject.ProviderName));
         Assert.That(result.OriginalActualStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.OriginalActualStartDate));
         Assert.That(result.PendingActualStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.PendingActualStartDate));
+        Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(sourceObject.PendingStartDateChange.OriginalPlannedEndDate));
+        Assert.That(result.PendingPlannedEndDate, Is.EqualTo(sourceObject.PendingStartDateChange.PendingPlannedEndDate));
     }
 }
