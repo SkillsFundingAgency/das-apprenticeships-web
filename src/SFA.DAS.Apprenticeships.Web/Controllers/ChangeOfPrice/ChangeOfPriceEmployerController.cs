@@ -9,6 +9,8 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using System.Web;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
+using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -84,8 +86,10 @@ public class ChangeOfPriceEmployerController : Controller
     {
         await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
-        var employerCommitmentsReturnUrl = $"{_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())}?showChangeOfPriceRequestSent=true";
-        return Redirect(employerCommitmentsReturnUrl);
+        var redirectUrl = _externalEmployerUrlHelper
+            .CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
+            .AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRequestSent);
+        return Redirect(redirectUrl);
     }
 
     [HttpGet]
@@ -99,7 +103,7 @@ public class ChangeOfPriceEmployerController : Controller
             return NotFound();
         }
 
-        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
 
         switch (response.PendingPriceChange.Initiator.GetChangeInitiator())
         {
@@ -125,7 +129,7 @@ public class ChangeOfPriceEmployerController : Controller
     [Route("cancel")]
     public async Task<IActionResult> CancelPriceChange(string employerAccountId, string apprenticeshipHashedId, string cancelRequest)
     {
-        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
         if (cancelRequest != "1")
         {
             return Redirect(redirectUrl);
@@ -139,7 +143,7 @@ public class ChangeOfPriceEmployerController : Controller
         }
 
         await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-        redirectUrl += "?showPriceChangeCancelled=true";
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
     }
 
@@ -155,15 +159,19 @@ public class ChangeOfPriceEmployerController : Controller
             return NotFound();
         }
 
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
+
         if (ApproveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeApproved=true");
+            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceApproved);
+            return Redirect(redirectUrl);
         }
 
         await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeRejected=true");
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRejected);
+        return Redirect(redirectUrl);
     }
 
 }
