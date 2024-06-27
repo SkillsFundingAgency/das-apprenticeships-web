@@ -100,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Api
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             
             var errorContent = "";
-            var responseBody = (TResponse)default;
+            var responseBody = default(TResponse?);
             
             if(!response.IsSuccessStatusCode)
             {

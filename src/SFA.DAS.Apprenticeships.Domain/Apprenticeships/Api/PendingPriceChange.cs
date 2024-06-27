@@ -9,7 +9,7 @@
 		public decimal? PendingAssessmentPrice { get; set; }
 		public decimal PendingTotalPrice { get; set; }
 		public DateTime EffectiveFrom { get; set; }
-		public string Reason { get; set; }
+		public string Reason { get; set; } = null!;
         public Guid ApprenticeshipKey { get; set; }
         public DateTime? ProviderApprovedDate { get; set; }
 		public DateTime? EmployerApprovedDate { get; set; }
