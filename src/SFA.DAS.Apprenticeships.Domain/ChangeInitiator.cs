@@ -10,12 +10,9 @@ public static class ChangeInitiatorExtensions
 {
     public static ChangeInitiator GetChangeInitiator(this string? changeInitiatorString)
     {
-        if (!string.IsNullOrEmpty(changeInitiatorString))
+        if (Enum.TryParse<ChangeInitiator>(changeInitiatorString, out var initiatedBy))
         {
-            if (Enum.TryParse<ChangeInitiator>(changeInitiatorString, out var initiatedBy))
-            {
-                return initiatedBy;
-            }
+            return initiatedBy;
         }
 
         throw new ArgumentOutOfRangeException($"Could not resolve Change Initiator :{changeInitiatorString}");
