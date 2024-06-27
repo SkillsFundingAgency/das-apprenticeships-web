@@ -20,16 +20,14 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate;
 [TestFixture]
 public class ChangeOfStartDateProviderControllerTests
 {
-    #pragma warning disable CS8618
-    private Fixture _fixture;
-    private Mock<ILogger<ChangeOfStartDateProviderController>> _mockLogger;
-    private Mock<IApprenticeshipService> _mockApprenticeshipService;
-    private Mock<IMapper> _mockMapper;
-    private Mock<IExternalUrlHelper> _mockExternalUrlHelper;
-    private Mock<ICacheService> _mockCacheService;
+    private readonly Fixture _fixture;
+    private readonly Mock<ILogger<ChangeOfStartDateProviderController>> _mockLogger;
+    private readonly Mock<IApprenticeshipService> _mockApprenticeshipService;
+    private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IExternalUrlHelper> _mockExternalUrlHelper;
+    private readonly Mock<ICacheService> _mockCacheService;
 
-    [SetUp]
-    public void Setup()
+    public ChangeOfStartDateProviderControllerTests()
     {
         _fixture = new Fixture();
         _mockLogger = new Mock<ILogger<ChangeOfStartDateProviderController>>();
@@ -85,7 +83,6 @@ public class ChangeOfStartDateProviderControllerTests
     {
         // Arrange
         var apprenticeshipHashedId = _fixture.Create<string>();
-        var apprenticeshipKey = Guid.NewGuid();
         var controller = GetSubjectUnderTest();
         SetupGetStartDate(apprenticeshipHashedId, null);
 
@@ -207,7 +204,7 @@ public class ChangeOfStartDateProviderControllerTests
         var result = await controller.ViewPendingChangePage(123, "apprenticeshipHashedId");
 
         // Assert
-        Assert.IsInstanceOf<NotFoundResult>(result);
+        result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]
@@ -242,7 +239,7 @@ public class ChangeOfStartDateProviderControllerTests
         var ukprn = _fixture.Create<long>();
         var controller = GetSubjectUnderTest();
         var httpContextMocks = controller.SetupHttpContext(ukprn, hashId);
-        httpContextMocks.SetQueryString(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("view", urlQueryParameter) });
+        httpContextMocks.SetQueryString(new[] { new KeyValuePair<string, string>("view", urlQueryParameter) });
         var createChangeOfStartDateModel = _fixture.Create<ProviderPlannedEndDateModel>();
 
         // Act
@@ -268,7 +265,7 @@ public class ChangeOfStartDateProviderControllerTests
         var result = controller.GetProviderEditChangeDetails(createChangeOfStartDateModel);
 
         // Assert
-        var viewResult = result.ShouldBeOfType<NotFoundResult>();
+        result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]
