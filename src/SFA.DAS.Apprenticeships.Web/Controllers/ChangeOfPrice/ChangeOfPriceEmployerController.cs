@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using System.Web;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 
@@ -121,7 +122,7 @@ public class ChangeOfPriceEmployerController : Controller
 
         }
 
-        throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
+        throw new ServiceException("Unrecognised PriceChangeInitiator");
     }
 
     [HttpPost]
@@ -136,9 +137,9 @@ public class ChangeOfPriceEmployerController : Controller
         }
 
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with supplied apprenticeshipHashedId");
             return NotFound();
         }
 
@@ -153,9 +154,9 @@ public class ChangeOfPriceEmployerController : Controller
     public async Task<IActionResult> ApproveOrRejectPriceChangePage(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with supplied apprenticeshipHashedId");
             return NotFound();
         }
 
