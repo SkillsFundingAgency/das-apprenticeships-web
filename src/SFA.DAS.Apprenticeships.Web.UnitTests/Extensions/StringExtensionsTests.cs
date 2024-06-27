@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Web.Extensions;
 using System.Text.Json;
+using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions
 {
@@ -31,9 +32,9 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions
 
 			// Assert
 			foreach (var key in expected.Keys)
-			{
-				Assert.IsTrue(result.ContainsKey(key));
-				Assert.That(result[key].ToString(), Is.EqualTo(expected[key].ToString()));
+            {
+                result.Should().ContainKey(key);
+                result[key].ToString().Should().Be(expected[key].ToString());
 			}
 		}
 	}

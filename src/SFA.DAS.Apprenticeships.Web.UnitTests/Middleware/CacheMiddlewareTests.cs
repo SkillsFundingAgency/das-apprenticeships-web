@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Primitives;
 using Moq;
-using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
 using System.Text.Json;
+using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Middleware
 {
@@ -46,10 +45,10 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Middleware
 			// Act
 			await middleware.InvokeAsync(_mockHttpContext.Object);
 
-			// Assert
-			Assert.IsTrue(_mockHttpContext.Object.Request.Form.ContainsKey("TestProperty"));
-			var actualValue = _mockHttpContext.Object.Request.Form["TestProperty"];
-			Assert.That(actualValue, Is.EqualTo("testValue"));
+            // Assert
+            _mockHttpContext.Object.Request.Form.Should().ContainKey("TestProperty");
+            var actualValue = _mockHttpContext.Object.Request.Form["TestProperty"];
+            actualValue.Should().BeEquivalentTo("testValue");
 		}
 
 		[Test]

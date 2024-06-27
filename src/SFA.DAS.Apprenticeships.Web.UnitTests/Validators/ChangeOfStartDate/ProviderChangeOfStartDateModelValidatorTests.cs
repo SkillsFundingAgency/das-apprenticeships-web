@@ -221,7 +221,7 @@ public class ProviderChangeOfStartDateModelValidatorTests
         result.Errors.Should().NotContain(x => x.ErrorMessage == $"{StandardVersionLatestDateMessage}{model.StandardVersionLatestDate.Value:dd MM yyyy}.");
     }
 
-    private ProviderChangeOfStartDateModel BuildValidTestModel(DateTime originalStartDate)
+    private static ProviderChangeOfStartDateModel BuildValidTestModel(DateTime originalStartDate)
     {
         return new ProviderChangeOfStartDateModel
         {
