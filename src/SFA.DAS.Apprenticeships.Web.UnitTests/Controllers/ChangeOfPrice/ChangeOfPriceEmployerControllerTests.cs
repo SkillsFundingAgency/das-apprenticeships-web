@@ -170,7 +170,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
         [TestCase("test", "test")]
         [TestCase(" ", " ")]
         [TestCase(null, "")]
-        public async Task EmployerRejectChange_ApproveFalse_RejectsPriceHistoryAndRedirectsToEmployerCommitments(string? rejectReason, string? expectedEncodedReason)
+        public async Task EmployerRejectChange_ApproveFalse_RejectsPriceHistoryAndRedirectsToEmployerCommitments(string? rejectReason, string expectedEncodedReason)
         {
             // Arrange
             var employerAccountId = _fixture.Create<string>();
@@ -180,7 +180,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
 
             // Act
-            var result = await controller.ApproveOrRejectPriceChangePage(employerAccountId, apprenticeshipHashedId, "0", rejectReason);
+            var result = await controller.ApproveOrRejectPriceChangePage(employerAccountId, apprenticeshipHashedId, "0", rejectReason!);
 
             // Assert
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason), Times.Once);
@@ -237,7 +237,6 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             // Arrange
             var employerAccountId = _fixture.Create<string>();
             var apprenticeshipHashedId = _fixture.Create<string>();
-            var providerUserName = _fixture.Create<string>();
 
             var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
             var expectedUrl = $"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details";
@@ -254,7 +253,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             ((RedirectResult)result).Url.Should().Be(expectedUrl);
         }
 
-        private UrlBuilder GetUrlBuilder()
+        private static UrlBuilder GetUrlBuilder()
         {
             return new UrlBuilder("AT");
         }
