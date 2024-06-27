@@ -20,14 +20,15 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfStartDate;
 [TestFixture]
 public class ChangeOfStartDateProviderControllerTests
 {
-    private readonly Fixture _fixture;
-    private readonly Mock<ILogger<ChangeOfStartDateProviderController>> _mockLogger;
-    private readonly Mock<IApprenticeshipService> _mockApprenticeshipService;
-    private readonly Mock<IMapper> _mockMapper;
-    private readonly Mock<IExternalUrlHelper> _mockExternalUrlHelper;
-    private readonly Mock<ICacheService> _mockCacheService;
+    private Fixture _fixture;
+    private Mock<ILogger<ChangeOfStartDateProviderController>> _mockLogger;
+    private Mock<IApprenticeshipService> _mockApprenticeshipService;
+    private Mock<IMapper> _mockMapper;
+    private Mock<IExternalUrlHelper> _mockExternalUrlHelper;
+    private Mock<ICacheService> _mockCacheService;
 
-    public ChangeOfStartDateProviderControllerTests()
+    [SetUp]
+    public void Setup()
     {
         _fixture = new Fixture();
         _mockLogger = new Mock<ILogger<ChangeOfStartDateProviderController>>();

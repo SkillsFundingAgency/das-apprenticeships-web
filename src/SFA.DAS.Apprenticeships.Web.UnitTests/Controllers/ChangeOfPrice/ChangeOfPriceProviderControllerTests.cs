@@ -24,16 +24,20 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
     {
         private readonly Fixture _fixture;
         private readonly Mock<ILogger<ChangeOfPriceProviderController>> _mockLogger;
-        private readonly Mock<IApprenticeshipService> _mockApprenticeshipService;
-        private readonly Mock<IMapper> _mockMapper;
-        private readonly Mock<ICacheService> _mockCacheService;
-        private readonly Mock<IExternalUrlHelper> _mockExternalUrlHelper;
-        private readonly string _expectedProviderCommitmentsUrl;
+        private Mock<IApprenticeshipService> _mockApprenticeshipService;
+        private Mock<IMapper> _mockMapper;
+        private Mock<ICacheService> _mockCacheService;
+        private Mock<IExternalUrlHelper> _mockExternalUrlHelper;
+        private string _expectedProviderCommitmentsUrl;
 
         public ChangeOfPriceProviderControllerTests()
         {
             _fixture = new Fixture();
             _mockLogger = new Mock<ILogger<ChangeOfPriceProviderController>>();
+        }
+
+        [SetUp]
+        public void Setup(){
             _mockApprenticeshipService = new Mock<IApprenticeshipService>();
             _mockMapper = new Mock<IMapper>();
             _mockCacheService = new Mock<ICacheService>();
