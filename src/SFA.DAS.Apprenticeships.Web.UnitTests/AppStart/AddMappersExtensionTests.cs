@@ -29,7 +29,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.AppStart
         }
 
 
-        public static IEnumerable<Type> GetAllTypesImplementingInterface(Type openGenericType, Assembly assembly)
+        private static IEnumerable<Type> GetAllTypesImplementingInterface(Type openGenericType, Assembly assembly)
         {
             return from x in assembly.GetTypes()
                    from z in x.GetInterfaces()
