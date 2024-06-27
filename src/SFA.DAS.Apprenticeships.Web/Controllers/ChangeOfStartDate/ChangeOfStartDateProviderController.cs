@@ -11,6 +11,7 @@ using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
@@ -162,7 +163,7 @@ public class ChangeOfStartDateProviderController : Controller
 
         }
 
-        throw new ArgumentOutOfRangeException("ChangeInitiator");
+        throw new ServiceException("Unrecognised ChangeInitiator");
     }
 
 	[HttpPost]
@@ -177,9 +178,9 @@ public class ChangeOfStartDateProviderController : Controller
 		}
 
 		var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-		if (apprenticeshipKey == default)
+		if (apprenticeshipKey == Guid.Empty)
 		{
-			_logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}", apprenticeshipHashedId);
+			_logger.LogWarning("Apprenticeship key not found for apprenticeship with supplied apprenticeshipHashedId");
 			return NotFound();
 		}
 
