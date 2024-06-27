@@ -13,11 +13,9 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
-using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Security.Claims;
-using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
 {
@@ -26,21 +24,16 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
     {
         private readonly Fixture _fixture;
         private readonly Mock<ILogger<ChangeOfPriceProviderController>> _mockLogger;
-        private Mock<IApprenticeshipService> _mockApprenticeshipService = null!; // should be initialized in Setup()
-        private Mock<IMapper> _mockMapper = null!; // should be initialized in Setup()
-        private Mock<ICacheService> _mockCacheService = null!; // should be initialized in Setup()
-        private Mock<IExternalUrlHelper> _mockExternalUrlHelper = null!;
-        private string _expectedProviderCommitmentsUrl = null!;
+        private readonly Mock<IApprenticeshipService> _mockApprenticeshipService;
+        private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<ICacheService> _mockCacheService;
+        private readonly Mock<IExternalUrlHelper> _mockExternalUrlHelper;
+        private readonly string _expectedProviderCommitmentsUrl;
 
         public ChangeOfPriceProviderControllerTests()
         {
             _fixture = new Fixture();
             _mockLogger = new Mock<ILogger<ChangeOfPriceProviderController>>();
-        }
-
-        [SetUp]
-        public void Setup()
-        {
             _mockApprenticeshipService = new Mock<IApprenticeshipService>();
             _mockMapper = new Mock<IMapper>();
             _mockCacheService = new Mock<ICacheService>();
@@ -62,7 +55,6 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>()))
                 .Returns(_expectedProviderCommitmentsUrl);
 
-            _mockCacheService = new Mock<ICacheService>();
             var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
 
             controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
@@ -273,12 +265,12 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
 
             // Act
-            var result = await controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges, "");
+            var result = await controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges);
 
             // Assert
             var redirectToActionResult = result.ShouldBeOfType<RedirectToActionResult>();
             redirectToActionResult.ActionName.Should().Be("ConfirmPriceBreakdown");
-            redirectToActionResult.RouteValues["ukprn"].Should().Be(ukprn);
+            redirectToActionResult.RouteValues!["ukprn"].Should().Be(ukprn);
             redirectToActionResult.RouteValues["apprenticeshipHashedId"].Should().Be(apprenticeshipHashedId);
         }
 
@@ -286,7 +278,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
         [TestCase("test", "test")]
         [TestCase(" ", " ")]
         [TestCase(null, "")]
-        public async Task ApproveOrRejectPendingPriceChange_RejectChanges_RedirectsToShowPriceChangeRejected(string? rejectReason, string? expectedEncodedReason)
+        public async Task ApproveOrRejectPendingPriceChange_RejectChanges_RedirectsToShowPriceChangeRejected(string? rejectReason, string expectedEncodedReason)
         {
             // Arrange
             var ukprn = _fixture.Create<long>();
@@ -300,7 +292,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
 
             // Act
-            var result = await controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges, rejectReason);
+            var result = await controller.ApproveOrRejectPendingPriceChange(ukprn, apprenticeshipHashedId, approveChanges, rejectReason!);
 
             // Assert
             _mockApprenticeshipService.Verify(x => x.RejectPendingPriceChange(apprenticeshipKey, expectedEncodedReason));
@@ -342,7 +334,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, userId) })) }
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userId) })) }
             };
 
             // Act
@@ -366,7 +358,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice
             var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, userId) })) }
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userId) })) }
             };
 
             // Act
