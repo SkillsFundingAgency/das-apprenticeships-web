@@ -18,10 +18,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
     public class ApiClientTests
     {
         private Mock<IOptions<ApprenticeshipsOuterApi>> _configMock;
-        private Mock<IHttpContextAccessor> _contextAccessorMock;
-        private const string _ExpectedOcpApimKey = "ExpectedOcpApimKey";
-        private const string _baseUrl = "http://test.com";
-        private const string _ExpectedUrl = "http://test.com/UnitTestEndpoin";
+        private readonly Mock<IHttpContextAccessor> _contextAccessorMock;
+        private const string ExpectedOcpApimKey = "ExpectedOcpApimKey";
+        private const string BaseUrl = "http://test.com";
+        private const string ExpectedUrl = "http://test.com/UnitTestEndpoin";
         private HttpRequestMessage? _sentMessage;
         private Fixture _fixture;
 
@@ -35,7 +35,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         public void Setup()
         {
             _configMock = new Mock<IOptions<ApprenticeshipsOuterApi>>();
-            var config = new ApprenticeshipsOuterApi { BaseUrl = _baseUrl, Key = _ExpectedOcpApimKey };
+            var config = new ApprenticeshipsOuterApi { BaseUrl = BaseUrl, Key = ExpectedOcpApimKey };
             _configMock.Setup(x => x.Value).Returns(config);
             _sentMessage = null;
         }
@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         {
             // Arrange
             var request = new Mock<IGetApiRequest>();
-            request.Setup(m => m.GetUrl).Returns(_ExpectedUrl);
+            request.Setup(m => m.GetUrl).Returns(ExpectedUrl);
 
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
@@ -57,7 +57,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             // Assert
             result.Body.Should().Be(expectedApiResponse);
-            VerifyRequest(_ExpectedUrl, HttpMethod.Get);
+            VerifyRequest(ExpectedUrl, HttpMethod.Get);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         {
             // Arrange
             var request = new Mock<IPostApiRequest>();
-            request.Setup(m => m.PostUrl).Returns(_ExpectedUrl);
+            request.Setup(m => m.PostUrl).Returns(ExpectedUrl);
 
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
@@ -77,7 +77,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             // Assert
             result.Body.Should().Be(expectedApiResponse);
-            VerifyRequest(_ExpectedUrl, HttpMethod.Post);
+            VerifyRequest(ExpectedUrl, HttpMethod.Post);
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         {
             // Arrange
             var request = new Mock<IPutApiRequest>();
-            request.Setup(m => m.PutUrl).Returns(_ExpectedUrl);
+            request.Setup(m => m.PutUrl).Returns(ExpectedUrl);
 
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
@@ -97,7 +97,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             // Assert
             result.Body.Should().Be(expectedApiResponse);
-            VerifyRequest(_ExpectedUrl, HttpMethod.Put);
+            VerifyRequest(ExpectedUrl, HttpMethod.Put);
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         {
             // Arrange
             var request = new Mock<IDeleteApiRequest>();
-            request.Setup(m => m.DeleteUrl).Returns(_ExpectedUrl);
+            request.Setup(m => m.DeleteUrl).Returns(ExpectedUrl);
 
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
@@ -117,7 +117,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             // Assert
             result.Body.Should().Be(expectedApiResponse);
-            VerifyRequest(_ExpectedUrl, HttpMethod.Delete);
+            VerifyRequest(ExpectedUrl, HttpMethod.Delete);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         {
             // Arrange
             var request = new Mock<IGetApiRequest>();
-            request.Setup(m => m.GetUrl).Returns(_ExpectedUrl);
+            request.Setup(m => m.GetUrl).Returns(ExpectedUrl);
 
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.Unauthorized, expectedApiResponse);
@@ -141,7 +141,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         {
             // Arrange
             var request = new Mock<IPatchApiRequest>();
-            request.Setup(m => m.PatchUrl).Returns(_ExpectedUrl);
+            request.Setup(m => m.PatchUrl).Returns(ExpectedUrl);
 
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
@@ -153,7 +153,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             // Assert
             result.Body.Should().Be(expectedApiResponse);
-            VerifyRequest(_ExpectedUrl, HttpMethod.Patch);
+            VerifyRequest(ExpectedUrl, HttpMethod.Patch);
         }
 
         private HttpClient GetUnitTestHttpClient(HttpResponseMessage expectedResponse)
@@ -162,7 +162,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             httpClientHandler.Protected()
                     .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-                    .Callback((HttpRequestMessage requestMessage, CancellationToken token) =>
+                    .Callback((HttpRequestMessage requestMessage, CancellationToken _) =>
                     {
                         _sentMessage = requestMessage;
                     })
@@ -183,10 +183,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
 
             _sentMessage.Method.Should().Be(httpMethod);
             _sentMessage.RequestUri.Should().BeEquivalentTo(new Uri(expectedUrl));
-            _sentMessage.Headers.GetValues("Ocp-Apim-Subscription-Key").Should().Contain(_ExpectedOcpApimKey);
+            _sentMessage.Headers.GetValues("Ocp-Apim-Subscription-Key").Should().Contain(ExpectedOcpApimKey);
         }
 
-        private HttpResponseMessage GetHttpResponseMessage(HttpStatusCode statusCode, string apiResponse)
+        private static HttpResponseMessage GetHttpResponseMessage(HttpStatusCode statusCode, string apiResponse)
         {
             var response = new HttpResponseMessage(statusCode);
             response.Content = new StringContent(JsonConvert.SerializeObject(apiResponse), Encoding.UTF8, "application/json");
