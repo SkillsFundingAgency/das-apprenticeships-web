@@ -81,7 +81,7 @@ public class ChangeOfStartDateEmployerController : Controller
         if (approveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
-            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
+            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId!);
 
             redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfStartDateApproved);
             return Redirect(redirectUrl);

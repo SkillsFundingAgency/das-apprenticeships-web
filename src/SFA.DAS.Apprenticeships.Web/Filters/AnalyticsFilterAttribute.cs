@@ -14,7 +14,7 @@ namespace SFA.DAS.Apprenticeships.Web.Filters
             if (controller != null)
             {
                 var user = controller.User;
-                var userId = user?.GetUserId();
+                var userId = user.GetUserId();
                 controller.ViewBag.GaData = new GaData
                 {
                     UserId = userId,
@@ -27,11 +27,11 @@ namespace SFA.DAS.Apprenticeships.Web.Filters
         public class GaData
         {
             public string DataLoaded { get; set; } = "dataLoaded";
-            public string UserId { get; set; }
-            public string UserEmail { get; set; }
-            public string UserName { get; set; }
-            public string Vpv { get; set; }
-            public string Acc { get; set; }
+            public string? UserId { get; set; }
+            public string? UserEmail { get; set; }
+            public string? UserName { get; set; }
+            public string? Vpv { get; set; }
+            public string? Acc { get; set; }
 
             public IDictionary<string, string> Extras { get; set; } = new Dictionary<string, string>();
         }

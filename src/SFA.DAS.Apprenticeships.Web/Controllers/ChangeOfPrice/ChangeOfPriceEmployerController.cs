@@ -85,7 +85,7 @@ public class ChangeOfPriceEmployerController : Controller
     [Route("submit")]
     public async Task<IActionResult> EmployerInitiatedSubmitChange(EmployerChangeOfPriceModel model)
     {
-        await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
+        await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId()!, null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
         var redirectUrl = _externalEmployerUrlHelper
             .CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
@@ -165,7 +165,7 @@ public class ChangeOfPriceEmployerController : Controller
         if (ApproveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
-            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
+            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId!);
             redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceApproved);
             return Redirect(redirectUrl);
         }

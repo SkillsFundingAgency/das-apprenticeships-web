@@ -22,14 +22,14 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
         var claims = new List<Claim>();
-        var userId = tokenValidatedContext.Principal.Claims
+        var userId = tokenValidatedContext.Principal?.Claims
             .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
             .Value;
-        var email = tokenValidatedContext.Principal.Claims
+        var email = tokenValidatedContext.Principal?.Claims
             .First(c => c.Type.Equals(ClaimTypes.Email))
             .Value;
 
-        var result = await _accountsSvc.GetUserAccounts(userId, email);
+        var result = await _accountsSvc.GetUserAccounts(userId!, email!);
 
         var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
         var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
@@ -46,7 +46,7 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
         }
 
         claims.Add(new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, result.EmployerUserId));
-        claims.Add(new Claim(EmployerClaims.EmployerEmailClaimsTypeIdentifier, email));
+        claims.Add(new Claim(EmployerClaims.EmployerEmailClaimsTypeIdentifier, email!));
 
         result.EmployerAccounts
             .Where(c => c.Role.Equals("owner", StringComparison.CurrentCultureIgnoreCase) || c.Role.Equals("transactor", StringComparison.CurrentCultureIgnoreCase))
