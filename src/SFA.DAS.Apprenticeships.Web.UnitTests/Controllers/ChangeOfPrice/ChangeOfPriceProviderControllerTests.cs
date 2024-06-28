@@ -16,6 +16,7 @@ using SFA.DAS.Apprenticeships.Web.UnitTests.TestHelpers;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Security.Claims;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Controllers.ChangeOfPrice;
 
@@ -257,6 +258,28 @@ public class ChangeOfPriceProviderControllerTests
         var viewResult = result.ShouldBeOfType<ViewResult>();
         viewResult.ViewName.Should().Be(ChangeOfPriceProviderController.ApproveEmployerChangeOfPriceViewName);
         viewResult.Model.ShouldBeOfType<ProviderViewPendingPriceChangeModel>();
+    }
+
+    [Test]
+    public void ViewPendingPriceChangePage_UnrecognisedInitiator_ThrowsException()
+    {
+        // Arrange
+        var ukprn = _fixture.Create<long>();
+        var apprenticeshipHashedId = _fixture.Create<string>();
+        var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+        pendingPriceChange.PendingPriceChange.Initiator = "TestInvalidValue";
+        pendingPriceChange.HasPendingPriceChange = true;
+
+        _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipHashedId))
+            .ReturnsAsync(pendingPriceChange);
+
+        var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+
+        // Act & Assert
+        FluentActions
+            .Invoking(() => controller.ViewPendingPriceChangePage(ukprn, apprenticeshipHashedId))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     [Test]
