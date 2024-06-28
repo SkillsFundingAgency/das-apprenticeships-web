@@ -14,7 +14,7 @@ namespace SFA.DAS.Apprenticeships.Web.Services
 	public class CacheService : ICacheService
 	{
 		private readonly IDistributedCache _distributedCache;
-		private int _expirationInMinutes;
+		private readonly int _expirationInMinutes;
 
         public CacheService(IDistributedCache distributedCache, IOptions<CacheConfiguration> options)
         {
@@ -37,7 +37,7 @@ namespace SFA.DAS.Apprenticeships.Web.Services
 			});
 		}
 
-		private static byte[] ObjectToByteArray(Object obj)
+		private static byte[] ObjectToByteArray(object obj)
 		{
 			return JsonSerializer.SerializeToUtf8Bytes(obj);
 		}
