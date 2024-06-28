@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
@@ -183,6 +184,34 @@ public class ChangeOfPriceEmployerControllerTests
     }
 
     [Test]
+    public void GetViewPendingPriceChangePageEmployer_UnrecognisedInitiator_ThrowsException()
+    {
+        // Arrange
+        var accountId = _fixture.Create<string>();
+        var apprenticeshipHashedId = _fixture.Create<string>();
+        var employerAccountId = _fixture.Create<string>();
+        var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+        var viewModel = _fixture.Create<EmployerViewPendingPriceChangeModel>();
+        pendingPriceChange.HasPendingPriceChange = true;
+        pendingPriceChange.PendingPriceChange.Initiator = "InvalidTestValue";
+
+        _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipHashedId))
+            .ReturnsAsync(pendingPriceChange);
+
+        _mockMapper.Setup(x => x.Map<EmployerViewPendingPriceChangeModel>(pendingPriceChange))
+            .Returns(viewModel);
+
+        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
+        controller.SetupHttpContext(null, apprenticeshipHashedId, null, employerAccountId);
+
+        // Act & Assert
+        FluentActions
+            .Invoking(() => controller.ViewPendingPriceChangePage(accountId, apprenticeshipHashedId))
+            .Should()
+            .ThrowAsync<ServiceException>();
+    }
+
+    [Test]
     public async Task GetViewPendingPriceChangePageEmployer_ReturnsNotFoundWhenNoPriceChangeExists()
     {
         // Arrange
@@ -242,6 +271,20 @@ public class ChangeOfPriceEmployerControllerTests
     }
 
     [Test]
+    public async Task ApproveOrRejectPriceChange_ApprenticeshipKeyNotFound_ReturnsNotFound()
+    {
+        // Arrange
+        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
+        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.Empty);
+
+        // Act
+        var result = await controller.ApproveOrRejectPriceChangePage(_fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>());
+
+        // Assert
+        result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
     public async Task CancelPriceChange_CancelTrue_CancelsPriceHistoryAndRedirectsToProviderCommitments()
     {
         // Arrange
@@ -282,6 +325,20 @@ public class ChangeOfPriceEmployerControllerTests
         _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Never);
         result.ShouldBeOfType<RedirectResult>();
         ((RedirectResult)result).Url.Should().Be(expectedUrl);
+    }
+
+    [Test]
+    public async Task CancelPriceChange_ApprenticeshipKeyNotFound_ReturnsNotFound()
+    {
+        // Arrange
+        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
+        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.Empty);
+
+        // Act
+        var result = await controller.CancelPriceChange(_fixture.Create<string>(), _fixture.Create<string>(), "1");
+
+        // Assert
+        result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]
