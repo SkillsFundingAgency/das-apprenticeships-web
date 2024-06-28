@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Newtonsoft.Json;
