@@ -228,7 +228,7 @@ public class ChangeOfStartDateProviderControllerTests
 
         // Assert
         var viewResult = result.ShouldBeOfType<ViewResult>();
-        Assert.That(viewResult.ViewName, Is.EqualTo(ChangeOfStartDateProviderController.ProviderCancelPendingChangeViewName));
+        viewResult.ViewName.Should().Be(ChangeOfStartDateProviderController.ProviderCancelPendingChangeViewName);
     }
 
     [TestCase("startDate", ChangeOfStartDateProviderController.EnterNewStartDateViewName)]

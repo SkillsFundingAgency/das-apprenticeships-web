@@ -24,7 +24,7 @@ public class ProviderPlannedEndDateModelTests
         var result = model.SuggestedEndDate;
 
         // Assert
-        Assert.That(result, Is.Null);
+        result.Should().BeNull();
     }
 
     [Test]

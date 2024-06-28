@@ -133,7 +133,11 @@ public class ApiClientTests
         var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
 
         // Act & Assert
-        Assert.ThrowsAsync<ApiUnauthorizedException>(() => apiClient.Get<string>(request.Object));
+        FluentActions
+            .Invoking(() => apiClient.Get<string>(request.Object))
+            .Should()
+            .ThrowAsync<ApiUnauthorizedException>();
+
     }
 
     [Test]

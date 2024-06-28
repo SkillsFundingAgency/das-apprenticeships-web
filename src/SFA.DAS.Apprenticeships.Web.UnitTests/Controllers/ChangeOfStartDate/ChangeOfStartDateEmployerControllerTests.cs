@@ -41,7 +41,7 @@ public class ChangeOfStartDateEmployerControllerTests
         var result = await controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId");
 
         // Assert
-        Assert.IsInstanceOf<NotFoundResult>(result);
+        result.Should().BeOfType<NotFoundResult>();
     }
 
     [Test]

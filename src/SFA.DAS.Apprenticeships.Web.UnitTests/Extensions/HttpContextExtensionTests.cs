@@ -40,7 +40,11 @@ public class HttpContextExtensionTests
         mockHttpContext.Setup(m => m.Request).Returns(mockHttpRequest.Object);
 
         // Act / Assert
-        Assert.Throws<ArgumentException>(()=> mockHttpContext.Object.GetRouteValueString(valueKey));
+        FluentActions
+            .Invoking(() => mockHttpContext.Object.GetRouteValueString(valueKey))
+            .Should()
+            .Throw<ArgumentException>();
+
 
     }
 }

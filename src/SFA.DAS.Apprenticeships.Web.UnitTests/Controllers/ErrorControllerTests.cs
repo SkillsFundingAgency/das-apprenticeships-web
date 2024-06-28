@@ -28,9 +28,9 @@ public class ErrorControllerTests
         var result = (ViewResult)sut.Error(403);
 
         // Assert
-        Assert.That(result, Is.Not.Null);
+        result.Should().NotBeNull();
         var actualModel = result?.Model as Error403ViewModel;
-        Assert.That(actualModel?.HelpPageLink, Is.EqualTo(helpLink));
+        actualModel?.HelpPageLink.Should().Be(helpLink);
         //Assert.That(actualModel?.UseDfESignIn, Is.EqualTo(useDfESignIn));
     }
 

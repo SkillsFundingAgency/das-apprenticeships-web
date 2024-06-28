@@ -196,7 +196,11 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Delete<object>(It.IsAny<CancelPendingPriceChangeRequest>())).ReturnsAsync(response);
 
         // Act / Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey))
+            .Should()
+            .ThrowAsync<ServiceException>();
+
     }
 
     [Test]
@@ -223,7 +227,10 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<RejectPendingPriceChangeRequest>())).ReturnsAsync(response);
 
         // Act / Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, _fixture.Create<string>()))
+            .Should()
+            .ThrowAsync<ServiceException>();
 
     }
 
@@ -251,7 +258,10 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
 
         // Act / Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>()));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>()))
+            .Should()
+            .ThrowAsync<ServiceException>();
 
     }
 
@@ -279,7 +289,10 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Patch<object>(It.IsAny<ApprovePendingPriceChangeRequest>())).ReturnsAsync(response);
 
         // Act / Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>(), _fixture.Create<decimal>(), _fixture.Create<decimal>()));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, _fixture.Create<string>(), _fixture.Create<decimal>(), _fixture.Create<decimal>()))
+            .Should()
+            .ThrowAsync<ServiceException>();
 
     }
 
@@ -345,8 +358,10 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Post<object>(It.IsAny<CreateChangeOfStartDateRequest>())).ReturnsAsync(new ApiResponse<object>(string.Empty, HttpStatusCode.BadRequest, "Error"));
 
         // Act / Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CreateStartDateChange(
-            apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate, data.PlannedEndDate));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.CreateStartDateChange(apprenticeshipKey, data.Initiator, data.UserId, data.Reason, data.ActualStartDate, data.PlannedEndDate))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     [Test]
@@ -379,7 +394,10 @@ public class ApprenticeshipServiceTests
             .ReturnsAsync(responseData);
 
         // Act
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     [Test]
@@ -412,7 +430,10 @@ public class ApprenticeshipServiceTests
 		    .ReturnsAsync(responseData);
 
 	    // Act & Assert
-	    Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.RejectPendingStartDateChange(apprenticeshipKey, reason));
+	    FluentActions
+            .Invoking(() => _apprenticeshipService.RejectPendingStartDateChange(apprenticeshipKey, reason))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     [Test]
@@ -443,7 +464,10 @@ public class ApprenticeshipServiceTests
             .ReturnsAsync(responseData);
 
         // Act & Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     [Test]
@@ -475,7 +499,10 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Post<object>(It.IsAny<FreezePaymentsRequest>())).ReturnsAsync(responseData);
 
         // Act & Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.FreezePayments(apprenticeshipKey, reason));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.FreezePayments(apprenticeshipKey, reason))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     [Test]
@@ -505,7 +532,10 @@ public class ApprenticeshipServiceTests
         _apiClientMock.Setup(x => x.Post<object>(It.IsAny<UnfreezePaymentsRequest>())).ReturnsAsync(responseData);
 
         // Act & Assert
-        Assert.ThrowsAsync<ServiceException>(() => _apprenticeshipService.UnfreezePayments(apprenticeshipKey));
+        FluentActions
+            .Invoking(() => _apprenticeshipService.UnfreezePayments(apprenticeshipKey))
+            .Should()
+            .ThrowAsync<ServiceException>();
     }
 
     private void MockGetApprenticeshipKey(string apprenticeshipHashId, Guid? apprenticeshipKey = null)

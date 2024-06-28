@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions;
@@ -17,6 +18,7 @@ public class ModelStateExtensionsTests
         var result = modelState.GetErrorSummary();
 
         // Assert
-        Assert.That(result.Equals("This is error 1 This is error 2"));
+        result.Should().Be("This is error 1 This is error 2");
+
     }
 }
