@@ -538,6 +538,34 @@ public class ApprenticeshipServiceTests
             .ThrowAsync<ServiceException>();
     }
 
+    [Test]
+    public async Task CreatePriceHistory_WhenCalled_ReturnsPriceChangeStatus()
+    {
+        // Arrange
+        var expectedStatus = _fixture.Create<string>();
+
+        _apiClientMock.Setup(x => x.Post<PostPendingPriceChangeResponse>(It.IsAny<CreateApprenticeshipPriceHistoryRequest>()))
+            .ReturnsAsync(new ApiResponse<PostPendingPriceChangeResponse>(
+                new PostPendingPriceChangeResponse { PriceChangeStatus = expectedStatus },
+                HttpStatusCode.Accepted,
+                string.Empty));
+
+        // Act
+        var result = await _apprenticeshipService.CreatePriceHistory(
+            _fixture.Create<Guid>(),
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            _fixture.Create<decimal?>(),
+            _fixture.Create<decimal?>(),
+            _fixture.Create<decimal?>(),
+            _fixture.Create<string>(),
+            _fixture.Create<DateTime>());
+
+        // Assert
+        result.Should().Be(expectedStatus);
+    }
+
+
     private void MockGetApprenticeshipKey(string apprenticeshipHashId, Guid? apprenticeshipKey = null)
     {
         if (apprenticeshipKey == null)
