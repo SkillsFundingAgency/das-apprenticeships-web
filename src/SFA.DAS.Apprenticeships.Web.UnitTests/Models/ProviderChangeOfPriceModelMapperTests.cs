@@ -1,20 +1,12 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
-using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models;
 
 public class ProviderChangeOfPriceModelMapperTests
 {
-    private readonly Fixture _fixture;
-
-    public ProviderChangeOfPriceModelMapperTests()
-    {
-        _fixture = new Fixture();
-    }
-
     [Test]
     public void Map_ApprenticeshipPriceToCreateChangeOfPriceModel()
     {
