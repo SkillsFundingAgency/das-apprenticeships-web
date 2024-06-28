@@ -253,6 +253,57 @@ public class ChangeOfPriceEmployerControllerTests
         ((RedirectResult)result).Url.Should().Be(expectedUrl);
     }
 
+    [Test]
+    public void GetEmployerEditChangeDetails_ReturnsViewWithModel()
+    {
+        // Arrange
+        var model = _fixture.Create<EmployerChangeOfPriceModel>();
+        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
+
+        // Act
+        var result = controller.GetEmployerEditChangeDetails(model);
+
+        // Assert
+        var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+        viewResult.ViewName.Should().Be(ChangeOfPriceEmployerController.EnterChangeDetailsViewName);
+        viewResult.Model.Should().Be(model);
+    }
+
+    [Test]
+    public async Task EmployerCheckDetails_InvalidModel_ReturnsViewWithModel()
+    {
+        // Arrange
+        var model = _fixture.Create<EmployerChangeOfPriceModel>();
+        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
+        controller.ModelState.AddModelError("PropertyName", "Error Message");
+
+        // Act
+        var result = await controller.EmployerCheckDetails(model);
+
+        // Assert
+        var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+        viewResult.ViewName.Should().Be(ChangeOfPriceEmployerController.EnterChangeDetailsViewName);
+        viewResult.Model.Should().Be(model);
+    }
+
+    [Test]
+    public async Task EmployerCheckDetails_ValidModel_SetsCacheAndReturnsView()
+    {
+        // Arrange
+        var model = _fixture.Create<EmployerChangeOfPriceModel>();
+        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
+
+        // Act
+        var result = await controller.EmployerCheckDetails(model);
+
+        // Assert
+        var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+        viewResult.ViewName.Should().Be(ChangeOfPriceEmployerController.CheckDetailsViewName);
+        viewResult.Model.Should().Be(model);
+
+        _mockCacheService.Verify(x => x.SetCacheModelAsync(model), Times.Once);
+    }
+
     private static UrlBuilder GetUrlBuilder()
     {
         return new UrlBuilder("AT");
