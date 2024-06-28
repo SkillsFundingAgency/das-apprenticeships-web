@@ -90,9 +90,6 @@ namespace SFA.DAS.Apprenticeships.Web
             //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
             builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
 
-            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
-            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
-
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
 
