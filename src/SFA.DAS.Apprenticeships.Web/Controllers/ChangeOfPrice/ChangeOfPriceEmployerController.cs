@@ -139,7 +139,7 @@ public class ChangeOfPriceEmployerController : Controller
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
         if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with supplied apprenticeshipHashedId");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
             return NotFound();
         }
 
@@ -156,7 +156,7 @@ public class ChangeOfPriceEmployerController : Controller
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
         if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with supplied apprenticeshipHashedId");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
             return NotFound();
         }
 
