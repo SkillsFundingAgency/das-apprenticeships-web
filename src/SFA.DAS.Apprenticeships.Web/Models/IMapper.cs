@@ -12,7 +12,7 @@
 
     public class MapperResolver: IMapper
     {
-        private Dictionary<Type, object> _mappers = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> _mappers = new();
 
         public void Register<T>(IMapper<T> mapper)
         {
