@@ -321,6 +321,25 @@ public class ChangeOfPriceProviderControllerTests
     }
 
     [Test]
+    public async Task ProviderCancelChange_ApprenticeshipKeyNotFound_ReturnsNotFound()
+    {
+        // Arrange
+        var providerReferenceNumber = _fixture.Create<long>();
+        var apprenticeshipHashedId = _fixture.Create<string>();
+        var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+        controller.SetupHttpContext(providerReferenceNumber, apprenticeshipHashedId);
+        var expectedUrl = _fixture.Create<string>();
+        _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
+        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.Empty);
+
+        // Act
+        var result = await controller.CancelPriceChange(providerReferenceNumber, apprenticeshipHashedId, "1");
+
+        // Assert
+        result.ShouldBeOfType<NotFoundResult>();
+    }
+
+    [Test]
     public async Task ApproveOrRejectPendingPriceChange_ApproveChanges_RedirectsToConfirmPriceBreakdown()
     {
         // Arrange
