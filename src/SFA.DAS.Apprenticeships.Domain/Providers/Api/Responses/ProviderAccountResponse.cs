@@ -1,11 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Domain.Providers.Api.Responses
-{
-    [ExcludeFromCodeCoverage]
+namespace SFA.DAS.Apprenticeships.Domain.Providers.Api.Responses;
 
-    public class ProviderAccountResponse
-    {
-        public bool CanAccessService { get; set; }
-    }
+[ExcludeFromCodeCoverage]
+
+public class ProviderAccountResponse
+{
+    public bool CanAccessService { get; set; }
 }

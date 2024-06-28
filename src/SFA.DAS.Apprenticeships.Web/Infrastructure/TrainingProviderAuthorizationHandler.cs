@@ -2,51 +2,50 @@
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Web.Infrastructure
+namespace SFA.DAS.Apprenticeships.Web.Infrastructure;
+
+/// <summary>
+/// Interface to define contracts related to Training Provider Authorization Handlers.
+/// </summary>
+public interface ITrainingProviderAuthorizationHandler
 {
     /// <summary>
-    /// Interface to define contracts related to Training Provider Authorization Handlers.
+    /// Contract to check if the authenticated Provider is a valid Training Provider.
     /// </summary>
-    public interface ITrainingProviderAuthorizationHandler
+    /// <param name="context">AuthorizationHandlerContext</param>
+    /// <returns>true if the ukprn of the user's claim is associated with a valid training provider with access to the service; otherwise, false.</returns>
+    Task<bool> IsProviderAuthorized(AuthorizationHandlerContext context);
+}
+
+///<inheritdoc cref="ITrainingProviderAuthorizationHandler"/>
+[ExcludeFromCodeCoverage]
+public class TrainingProviderAuthorizationHandler : ITrainingProviderAuthorizationHandler
+{
+    private readonly ITrainingProviderService _trainingProviderService;
+
+    public TrainingProviderAuthorizationHandler(ITrainingProviderService trainingProviderService)
     {
-        /// <summary>
-        /// Contract to check if the authenticated Provider is a valid Training Provider.
-        /// </summary>
-        /// <param name="context">AuthorizationHandlerContext</param>
-        /// <returns>true if the ukprn of the user's claim is associated with a valid training provider with access to the service; otherwise, false.</returns>
-        Task<bool> IsProviderAuthorized(AuthorizationHandlerContext context);
+        _trainingProviderService = trainingProviderService;
     }
 
-    ///<inheritdoc cref="ITrainingProviderAuthorizationHandler"/>
-    [ExcludeFromCodeCoverage]
-    public class TrainingProviderAuthorizationHandler : ITrainingProviderAuthorizationHandler
+    public async Task<bool> IsProviderAuthorized(AuthorizationHandlerContext context)
     {
-        private readonly ITrainingProviderService _trainingProviderService;
+        var ukprn = GetProviderId(context);
 
-        public TrainingProviderAuthorizationHandler(ITrainingProviderService trainingProviderService)
+        if (ukprn <= 0)
         {
-            _trainingProviderService = trainingProviderService;
+            return false;
         }
 
-        public async Task<bool> IsProviderAuthorized(AuthorizationHandlerContext context)
-        {
-            var ukprn = GetProviderId(context);
+        var providerDetails = await _trainingProviderService.CanProviderAccessService(ukprn);
 
-            if (ukprn <= 0)
-            {
-                return false;
-            }
+        return providerDetails;
+    }
 
-            var providerDetails = await _trainingProviderService.CanProviderAccessService(ukprn);
-
-            return providerDetails;
-        }
-
-        private static long GetProviderId(AuthorizationHandlerContext authorizationHandlerContext)
-        {
-            return long.TryParse(authorizationHandlerContext.User.FindFirst(c => c.Type.Equals(ProviderClaims.ProviderUkprn))?.Value, out var providerId) 
-                ? providerId 
-                : 0;
-        }
+    private static long GetProviderId(AuthorizationHandlerContext authorizationHandlerContext)
+    {
+        return long.TryParse(authorizationHandlerContext.User.FindFirst(c => c.Type.Equals(ProviderClaims.ProviderUkprn))?.Value, out var providerId) 
+            ? providerId 
+            : 0;
     }
 }
