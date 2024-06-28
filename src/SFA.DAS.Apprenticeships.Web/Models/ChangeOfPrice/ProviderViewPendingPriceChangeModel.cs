@@ -8,7 +8,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 public class ProviderViewPendingPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesProvider
 {
     public long? ProviderReferenceNumber { get; set; }
-    public string EmployerName { get; set; }
+    public string EmployerName { get; set; } = null!;
 }
 
 public class ProviderViewPendingPriceChangeModelMapper : IMapper<ProviderViewPendingPriceChangeModel>
