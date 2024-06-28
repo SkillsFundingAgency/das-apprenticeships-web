@@ -36,12 +36,12 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 return false;
             }
             
-            if (_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValues.Ukprn))
+            if (_httpContextAccessor.HttpContext!.Request.RouteValues.ContainsKey(RouteValues.Ukprn))
             {
-                var ukPrnFromUrl = _httpContextAccessor.HttpContext.Request.RouteValues[RouteValues.Ukprn].ToString();
-                var ukPrn = context.User.FindFirst(c => c.Type.Equals(ProviderClaims.ProviderUkprn)).Value;
+                var ukPrnFromUrl = _httpContextAccessor.HttpContext!.Request.RouteValues[RouteValues.Ukprn]?.ToString();
+                var ukPrn = context.User.FindFirst(c => c.Type.Equals(ProviderClaims.ProviderUkprn))?.Value;
 
-                return ukPrn.Equals(ukPrnFromUrl);    
+                return ukPrn!.Equals(ukPrnFromUrl);    
             }
 
             return true;

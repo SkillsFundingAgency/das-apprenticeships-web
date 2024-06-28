@@ -43,7 +43,7 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
             {
                 return false;
             }
-            var accountIdFromUrl = _httpContextAccessor.HttpContext.Request.RouteValues[RouteValues.EmployerAccountId].ToString().ToUpper();
+            var accountIdFromUrl = _httpContextAccessor.HttpContext?.Request.RouteValues[RouteValues.EmployerAccountId]?.ToString()?.ToUpper();
             var employerAccountClaim = context.User.FindFirst(c=>c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
 
             if(employerAccountClaim?.Value == null)
@@ -53,19 +53,19 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
 
             try
             {
-                employerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim.Value);
+                employerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim.Value)!;
             }
             catch (JsonSerializationException e)
             {
-                _logger.LogError(e, "Could not deserialize employer account claim for user", employerAccountClaim.Value);
+                _logger.LogError(e, "Could not deserialize employer account claim for user");
                 return false;
             }
 
             EmployerUserAccountItem employerIdentifier;
 
-            if (employerAccounts != null && employerAccounts.ContainsKey(accountIdFromUrl))
+            if (employerAccounts != null && employerAccounts.ContainsKey(accountIdFromUrl!))
             {
-                employerIdentifier =  employerAccounts[accountIdFromUrl];
+                employerIdentifier =  employerAccounts[accountIdFromUrl!];
             }
             else
             {
@@ -78,23 +78,23 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure
                 var userId = userClaim.Value;
                 var email = context.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value;
 
-                var accounts = _accountsService.GetUserAccounts(userId, email).Result;
+                var accounts = _accountsService.GetUserAccounts(userId, email!).Result;
                 var accountsAsJson = JsonConvert.SerializeObject(accounts.EmployerAccounts.ToDictionary(k => k.AccountId));
                 var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
                 var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
-                userClaim.Subject.AddClaim(associatedAccountsClaim);
+                userClaim.Subject?.AddClaim(associatedAccountsClaim);
                 
-                if (!updatedEmployerAccounts.ContainsKey(accountIdFromUrl))
+                if (updatedEmployerAccounts == null || !updatedEmployerAccounts.ContainsKey(accountIdFromUrl!))
                 {
                     return false;
                 }
 
-                employerIdentifier = updatedEmployerAccounts[accountIdFromUrl];
+                employerIdentifier = updatedEmployerAccounts[accountIdFromUrl!];
             }
 
-            if (!_httpContextAccessor.HttpContext.Items.ContainsKey(ContextItemKeys.EmployerIdentifier))
+            if (!_httpContextAccessor.HttpContext!.Items.ContainsKey(ContextItemKeys.EmployerIdentifier))
             {
-                _httpContextAccessor.HttpContext.Items.Add(ContextItemKeys.EmployerIdentifier, employerAccounts.GetValueOrDefault(accountIdFromUrl));
+                _httpContextAccessor.HttpContext.Items.Add(ContextItemKeys.EmployerIdentifier, employerAccounts!.GetValueOrDefault(accountIdFromUrl));
             }
 
             return CheckUserRoleForAccess(employerIdentifier, allowAllUserRoles);
