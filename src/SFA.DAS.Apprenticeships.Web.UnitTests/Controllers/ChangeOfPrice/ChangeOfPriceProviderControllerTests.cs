@@ -170,6 +170,40 @@ public class ChangeOfPriceProviderControllerTests
     }
 
     [Test]
+    public async Task ProviderInitiatedSubmitChange_AutoApprove_ValidModel_CreatesPriceHistoryAndRedirectsToProviderCommitments()
+    {
+        // Arrange
+        var expectedUser = _fixture.Create<string>();
+
+        var createChangeOfPriceModel = _fixture.Create<ProviderChangeOfPriceModel>();
+        var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+        controller.SetupHttpContext(_fixture.Create<long>(), "anyApprenticeshipId", expectedUser);
+        var expectedUrl = _fixture.Create<string>();
+        _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
+        _mockApprenticeshipService.Setup(x => x.CreatePriceHistory(It.IsAny<Guid>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<decimal?>(), It.IsAny<decimal?>(), It.IsAny<decimal?>(),
+                It.IsAny<string?>(), It.IsAny<DateTime>()))
+            .ReturnsAsync("Approved");
+
+
+        // Act
+        var result = await controller.ProviderInitiatedSubmitChange(createChangeOfPriceModel);
+
+        // Assert
+        _mockApprenticeshipService.Verify(x => x.CreatePriceHistory(
+            createChangeOfPriceModel.ApprenticeshipKey,
+            "Provider",
+            expectedUser,
+            createChangeOfPriceModel.ApprenticeshipTrainingPrice,
+            createChangeOfPriceModel.ApprenticeshipEndPointAssessmentPrice,
+            createChangeOfPriceModel.ApprenticeshipTotalPrice,
+            It.IsAny<string>(),
+            createChangeOfPriceModel.EffectiveFromDate.Date.GetValueOrDefault()));
+        result.ShouldBeOfType<RedirectResult>();
+        ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfPriceAutoApproved}");
+    }
+
+    [Test]
     public async Task ViewPendingPriceChangePage_ReturnsCorrectView()
     {
         // Arrange
