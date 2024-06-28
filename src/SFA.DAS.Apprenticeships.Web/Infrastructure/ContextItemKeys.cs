@@ -1,11 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Web.Infrastructure
-{
-    [ExcludeFromCodeCoverage]
+namespace SFA.DAS.Apprenticeships.Web.Infrastructure;
 
-    public static class ContextItemKeys
-    {
-        public const string EmployerIdentifier = "Employer";
-    }
+[ExcludeFromCodeCoverage]
+
+public static class ContextItemKeys
+{
+    public const string EmployerIdentifier = "Employer";
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
 using SFA.DAS.Apprenticeships.Web.Extensions;
@@ -8,7 +9,6 @@ using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
@@ -61,7 +61,7 @@ public class ChangeOfStartDateEmployerController : Controller
 
         }
 
-        throw new ArgumentOutOfRangeException("ChangeInitiator");
+        throw new ServiceException("Unrecognised ChangeInitiator");
     }
 
     [HttpPost]
@@ -70,9 +70,9 @@ public class ChangeOfStartDateEmployerController : Controller
     public async Task<IActionResult> ApproveOrRejectStartDateChange(string employerAccountId, string apprenticeshipHashedId, string approveChanges, string rejectReason)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
             return NotFound();
         }
 
@@ -81,7 +81,7 @@ public class ChangeOfStartDateEmployerController : Controller
         if (approveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
-            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId);
+            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId!);
 
             redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfStartDateApproved);
             return Redirect(redirectUrl);

@@ -1,4 +1,5 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+namespace SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 
 public class ApprenticeshipStartDate
 {
@@ -10,7 +11,7 @@ public class ApprenticeshipStartDate
     public DateTime? EarliestStartDate { get; set; }
     public DateTime? LatestStartDate { get; set; }
     public DateTime LastFridayOfSchool { get; set; }
-    public StandardInfo Standard { get; set; } = null!;
+    public StandardInfo Standard { get; set; }
     public AcademicYearDetails CurrentAcademicYear { get; set; }
     public AcademicYearDetails PreviousAcademicYear { get; set; }
 }

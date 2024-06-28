@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using System.Web;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 
@@ -84,7 +85,7 @@ public class ChangeOfPriceEmployerController : Controller
     [Route("submit")]
     public async Task<IActionResult> EmployerInitiatedSubmitChange(EmployerChangeOfPriceModel model)
     {
-        await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
+        await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId()!, null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
         var redirectUrl = _externalEmployerUrlHelper
             .CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
@@ -121,7 +122,7 @@ public class ChangeOfPriceEmployerController : Controller
 
         }
 
-        throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
+        throw new ServiceException("Unrecognised PriceChangeInitiator");
     }
 
     [HttpPost]
@@ -136,9 +137,9 @@ public class ChangeOfPriceEmployerController : Controller
         }
 
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
             return NotFound();
         }
 
@@ -153,9 +154,9 @@ public class ChangeOfPriceEmployerController : Controller
     public async Task<IActionResult> ApproveOrRejectPriceChangePage(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
     {
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
             return NotFound();
         }
 
@@ -164,7 +165,7 @@ public class ChangeOfPriceEmployerController : Controller
         if (ApproveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
-            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
+            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId!);
             redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceApproved);
             return Redirect(redirectUrl);
         }

@@ -1,8 +1,7 @@
-namespace SFA.DAS.Apprenticeships.Infrastructure.Configuration
+namespace SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+
+public class ApprenticeshipsWeb
 {
-    public class ApprenticeshipsWeb
-    {
-        public bool UseGovSignIn { get; set; }
-        public bool UseDfESignIn { get; set; }
-    }
+    public bool UseGovSignIn { get; set; }
+    public bool UseDfESignIn { get; set; }
 }

@@ -5,7 +5,7 @@ namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 public class EmployerCancelPriceChangeModel : IRouteValuesEmployer
 {
-	public string ApprenticeshipHashedId { get; set; } = string.Empty;
+	public string? ApprenticeshipHashedId { get; set; } = string.Empty;
 	public Guid ApprenticeshipKey { get; set; }
 	public string EmployerAccountId { get; set; } = string.Empty;
 	public string ProviderName { get; set; } = string.Empty;
@@ -39,7 +39,7 @@ public class EmployerCancelPriceChangeModelMapper : IMapper<EmployerCancelPriceC
 			ApprenticeshipTotalPrice = getPendingPriceChangeResponse.PendingPriceChange.PendingTotalPrice,
 			EffectiveFromDate = getPendingPriceChangeResponse.PendingPriceChange.EffectiveFrom,
 			ReasonForChangeOfPrice = HttpUtility.HtmlDecode(getPendingPriceChangeResponse.PendingPriceChange.Reason),
-			ProviderName = getPendingPriceChangeResponse.ProviderName,
+			ProviderName = getPendingPriceChangeResponse.ProviderName!,
 			FirstName = getPendingPriceChangeResponse.PendingPriceChange.FirstName,
 			LastName = getPendingPriceChangeResponse.PendingPriceChange.LastName
 		};

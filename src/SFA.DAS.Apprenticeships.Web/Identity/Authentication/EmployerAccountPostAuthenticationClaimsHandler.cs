@@ -22,6 +22,7 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
         var claims = new List<Claim>();
+        if (tokenValidatedContext.Principal == null) throw new ArgumentNullException(nameof(tokenValidatedContext), "ClaimsPrincipal is null");
         var userId = tokenValidatedContext.Principal.Claims
             .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
             .Value;

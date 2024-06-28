@@ -1,15 +1,16 @@
 ﻿using SFA.DAS.Apprenticeships.Web.Extensions;
 using System.Text.Json;
+using FluentAssertions;
 
-namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions
+namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions;
+
+public class StringExtensionsTests
 {
-	public class StringExtensionsTests
-	{
-		[Test]
-		public void GetFlatJson_ShouldReturnFlatJsonDictionary()
-		{
-			// Arrange
-			var json = @"{
+    [Test]
+    public void GetFlatJson_ShouldReturnFlatJsonDictionary()
+    {
+        // Arrange
+        var json = @"{
                 ""key1"": ""value1"",
                 ""key2"": {
                     ""key3"": ""value3"",
@@ -19,22 +20,21 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Extensions
                 }
             }";
 
-			var expected = new Dictionary<string, JsonElement>
-			{
-				{"key1", JsonDocument.Parse("\"value1\"").RootElement},
-				{"key2.key3", JsonDocument.Parse("\"value3\"").RootElement},
-				{"key2.key4.key5", JsonDocument.Parse("\"value5\"").RootElement}
-			};
+        var expected = new Dictionary<string, JsonElement>
+        {
+            {"key1", JsonDocument.Parse("\"value1\"").RootElement},
+            {"key2.key3", JsonDocument.Parse("\"value3\"").RootElement},
+            {"key2.key4.key5", JsonDocument.Parse("\"value5\"").RootElement}
+        };
 
-			// Act
-			var result = json.GetFlatJson();
+        // Act
+        var result = json.GetFlatJson();
 
-			// Assert
-			foreach (var key in expected.Keys)
-			{
-				Assert.IsTrue(result.ContainsKey(key));
-				Assert.That(result[key].ToString(), Is.EqualTo(expected[key].ToString()));
-			}
-		}
-	}
+        // Assert
+        foreach (var key in expected.Keys)
+        {
+            result.Should().ContainKey(key);
+            result[key].ToString().Should().Be(expected[key].ToString());
+        }
+    }
 }

@@ -41,7 +41,7 @@ public class ChangeOfStartDateEmployerControllerTests
         var result = await controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId");
 
         // Assert
-        Assert.IsInstanceOf<NotFoundResult>(result);
+        result.Should().BeOfType<NotFoundResult>();
     }
 
     [Test]
@@ -55,7 +55,11 @@ public class ChangeOfStartDateEmployerControllerTests
         controller.SetupHttpContext(null, "apprenticeshipHashedId", null, "employerAccountId");
 
         // Act & Assert
-        Assert.ThrowsAsync<NotImplementedException>(() => controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId"));
+        await FluentActions
+            .Invoking(() => controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId"))
+            .Should()
+            .ThrowAsync<NotImplementedException>();
+
     }
 
     [Test]
@@ -69,7 +73,10 @@ public class ChangeOfStartDateEmployerControllerTests
         controller.SetupHttpContext(null, "apprenticeshipHashedId", null, "employerAccountId");
 
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId"));
+        await FluentActions
+            .Invoking(() => controller.ViewPendingChangePage("employerAccountId", "apprenticeshipHashedId"))
+            .Should()
+            .ThrowAsync<ArgumentOutOfRangeException>();
     }
 
     [Test]
@@ -106,9 +113,9 @@ public class ChangeOfStartDateEmployerControllerTests
         var result = await controller.ApproveOrRejectStartDateChange(_fixture.Create<string>(), _fixture.Create<string>(), "1", "");
 
         // Assert
-        Assert.IsInstanceOf<NotFoundResult>(result);
+        result.Should().BeOfType<NotFoundResult>();
     }
-    
+
     [Test]
     public async Task EmployerApproveChange_ApprovesStartDateAndRedirectsToEmployerCommitments()
     {

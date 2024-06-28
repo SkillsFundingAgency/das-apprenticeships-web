@@ -5,12 +5,11 @@ using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Helpers;
-using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
@@ -131,7 +130,7 @@ public class ChangeOfPriceProviderController : Controller
 
         }
 
-        throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
+        throw new ServiceException("Unrecognised PriceChangeInitiator");
     }
 
     [HttpPost]
@@ -158,7 +157,7 @@ public class ChangeOfPriceProviderController : Controller
     {
         var response = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashedId);
 
-        var confirmPriceBreakdownPriceChangeModel = _mapper.Map<ProviderConfirmPriceBreakdownPriceChangeModel>(response);
+        var confirmPriceBreakdownPriceChangeModel = _mapper.Map<ProviderConfirmPriceBreakdownPriceChangeModel>(response!);
 
         return View(ProviderConfirmPriceBreakdownViewName, confirmPriceBreakdownPriceChangeModel);
     }
@@ -194,9 +193,9 @@ public class ChangeOfPriceProviderController : Controller
         }
 
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
             return NotFound();
         }
 

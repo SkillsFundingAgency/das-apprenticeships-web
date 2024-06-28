@@ -1,10 +1,9 @@
-﻿namespace SFA.DAS.Apprenticeships.Application.Exceptions
+﻿namespace SFA.DAS.Apprenticeships.Application.Exceptions;
+
+public class ServiceException : Exception
 {
-    public class ServiceException : Exception
+    public ServiceException(string message) : base(message)
     {
-        public ServiceException(string message) : base(message)
-        {
             
-        }
     }
 }

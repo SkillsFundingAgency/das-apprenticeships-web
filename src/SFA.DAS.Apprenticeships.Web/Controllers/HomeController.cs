@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SFA.DAS.Apprenticeships.Web.Controllers
+namespace SFA.DAS.Apprenticeships.Web.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
-    {
-    }
 }
