@@ -232,6 +232,34 @@ public class ChangeOfPriceProviderControllerTests
     }
 
     [Test]
+    public async Task ViewPendingPriceChangePage_EmployerInitiated_ReturnsCorrectView()
+    {
+        // Arrange
+        var ukprn = _fixture.Create<long>();
+        var apprenticeshipHashedId = _fixture.Create<string>();
+        var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
+        pendingPriceChange.PendingPriceChange.Initiator = "Employer";
+        pendingPriceChange.HasPendingPriceChange = true;
+
+        _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipHashedId))
+            .ReturnsAsync(pendingPriceChange);
+
+        _mockMapper.Setup(x => x.Map<ProviderViewPendingPriceChangeModel>(pendingPriceChange))
+            .Returns(new ProviderViewPendingPriceChangeModel());
+
+        var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
+        controller.SetupHttpContext(_fixture.Create<long>(), apprenticeshipHashedId);
+
+        // Act
+        var result = await controller.ViewPendingPriceChangePage(ukprn, apprenticeshipHashedId);
+
+        // Assert
+        var viewResult = result.ShouldBeOfType<ViewResult>();
+        viewResult.ViewName.Should().Be(ChangeOfPriceProviderController.ApproveEmployerChangeOfPriceViewName);
+        viewResult.Model.ShouldBeOfType<ProviderViewPendingPriceChangeModel>();
+    }
+
+    [Test]
     public async Task ViewPendingPriceChangePage_ReturnsNotFoundWhenNoPriceChangeExists()
     {
         // Arrange
