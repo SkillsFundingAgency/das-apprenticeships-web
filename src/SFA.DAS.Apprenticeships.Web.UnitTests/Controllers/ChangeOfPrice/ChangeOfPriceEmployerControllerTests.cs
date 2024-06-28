@@ -131,6 +131,7 @@ public class ChangeOfPriceEmployerControllerTests
         var employerAccountId = _fixture.Create<string>();
         var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
         var viewModel = _fixture.Create<EmployerCancelPriceChangeModel>();
+        pendingPriceChange.HasPendingPriceChange = true;
         pendingPriceChange.PendingPriceChange.Initiator = "Employer";
 
         _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipHashedId))
@@ -160,6 +161,7 @@ public class ChangeOfPriceEmployerControllerTests
         var employerAccountId = _fixture.Create<string>();
         var pendingPriceChange = _fixture.Create<GetPendingPriceChangeResponse>();
         var viewModel = _fixture.Create<EmployerViewPendingPriceChangeModel>();
+        pendingPriceChange.HasPendingPriceChange = true;
         pendingPriceChange.PendingPriceChange.Initiator = "Provider";
 
         _mockApprenticeshipService.Setup(x => x.GetPendingPriceChange(apprenticeshipHashedId))
