@@ -75,9 +75,7 @@ public class ChangeOfStartDateEmployerController : Controller
     public async Task<IActionResult> ApproveOrRejectStartDateChange(EmployerViewPendingStartDateChangeModel model)
     {
         if (!ModelState.IsValid)
-        {
             return View(ApproveProviderChangeOfStartDateViewName, model);
-        }
 
         var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId!.ToUpper());
 

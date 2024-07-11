@@ -296,16 +296,15 @@ public class ChangeOfStartDateProviderControllerTests
     public async Task CancelStartDateChange_KeepPendingChange_DoesNotCancelChange()
     {
         // Arrange
-        var hashId = "hashId";
-        var ukprn = _fixture.Create<long>();
-        var keepPendingChange = "0";
+        var model = _fixture.Create<ProviderCancelStartDateModel>();
+        model.CancelRequest = "0";
         var controller = GetSubjectUnderTest();
-        controller.SetupHttpContext(ukprn, hashId);
+        controller.SetupHttpContext(model.ProviderReferenceNumber, model.ApprenticeshipHashedId);
         var expectedUrl = _fixture.Create<string>();
         _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
 
         // Act
-        var result = await controller.CancelStartDateChange(ukprn, hashId, keepPendingChange);
+        var result = await controller.CancelStartDateChange(model);
 
         // Assert
         _mockApprenticeshipService.Verify(m => m.CancelPendingStartDateChange(It.IsAny<Guid>()), Times.Never);
@@ -317,43 +316,20 @@ public class ChangeOfStartDateProviderControllerTests
     public async Task CancelStartDateChange_CancelPendingChange_CancelsChange()
     {
         // Arrange
-        var hashId = "hashId";
-        var ukprn = _fixture.Create<long>();
-        var keepPendingChange = "1";
+        var model = _fixture.Create<ProviderCancelStartDateModel>();
+        model.CancelRequest = "1";
         var controller = GetSubjectUnderTest();
-        controller.SetupHttpContext(ukprn, hashId);
+        controller.SetupHttpContext(model.ProviderReferenceNumber, model.ApprenticeshipHashedId);
         var expectedUrl = _fixture.Create<string>();
         _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
-        _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(hashId)).ReturnsAsync(Guid.NewGuid());
 
         // Act
-        var result = await controller.CancelStartDateChange(ukprn, hashId, keepPendingChange);
+        var result = await controller.CancelStartDateChange(model);
 
         // Assert
         _mockApprenticeshipService.Verify(m => m.CancelPendingStartDateChange(It.IsAny<Guid>()), Times.Once);
         var redirectResult = result.ShouldBeOfType<RedirectResult>();
         redirectResult.Url.Should().Be($"{expectedUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfStartDateCancelled}");
-    }
-
-    [Test]
-    public async Task CancelStartDateChange_ApprenticeshipKeyNotFound_ReturnsNotFound()
-    {
-        // Arrange
-        var hashId = "hashId";
-        var ukprn = _fixture.Create<long>();
-        var keepPendingChange = "1";
-        var controller = GetSubjectUnderTest();
-        controller.SetupHttpContext(ukprn, hashId);
-        var expectedUrl = _fixture.Create<string>();
-        _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
-        _mockApprenticeshipService.Setup(m => m.GetApprenticeshipKey(hashId)).ReturnsAsync(Guid.Empty);
-
-        // Act
-        var result = await controller.CancelStartDateChange(ukprn, hashId, keepPendingChange);
-
-        //Assert
-        _mockApprenticeshipService.Verify(m => m.CancelPendingStartDateChange(It.IsAny<Guid>()), Times.Never);
-        result.Should().BeOfType<NotFoundResult>();
     }
 
     private ChangeOfStartDateProviderController GetSubjectUnderTest()
