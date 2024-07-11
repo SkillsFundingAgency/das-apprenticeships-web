@@ -135,9 +135,7 @@ public class ChangeOfPriceEmployerController : Controller
     public async Task<IActionResult> CancelPriceChange(EmployerCancelPriceChangeModel model)
     {
         if (!ModelState.IsValid)
-        {
             return View(CancelPendingChangeViewName, model);
-        }
 
         var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId.ToUpper());
         if (model.CancelRequest != "1")
@@ -156,9 +154,7 @@ public class ChangeOfPriceEmployerController : Controller
     public async Task<IActionResult> ApproveOrRejectPriceChangePage(EmployerViewPendingPriceChangeModel model)
     {
         if (!ModelState.IsValid)
-        {
             return View(ApproveProviderChangeOfPriceViewName, model);
-        }
 
         var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(model.ApprenticeshipHashedId);
         if (apprenticeshipKey == Guid.Empty)

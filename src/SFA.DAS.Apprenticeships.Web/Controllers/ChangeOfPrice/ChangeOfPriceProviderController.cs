@@ -13,6 +13,7 @@ using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
+using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -121,6 +122,7 @@ public class ChangeOfPriceProviderController : Controller
             case ChangeInitiator.Employer:
                 var employerInitiateViewModel = _mapper.Map<ProviderViewPendingPriceChangeModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(employerInitiateViewModel, HttpContext);
+                await _cache.SetCacheModelAsync(employerInitiateViewModel);
                 return View(ApproveEmployerChangeOfPriceViewName, employerInitiateViewModel);
 
             case ChangeInitiator.Provider:
@@ -135,18 +137,20 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpPost]
     [Route("pending")]
-    public async Task<IActionResult> ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges, string rejectReason = "")
+    public async Task<IActionResult> ApproveOrRejectPendingPriceChange(ProviderViewPendingPriceChangeModel model)
     {
-        if (ApproveChanges == "1")
+        if (!ModelState.IsValid)
+            return View(ApproveEmployerChangeOfPriceViewName, model);
+
+        if (model.ApproveRequest == "1")
         {
-            return RedirectToAction("ConfirmPriceBreakdown", new { ukprn, apprenticeshipHashedId });
+            return RedirectToAction("ConfirmPriceBreakdown", new { ukprn = model.ProviderReferenceNumber, apprenticeshipHashedId = model.ApprenticeshipHashedId });
         }
 
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
+        await _apprenticeshipService.RejectPendingPriceChange(model.ApprenticeshipKey, model.RejectReason!.HtmlEncode());
 
         var redirectUrl = _externalProviderUrlHelper
-            .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" })
+            .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId!.ToUpper()}" })
             .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceRejected);
         return Redirect(redirectUrl);
     }

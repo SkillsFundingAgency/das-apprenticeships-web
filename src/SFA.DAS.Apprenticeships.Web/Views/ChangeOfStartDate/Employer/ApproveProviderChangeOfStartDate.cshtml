@@ -54,7 +54,7 @@
             <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfStartDate/@Model.ApprenticeshipHashedId/pending">
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.CacheKey)
-                @await Html.PartialAsync("_ApproveOrReject")
+                @await Html.PartialAsync("_ApproveOrReject", Model)
             </form>
         </div>
     </div>
