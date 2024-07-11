@@ -44,6 +44,8 @@ public class ProviderCancelStartDateModelMapperTests
         result.ReasonForChangeOfStartDate.Should().Be(sourceObject.PendingStartDateChange.Reason);
         result.OriginalStartDate.Should().Be(sourceObject.PendingStartDateChange.OriginalActualStartDate);
         result.PendingStartDate.Should().Be(sourceObject.PendingStartDateChange.PendingActualStartDate);
+		result.OriginalPlannedEndDate.Should().Be(sourceObject.PendingStartDateChange.OriginalPlannedEndDate);
+		result.PendingPlannedEndDate.Should().Be(sourceObject.PendingStartDateChange.PendingPlannedEndDate);
 
-    }
+	}
 }

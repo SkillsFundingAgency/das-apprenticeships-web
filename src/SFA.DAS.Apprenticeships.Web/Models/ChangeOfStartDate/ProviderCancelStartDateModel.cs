@@ -10,6 +10,8 @@ public class ProviderCancelStartDateModel : BaseProviderChangeOfStartDateModel, 
 {
 	public DateTime OriginalStartDate { get; set; }
 	public DateTime PendingStartDate { get; set; }
+	public DateTime OriginalPlannedEndDate { get; set; }
+	public DateTime PendingPlannedEndDate { get; set; }
 }
 
 public class ProviderCancelStartDateModelMapper : IMapper<ProviderCancelStartDateModel>
@@ -38,8 +40,10 @@ public class ProviderCancelStartDateModelMapper : IMapper<ProviderCancelStartDat
             ApprenticeshipKey = pendingStartDateChange.ApprenticeshipKey,
             ReasonForChangeOfStartDate = HttpUtility.HtmlDecode(pendingStartDateChange.Reason),
             OriginalStartDate = pendingStartDateChange.OriginalActualStartDate.ValueOrThrow(nameof(PendingStartDateChange.OriginalActualStartDate)),
-            PendingStartDate = pendingStartDateChange.PendingActualStartDate.ValueOrThrow(nameof(PendingStartDateChange.PendingActualStartDate))
-        };
+            PendingStartDate = pendingStartDateChange.PendingActualStartDate.ValueOrThrow(nameof(PendingStartDateChange.PendingActualStartDate)),
+			OriginalPlannedEndDate = pendingStartDateChange.OriginalPlannedEndDate.ValueOrThrow(nameof(PendingStartDateChange.OriginalPlannedEndDate)),
+			PendingPlannedEndDate = pendingStartDateChange.PendingPlannedEndDate.ValueOrThrow(nameof(PendingStartDateChange.PendingPlannedEndDate))
+		};
 
         return model;
     }

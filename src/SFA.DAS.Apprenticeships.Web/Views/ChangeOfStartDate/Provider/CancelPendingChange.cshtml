@@ -12,7 +12,7 @@
     </a>
 
 	<div class="govuk-grid-row">
-		<div class="govuk-grid-column-two-thirds">
+		<div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">View change of start date</h1>
             <strong class="govuk-tag govuk-tag--yellow">Pending employer review</strong>
             <br /><br />
@@ -34,6 +34,13 @@
 							   param-OriginalValue='Model.OriginalStartDate.ToString("dd MMMM yyyy")'
 							   param-Value='Model.PendingStartDate.ToString("dd MMMM yyyy")'
 							   param-RowType='DetailsRowComponent.DetailsRowType.TableTwoColumns'
+							   render-mode="Static" />
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"PlannedEndDate"'
+							   param-Label='"Planned training end date"'
+							   param-OriginalValue='Model.OriginalPlannedEndDate.ToString("dd MMMM yyyy")'
+							   param-Value='Model.PendingPlannedEndDate.ToString("dd MMMM yyyy")'
 							   render-mode="Static" />
 
 					<component type="typeof(DetailsRowComponent)"
