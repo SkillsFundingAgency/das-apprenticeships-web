@@ -11,7 +11,6 @@ public class EmployerViewPendingPriceChangeModel : BasePendingPriceChangeModel, 
 	public string EmployerAccountId { get; set; } = null!;
 	public string ProviderName { get; set; } = null!;
 	public string BackLinkUrl { get; set; } = null!;
-
 	[RadioOption]
 	public string? ApproveChanges { get; set; }
 	public string? RejectReason { get; set; }

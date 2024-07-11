@@ -114,7 +114,8 @@ public class ChangeOfPriceEmployerController : Controller
                 var employerInitiateViewModel = _mapper.Map<EmployerCancelPriceChangeModel>(response);
                 HttpContext.PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
                 employerInitiateViewModel.BackLinkUrl = backLink;
-                return View(CancelPendingChangeViewName, employerInitiateViewModel);
+                await _cache.SetCacheModelAsync(employerInitiateViewModel);
+				return View(CancelPendingChangeViewName, employerInitiateViewModel);
 
             case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
@@ -131,22 +132,20 @@ public class ChangeOfPriceEmployerController : Controller
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("cancel")]
-    public async Task<IActionResult> CancelPriceChange(string employerAccountId, string apprenticeshipHashedId, string cancelRequest)
+    public async Task<IActionResult> CancelPriceChange(EmployerCancelPriceChangeModel model)
     {
-        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
-        if (cancelRequest != "1")
+        if (!ModelState.IsValid)
+        {
+            return View(CancelPendingChangeViewName, model);
+        }
+
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId.ToUpper());
+        if (model.CancelRequest != "1")
         {
             return Redirect(redirectUrl);
         }
 
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == Guid.Empty)
-        {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
-            return NotFound();
-        }
-
-        await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
+        await _apprenticeshipService.CancelPendingPriceChange(model.ApprenticeshipKey);
         redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
     }

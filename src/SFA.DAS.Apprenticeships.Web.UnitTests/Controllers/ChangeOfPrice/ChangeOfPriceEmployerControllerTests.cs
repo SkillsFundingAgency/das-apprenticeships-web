@@ -308,10 +308,16 @@ public class ChangeOfPriceEmployerControllerTests
         var expectedUrl = $"https://approvals.at-eas.apprenticeships.education.gov.uk/{employerAccountId}/apprentices/{apprenticeshipHashedId.ToUpper()}/details";
         _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
         var apprenticeshipKey = _fixture.Create<Guid>();
-        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+        var model = new EmployerCancelPriceChangeModel
+        {
+            EmployerAccountId = employerAccountId,
+            ApprenticeshipHashedId = apprenticeshipHashedId,
+            ApprenticeshipKey = apprenticeshipKey,
+            CancelRequest = "1"
+        };
 
         // Act
-        var result = await controller.CancelPriceChange(employerAccountId, apprenticeshipHashedId, "1");
+        var result = await controller.CancelPriceChange(model);
 
         // Assert
         _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Once);
@@ -331,28 +337,20 @@ public class ChangeOfPriceEmployerControllerTests
         _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
         var apprenticeshipKey = _fixture.Create<Guid>();
         _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+        var model = new EmployerCancelPriceChangeModel
+        {
+            EmployerAccountId = employerAccountId,
+            ApprenticeshipHashedId = apprenticeshipHashedId,
+            CancelRequest = "0"
+        };
 
         // Act
-        var result = await controller.CancelPriceChange(employerAccountId, apprenticeshipHashedId, "0");
+        var result = await controller.CancelPriceChange(model);
 
         // Assert
         _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Never);
         result.ShouldBeOfType<RedirectResult>();
         ((RedirectResult)result).Url.Should().Be(expectedUrl);
-    }
-
-    [Test]
-    public async Task CancelPriceChange_ApprenticeshipKeyNotFound_ReturnsNotFound()
-    {
-        // Arrange
-        var controller = new ChangeOfPriceEmployerController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, GetUrlBuilder());
-        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.Empty);
-
-        // Act
-        var result = await controller.CancelPriceChange(_fixture.Create<string>(), _fixture.Create<string>(), "1");
-
-        // Assert
-        result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]

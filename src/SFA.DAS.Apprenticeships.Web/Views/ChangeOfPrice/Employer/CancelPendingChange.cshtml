@@ -84,8 +84,8 @@
 
 				<form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
 					@Html.AntiForgeryToken()
-					@Html.HiddenFor(m => m.ApprenticeshipKey)
-					@await Html.PartialAsync("_CancelOrKeep")
+					@Html.HiddenFor(m => m.CacheKey)
+					@await Html.PartialAsync("_CancelOrKeep", Model)
 				</form>
 			</div>
 		</div>
