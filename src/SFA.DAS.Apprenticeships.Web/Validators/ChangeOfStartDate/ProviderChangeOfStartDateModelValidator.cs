@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfStartDate;
 
-public class ProviderChangeOfStartDateModelValidator : BaseValidation<ProviderChangeOfStartDateModel>
+public class ProviderChangeOfStartDateModelValidator : AbstractValidator<ProviderChangeOfStartDateModel>
 {
     public ProviderChangeOfStartDateModelValidator()
     {

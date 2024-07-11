@@ -1,7 +1,8 @@
-﻿using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
+﻿using FluentValidation;
+using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 
-public class EmployerViewPendingPriceChangeModelValidator : BaseValidation<EmployerViewPendingPriceChangeModel>
+public class EmployerViewPendingPriceChangeModelValidator : AbstractValidator<EmployerViewPendingPriceChangeModel>
 {
 }

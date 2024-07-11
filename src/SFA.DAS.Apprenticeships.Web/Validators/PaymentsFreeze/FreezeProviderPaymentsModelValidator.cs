@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPaymentStatus;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators.PaymentsFreeze;
 
-public class FreezeProviderPaymentsModelValidator : BaseValidation<FreezeProviderPaymentsModel>
+public class FreezeProviderPaymentsModelValidator : AbstractValidator<FreezeProviderPaymentsModel>
 {
     public FreezeProviderPaymentsModelValidator()
     {

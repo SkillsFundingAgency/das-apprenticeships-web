@@ -3,9 +3,9 @@ using SFA.DAS.Apprenticeships.Web.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators;
 
-public class BaseValidation<T> : AbstractValidator<T>
+public class RadioOptionValidation<T> : AbstractValidator<T>
 {
-	public BaseValidation()
+	public RadioOptionValidation()
 	{
 		var properties = typeof(T).GetProperties()
 			.Where(prop => Attribute.IsDefined(prop, typeof(RadioOptionAttribute)));
