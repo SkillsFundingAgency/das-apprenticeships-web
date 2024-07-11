@@ -12,6 +12,8 @@ using System.Web;
 using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Constants.Employer;
+using SFA.DAS.Apprenticeships.Web.Attributes;
+using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -118,6 +120,7 @@ public class ChangeOfPriceEmployerController : Controller
                 var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
                 HttpContext.PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
                 providerInitiateViewModel.BackLinkUrl = backLink;
+                await _cache.SetCacheModelAsync(providerInitiateViewModel);
                 return View(ApproveProviderChangeOfPriceViewName, providerInitiateViewModel);
 
         }
@@ -151,18 +154,23 @@ public class ChangeOfPriceEmployerController : Controller
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("pending")]
-    public async Task<IActionResult> ApproveOrRejectPriceChangePage(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
+    public async Task<IActionResult> ApproveOrRejectPriceChangePage(EmployerViewPendingPriceChangeModel model)
     {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
+        if (!ModelState.IsValid)
+        {
+            return View(ApproveProviderChangeOfPriceViewName, model);
+        }
+
+        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(model.ApprenticeshipHashedId);
         if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", model.ApprenticeshipHashedId);
             return NotFound();
         }
 
-        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId.ToUpper());
 
-        if (ApproveChanges != "0")
+        if (model.ApproveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
             await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId!);
@@ -170,7 +178,7 @@ public class ChangeOfPriceEmployerController : Controller
             return Redirect(redirectUrl);
         }
 
-        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
+        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, model.RejectReason!.HtmlEncode());
         redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRejected);
         return Redirect(redirectUrl);
     }
