@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Constants.Employer;
+using SFA.DAS.Apprenticeships.Web.Services;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
@@ -21,18 +22,21 @@ public class ChangeOfStartDateEmployerController : Controller
     private readonly IApprenticeshipService _apprenticeshipService;
     private readonly IMapper _mapper;
     private readonly UrlBuilder _externalEmployerUrlHelper;
+    private readonly ICacheService _cache;
     public const string ApproveProviderChangeOfStartDateViewName = "~/Views/ChangeOfStartDate/Employer/ApproveProviderChangeOfStartDate.cshtml";
 
     public ChangeOfStartDateEmployerController(
         ILogger<ChangeOfStartDateEmployerController> logger, 
         IApprenticeshipService apprenticeshipService,
         IMapper mapper,
-        UrlBuilder externalEmployerUrlHelper)
+        UrlBuilder externalEmployerUrlHelper,
+        ICacheService cache)
 	{
         _logger = logger;
         _apprenticeshipService = apprenticeshipService;
         _mapper = mapper;
         _externalEmployerUrlHelper = externalEmployerUrlHelper;
+        _cache = cache;
     }
 
     [HttpGet]
@@ -57,6 +61,7 @@ public class ChangeOfStartDateEmployerController : Controller
                 var providerInitiateViewModel = _mapper.Map<EmployerViewPendingStartDateChangeModel>(response);
                 HttpContext.PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
                 providerInitiateViewModel.BackLinkUrl = backLink;
+                await _cache.SetCacheModelAsync(providerInitiateViewModel);
                 return View(ApproveProviderChangeOfStartDateViewName, providerInitiateViewModel);
 
         }
@@ -67,27 +72,25 @@ public class ChangeOfStartDateEmployerController : Controller
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("pending")]
-    public async Task<IActionResult> ApproveOrRejectStartDateChange(string employerAccountId, string apprenticeshipHashedId, string approveChanges, string rejectReason)
+    public async Task<IActionResult> ApproveOrRejectStartDateChange(EmployerViewPendingStartDateChangeModel model)
     {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == Guid.Empty)
+        if (!ModelState.IsValid)
         {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
-            return NotFound();
+            return View(ApproveProviderChangeOfStartDateViewName, model);
         }
 
-        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId!.ToUpper());
 
-        if (approveChanges != "0")
+        if (model.ApproveRequest != "0")
         {
             var userId = HttpContext.User.GetUserId();
-            await _apprenticeshipService.ApprovePendingStartDateChange(apprenticeshipKey, userId!);
+            await _apprenticeshipService.ApprovePendingStartDateChange(model.ApprenticeshipKey, userId!);
 
             redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfStartDateApproved);
             return Redirect(redirectUrl);
 		}
 
-		await _apprenticeshipService.RejectPendingStartDateChange(apprenticeshipKey, rejectReason);
+		await _apprenticeshipService.RejectPendingStartDateChange(model.ApprenticeshipKey, model.RejectReason ?? string.Empty);
 
         redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfStartDateRejected);
         return Redirect(redirectUrl);
