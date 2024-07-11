@@ -301,20 +301,21 @@ public class ChangeOfPriceProviderControllerTests
     public async Task ProviderCancelChange_CancelTrue_CancelsPriceHistoryAndRedirectsToProviderCommitments()
     {
         // Arrange
-        var providerReferenceNumber = _fixture.Create<long>();
-        var apprenticeshipHashedId = _fixture.Create<string>();
-        var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
-        controller.SetupHttpContext(providerReferenceNumber, apprenticeshipHashedId);
+        var model = _fixture.Create<ProviderCancelPriceChangeModel>();
+        model.CancelRequest = "1";
+
+        var controller = new ChangeOfPriceProviderController(_mockLogger.Object,_mockApprenticeshipService.Object, _mockMapper.Object,_mockCacheService.Object,_mockExternalUrlHelper.Object);
+        controller.SetupHttpContext(model.ProviderReferenceNumber, model.ApprenticeshipHashedId);
+
         var expectedUrl = _fixture.Create<string>();
         _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
-        var apprenticeshipKey = _fixture.Create<Guid>();
-        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
+
 
         // Act
-        var result = await controller.CancelPriceChange(providerReferenceNumber, apprenticeshipHashedId, "1");
+        var result = await controller.CancelPriceChange(model);
 
         // Assert
-        _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Once);
+        _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(model.ApprenticeshipKey), Times.Once);
         result.ShouldBeOfType<RedirectResult>();
         ((RedirectResult)result).Url.Should().Be($"{expectedUrl}?banners={(ulong)ProviderApprenticeDetailsBanners.ChangeOfPriceCancelled}");
     }
@@ -323,43 +324,23 @@ public class ChangeOfPriceProviderControllerTests
     public async Task ProviderCancelChange_CancelFalse_DoesNotCancelPriceHistoryAndRedirectsToProviderCommitments()
     {
         // Arrange
-        var providerReferenceNumber = _fixture.Create<long>();
-        var apprenticeshipHashedId = _fixture.Create<string>();
+        var model = _fixture.Create<ProviderCancelPriceChangeModel>();
+        model.CancelRequest = "0";
         var providerUserName = _fixture.Create<string>();
 
         var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
-        controller.SetupHttpContext(providerReferenceNumber, apprenticeshipHashedId, providerUserName);
+        controller.SetupHttpContext(model.ProviderReferenceNumber, model.ApprenticeshipHashedId, providerUserName);
+
         var expectedUrl = _fixture.Create<string>();
         _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
-        var apprenticeshipKey = _fixture.Create<Guid>();
-        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(apprenticeshipKey);
 
         // Act
-        var result = await controller.CancelPriceChange(providerReferenceNumber, apprenticeshipHashedId, "0");
+        var result = await controller.CancelPriceChange(model);
 
         // Assert
-        _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(apprenticeshipKey), Times.Never);
+        _mockApprenticeshipService.Verify(x => x.CancelPendingPriceChange(model.ApprenticeshipKey), Times.Never);
         result.ShouldBeOfType<RedirectResult>();
         ((RedirectResult)result).Url.Should().Be(expectedUrl);
-    }
-
-    [Test]
-    public async Task ProviderCancelChange_ApprenticeshipKeyNotFound_ReturnsNotFound()
-    {
-        // Arrange
-        var providerReferenceNumber = _fixture.Create<long>();
-        var apprenticeshipHashedId = _fixture.Create<string>();
-        var controller = new ChangeOfPriceProviderController(_mockLogger.Object, _mockApprenticeshipService.Object, _mockMapper.Object, _mockCacheService.Object, _mockExternalUrlHelper.Object);
-        controller.SetupHttpContext(providerReferenceNumber, apprenticeshipHashedId);
-        var expectedUrl = _fixture.Create<string>();
-        _mockExternalUrlHelper.Setup(x => x.GenerateUrl(It.IsAny<UrlParameters>())).Returns(expectedUrl);
-        _mockApprenticeshipService.Setup(x => x.GetApprenticeshipKey(It.IsAny<string>())).ReturnsAsync(Guid.Empty);
-
-        // Act
-        var result = await controller.CancelPriceChange(providerReferenceNumber, apprenticeshipHashedId, "1");
-
-        // Assert
-        result.ShouldBeOfType<NotFoundResult>();
     }
 
     [Test]

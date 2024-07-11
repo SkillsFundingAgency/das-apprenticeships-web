@@ -128,6 +128,7 @@ public class ChangeOfPriceProviderController : Controller
             case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<ProviderCancelPriceChangeModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(providerInitiateViewModel, HttpContext);
+                await _cache.SetCacheModelAsync(providerInitiateViewModel);
                 return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
 
         }
@@ -187,23 +188,19 @@ public class ChangeOfPriceProviderController : Controller
 
     [HttpPost]
     [Route("cancel")]
-    public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+    public async Task<IActionResult> CancelPriceChange(ProviderCancelPriceChangeModel model)
     {
-        var redirectUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" });
+        if (!ModelState.IsValid)
+            return View(ProviderCancelPendingChangeViewName, model);
 
-        if (CancelRequest != "1")
+        var redirectUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}" });
+
+        if (model.CancelRequest != "1")
         {
             return Redirect(redirectUrl);
         }
 
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == Guid.Empty)
-        {
-            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", apprenticeshipHashedId);
-            return NotFound();
-        }
-
-        await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
+        await _apprenticeshipService.CancelPendingPriceChange(model.ApprenticeshipKey);
 
         redirectUrl = redirectUrl.AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
