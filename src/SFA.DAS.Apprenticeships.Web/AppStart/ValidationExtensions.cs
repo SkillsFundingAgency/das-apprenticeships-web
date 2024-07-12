@@ -1,13 +1,14 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Validators;
 using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart;
 
+[ExcludeFromCodeCoverage]
 public static class ValidationExtensions
 {
     public static IMvcBuilder RegisterValidators(this IMvcBuilder mvcBuilder)
