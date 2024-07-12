@@ -6,7 +6,7 @@ namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators;
 
 public class RadioOptionValidationTests
 {
-	private RadioOptionValidation<SampleModel> _validator;
+    private RadioOptionValidation<SampleModel> _validator;
 
     [SetUp]
     public void Setup()
