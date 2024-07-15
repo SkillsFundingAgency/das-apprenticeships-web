@@ -1,7 +1,9 @@
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.AppStart;
+using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
@@ -11,6 +13,7 @@ using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web;
 
@@ -119,7 +122,7 @@ public static class Program
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 }
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProviderChangeOfPriceModelValidator>())
+            .RegisterValidators()
             .ConfigureNavigationSection(serviceParameters)
             .EnableGoogleAnalytics()
             .SetDfESignInConfiguration(config.UseDfeSignIn())

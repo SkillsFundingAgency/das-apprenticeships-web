@@ -69,7 +69,7 @@
 
             <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/pending">
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(m => m.ApprenticeshipKey)
+                @Html.HiddenFor(m => m.CacheKey)
                 <div class="govuk-form-group">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Do you want to approve these changes?
@@ -79,15 +79,23 @@
                         Once you approve the new total price, you can enter the new training and end-point assessment price.
                     </div>
 
-                    <div class="govuk-radios">
-                        <div class="govuk-radios__item" id="radio-item-yes">
-                            <input class="govuk-radios__input" type="radio" id="option-yes" name="ApproveChanges" value="1" onchange="javascript: showHideRejectReason()">
-                            <label class="govuk-label govuk-radios__label" for="option-yes">Yes, approve these changes</label>
-                        </div>
-                        <div class="govuk-radios__item" id="radio-item-no">
-                            <input class="govuk-radios__input" type="radio" id="option-no" name="ApproveChanges" value="0" onchange="javascript: showHideRejectReason()">
-                            <label class="govuk-label govuk-radios__label" for="option-no">No, reject these changes</label>
-                        </div>
+                    <div class="govuk-radios  @ViewContext.DisplayFormGroupError(nameof(Model.ApproveRequest))">
+
+                        <component type="typeof(RadioOptionComponent)" render-mode="Static"
+                                   param-Id='"option-yes"'
+                                   param-name='"ApproveRequest"'
+                                   param-Value='"1"'
+                                   param-Label='"Yes, approve these changes"'
+                                   param-onchange='"javascript: showHideRejectReason();"' />
+
+                        <component type="typeof(RadioOptionComponent)" render-mode="Static"
+                                   param-Id='"option-no"'
+                                   param-name='"ApproveRequest"'
+                                   param-Value='"0"'
+                                   param-Label='"No, reject these changes"'
+                                   param-onchange='"javascript: showHideRejectReason();"' />
+
+                        @Html.ValidationMessageFor(m => m.ApproveRequest, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ApproveRequest) })
                     </div>
 
                     <div id="rejectReasonContainer">
