@@ -31,7 +31,14 @@ public class RadioOptionValidation<T> : AbstractValidator<T>
 			if (!string.IsNullOrEmpty(radioOptionString))
 				return true;
 		}
-		
+
+		bool? radioOptionBool = radioOption as bool?;
+
+        if (radioOptionBool.HasValue)
+		{
+			return true;
+		}
+
 		return false;
 	}
 }
