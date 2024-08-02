@@ -106,7 +106,7 @@
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" for="ReasonForChangeOfPriceRejection">
                                         Why do you want to reject these changes?
                                     </legend>
-                                    @Html.TextArea("rejectReason", new { @class = $"govuk-textarea", rows = "5", aria_describedby = "reason-for-rejection-hint" })
+                                    @Html.TextAreaFor(m => m.RejectReason, new { @class = $"govuk-textarea", rows = "5", aria_describedby = "reason-for-rejection-hint" })
                                 </div>
                             </div>
                         </fieldset>
