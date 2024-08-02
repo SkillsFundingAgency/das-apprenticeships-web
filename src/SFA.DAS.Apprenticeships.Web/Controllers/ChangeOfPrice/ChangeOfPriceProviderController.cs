@@ -13,6 +13,7 @@ using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -139,6 +140,7 @@ public class ChangeOfPriceProviderController : Controller
     [Route("pending")]
     public async Task<IActionResult> ApproveOrRejectPendingPriceChange(ProviderViewPendingPriceChangeModel model)
     {
+        _logger.LogInformation("FLP-107 - reject reason: {Reason}, {JsonModel}", model.RejectReason, JsonConvert.SerializeObject(model));
         if (!ModelState.IsValid)
             return View(ApproveEmployerChangeOfPriceViewName, model);
 
