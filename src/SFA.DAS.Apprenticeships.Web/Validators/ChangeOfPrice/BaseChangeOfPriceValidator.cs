@@ -4,7 +4,7 @@ using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 
-public abstract class BaseChangeOfPriceValidator<T> : AbstractValidator<T>
+public abstract class BaseChangeOfPriceValidator<T> : BaseApprenticeshipsModelValidator<T>
 {
     protected bool IsValidDate(DateField dateField)
     {

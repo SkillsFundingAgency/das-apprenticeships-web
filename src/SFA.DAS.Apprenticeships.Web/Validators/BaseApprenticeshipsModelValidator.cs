@@ -3,9 +3,13 @@ using SFA.DAS.Apprenticeships.Web.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Web.Validators;
 
-public class RadioOptionValidation<T> : AbstractValidator<T>
+/// <summary>
+/// Base validator for models across apprenticeships web, includes validation for radio buttons controlled by marker attributes
+/// </summary>
+/// <typeparam name="T">Model type</typeparam>
+public abstract class BaseApprenticeshipsModelValidator<T> : AbstractValidator<T>
 {
-	public RadioOptionValidation()
+	public BaseApprenticeshipsModelValidator()
 	{
 		var properties = typeof(T).GetProperties()
 			.Where(prop => Attribute.IsDefined(prop, typeof(RadioOptionAttribute)));

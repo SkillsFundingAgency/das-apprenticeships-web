@@ -4,14 +4,14 @@ using SFA.DAS.Apprenticeships.Web.Validators;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Validators;
 
-public class RadioOptionValidationTests
+public class BaseApprenticeshipsModelValidatorTests
 {
-    private RadioOptionValidation<SampleModel> _validator;
+    private SampleValidator _validator;
 
     [SetUp]
     public void Setup()
     {
-        _validator = new RadioOptionValidation<SampleModel>();
+        _validator = new SampleValidator();
     }
 
     [Test]
@@ -45,6 +45,11 @@ public class RadioOptionValidationTests
         var result = _validator.Validate(model);
         result.Errors.Should().BeEmpty();
     }
+}
+
+public class SampleValidator : BaseApprenticeshipsModelValidator<SampleModel>
+{
+
 }
 
 public class SampleModel
