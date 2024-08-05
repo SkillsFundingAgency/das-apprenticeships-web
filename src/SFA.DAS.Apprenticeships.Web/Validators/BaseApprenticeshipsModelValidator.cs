@@ -9,7 +9,7 @@ namespace SFA.DAS.Apprenticeships.Web.Validators;
 /// <typeparam name="T">Model type</typeparam>
 public abstract class BaseApprenticeshipsModelValidator<T> : AbstractValidator<T>
 {
-	public BaseApprenticeshipsModelValidator()
+    protected BaseApprenticeshipsModelValidator()
 	{
 		var properties = typeof(T).GetProperties()
 			.Where(prop => Attribute.IsDefined(prop, typeof(RadioOptionAttribute)));
@@ -25,18 +25,15 @@ public abstract class BaseApprenticeshipsModelValidator<T> : AbstractValidator<T
 		}
 	}
 
-	private static bool HaveRadioOptionSelected(object radioOption)
+	private static bool HaveRadioOptionSelected(object? radioOption)
 	{
 		if(radioOption == null)
 			return false;
 
-		if(radioOption is string radioOptionString)
-		{
-			if (!string.IsNullOrEmpty(radioOptionString))
-				return true;
-		}
+		if(radioOption is string radioOptionString && !string.IsNullOrEmpty(radioOptionString))
+            return true;
 
-		bool? radioOptionBool = radioOption as bool?;
+        bool? radioOptionBool = radioOption as bool?;
 
         if (radioOptionBool.HasValue)
 		{
