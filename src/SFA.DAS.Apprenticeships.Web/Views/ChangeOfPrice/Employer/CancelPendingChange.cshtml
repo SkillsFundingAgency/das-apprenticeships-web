@@ -1,0 +1,96 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice
+@model EmployerCancelPriceChangeModel
+@{
+}
+
+<div class="govuk-width-container ">
+
+
+	<a href="javascript:window.history.go(-1);" class="govuk-back-link">Back</a>
+
+
+
+	<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-two-thirds">
+
+				<h1 class="govuk-heading-l">View change request</h1>
+
+				<h2 class="govuk-heading-m">Apprenticeship details</h2>
+				<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Request status
+						</dt>
+						<dd class="govuk-summary-list__value">
+							<strong class="govuk-tag govuk-tag--yellow">Pending provider review</strong>
+						</dd>
+					</div>
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"ApprenticeName"'
+							   param-Label='"Name"'
+							   param-Value='$"{Model.FirstName} {Model.LastName}"'
+							   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+							   render-mode="Static" />
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"TrainingProvider"'
+							   param-Label='"Training provider"'
+							   param-Value='Model.ProviderName'
+							   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+							   render-mode="Static" />
+
+				</dl>
+				<h2 class="govuk-heading-m">Price changes you've requested</h2>
+
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third"></th>
+							<th scope="col" class="govuk-table__header app-custom-class">Current</th>
+							<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						<component type="typeof(DetailsRowComponent)"
+								   param-Id='"TotalPrice"'
+								   param-Label='"Total price"'
+								   param-OriginalValue='Model.OriginalTotalPrice.FormatCurrency()'
+								   param-Value='Model.ApprenticeshipTotalPrice.FormatCurrency()'
+								   render-mode="Static" />
+					</tbody>
+				</table>
+
+				<dl class="govuk-summary-list govuk-summary-list--no-border">
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"ReasonForChange"'
+							   param-Label='"Reason for change:"'
+							   param-Value='Model.ReasonForChangeOfPrice'
+							   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+							   render-mode="Static" />
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"EffectiveFromDate"'
+							   param-Label='"Effective from date:"'
+							   param-Value='Model.EffectiveFromDate.ToString("dd MMMM yyyy")'
+							   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+							   render-mode="Static" />
+
+				</dl>
+
+
+				<form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
+					@Html.AntiForgeryToken()
+					@Html.HiddenFor(m => m.ApprenticeshipKey)
+					@await Html.PartialAsync("_CancelOrKeep")
+				</form>
+			</div>
+		</div>
+
+
+
+	</main>
+</div>

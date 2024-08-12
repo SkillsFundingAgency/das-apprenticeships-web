@@ -1,18 +1,20 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.AppStart;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
-using SFA.DAS.Apprenticeships.Web.Validators;
+using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Web
 {
-	[ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage]
     public static class Program
     {
         public static void Main(string[] args)
@@ -56,23 +58,25 @@ namespace SFA.DAS.Apprenticeships.Web
 			builder.Services.AddApplicationInsightsTelemetry();
 
 			// Config
-			builder.ConfigureAzureTableStorage(config);
+            builder.ConfigureAzureTableStorage(config);
 			config.ValidateConfiguration();
 			builder.AddDistributedCache(config);
             builder.AddConfigurationOptions(config);
 
             // Authentication & Authorization
             var serviceParameters = config.GetServiceParameters();
+            Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
+            Try(() => builder.Services.AddMaMenuConfiguration(RouteNames.SignOut, config["ResourceEnvironmentName"]), "AddMaMenuConfiguration");
             switch (serviceParameters.AuthenticationType)
             {
 	            case AuthenticationType.Employer:
 					FailedStartUpMiddleware.StartupStep = "Employer Authentication";
-					Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
+                    Try(() => builder.Services.SetUpEmployerAuthorizationServices(), "SetUpEmployerAuthorizationServices");
 					Try(() => builder.Services.SetUpEmployerAuthentication(config, serviceParameters), "SetUpEmployerAuthentication");
-					break;
+                    Try(() => builder.Services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(), "StubAuthenticationService");
+                    break;
 	            case AuthenticationType.Provider:
 					FailedStartUpMiddleware.StartupStep = "Provider Authentication";
-					Try(() => builder.Services.AddProviderUiServiceRegistration(config), "AddProviderUiServiceRegistration");
 					Try(() => builder.Services.SetUpProviderAuthorizationServices(), "SetUpProviderAuthorizationServices");
                     Try(() => builder.Services.SetUpProviderAuthentication(config), "SetUpProviderAuthentication");
                     break;
@@ -80,6 +84,14 @@ namespace SFA.DAS.Apprenticeships.Web
 					throw new StartUpException("Authentication & Authorization: Invalid authentication type");
             }
             builder.Services.AddAuthorizationPolicies();
+            BearerTokenProvider.SetSigningKey(config["UserBearerTokenSigningKey"]);
+            Try(() => builder.Services.AddDataProtection(config, builder.Environment), "Setup DataProtection");
+
+            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
+            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
+
+            //TODO is this the right way to ensure UrlBuilder used in the controller can be built?
+            builder.Services.AddMaMenuConfiguration("signout", config["ResourceEnvironmentName"].ToLower());
 
             // Configuration of other services and MVC
             builder.Services.AddCustomServiceRegistration(serviceParameters);
@@ -110,7 +122,7 @@ namespace SFA.DAS.Apprenticeships.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateChangeOfPriceModelValidator>())
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProviderChangeOfPriceModelValidator>())
                 .ConfigureNavigationSection(serviceParameters)
                 .EnableGoogleAnalytics()
                 .SetDfESignInConfiguration(config.UseDfeSignIn())
@@ -148,7 +160,7 @@ namespace SFA.DAS.Apprenticeships.Web
             app.Use(async (context, next) =>
             {
                 await EnsurePagesCanBeEmbedded(context, next);
-                await Ensure404ResponsesRedirectToErrorPage(context, next);
+                await NotFoundHandlerMiddleware.Ensure404ResponsesRedirectToErrorPage(context, next);
             });
 
             app.UseRouting();
@@ -157,17 +169,6 @@ namespace SFA.DAS.Apprenticeships.Web
             app.UseAuthorization();
 
             app.Run();
-        }
-
-        private static async Task Ensure404ResponsesRedirectToErrorPage(HttpContext context, Func<Task> next)
-        {
-            if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
-            {
-                var originalPath = context.Request.Path.Value;
-                context.Items["originalPath"] = originalPath;
-                context.Request.Path = "/error/404";
-                await next();
-            }
         }
 
         private static async Task EnsurePagesCanBeEmbedded(HttpContext context, Func<Task> next)

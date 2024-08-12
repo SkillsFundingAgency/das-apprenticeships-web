@@ -1,13 +1,16 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
@@ -15,6 +18,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
     public class ApiClientTests
     {
         private Mock<IOptions<ApprenticeshipsOuterApi>> _configMock;
+        private Mock<IHttpContextAccessor> _contextAccessorMock;
         private const string _ExpectedOcpApimKey = "ExpectedOcpApimKey";
         private const string _baseUrl = "http://test.com";
         private const string _ExpectedUrl = "http://test.com/UnitTestEndpoin";
@@ -24,6 +28,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
         public ApiClientTests()
         {
             _fixture = new Fixture();
+            _contextAccessorMock = GetMockIHttpContextAccessor();
         }
 
         [SetUp]
@@ -45,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
             var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
-            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
 
             // Act
             var result = await apiClient.Get<string>(request.Object);
@@ -65,7 +70,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
             var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
-            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
 
             // Act
             var result = await apiClient.Post<string>(request.Object);
@@ -85,7 +90,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
             var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
-            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
 
             // Act
             var result = await apiClient.Put<string>(request.Object);
@@ -105,7 +110,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             var expectedApiResponse = _fixture.Create<string>();
             var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
             var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
-            var apiClient = new ApiClient(mockHttpClient, _configMock.Object);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
 
             // Act
             var result = await apiClient.Delete<string>(request.Object);
@@ -113,6 +118,42 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             // Assert
             result.Body.Should().Be(expectedApiResponse);
             VerifyRequest(_ExpectedUrl, HttpMethod.Delete);
+        }
+
+        [Test]
+        public void UnauthorizedResponse_ThrowsCorrectException()
+        {
+            // Arrange
+            var request = new Mock<IGetApiRequest>();
+            request.Setup(m => m.GetUrl).Returns(_ExpectedUrl);
+
+            var expectedApiResponse = _fixture.Create<string>();
+            var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.Unauthorized, expectedApiResponse);
+            var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
+
+            // Act & Assert
+            Assert.ThrowsAsync<ApiUnauthorizedException>(() => apiClient.Get<string>(request.Object));
+        }
+
+        [Test]
+        public async Task Patch_WithValidRequest_ReturnsApiResponse()
+        {
+            // Arrange
+            var request = new Mock<IPatchApiRequest>();
+            request.Setup(m => m.PatchUrl).Returns(_ExpectedUrl);
+
+            var expectedApiResponse = _fixture.Create<string>();
+            var httpResponseMessage = GetHttpResponseMessage(HttpStatusCode.OK, expectedApiResponse);
+            var mockHttpClient = GetUnitTestHttpClient(httpResponseMessage);
+            var apiClient = new ApiClient(mockHttpClient, _configMock.Object, _contextAccessorMock.Object);
+
+            // Act
+            var result = await apiClient.Patch<string>(request.Object);
+
+            // Assert
+            result.Body.Should().Be(expectedApiResponse);
+            VerifyRequest(_ExpectedUrl, HttpMethod.Patch);
         }
 
         private HttpClient GetUnitTestHttpClient(HttpResponseMessage expectedResponse)
@@ -151,5 +192,30 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Api
             response.Content = new StringContent(JsonConvert.SerializeObject(apiResponse), Encoding.UTF8, "application/json");
             return response;
         }
-    }
+
+		private static Mock<IHttpContextAccessor> GetMockIHttpContextAccessor()
+		{
+            BearerTokenProvider.SetSigningKey("abcdefghijklmnopqrstuv123456789==");
+
+			var contextMock = new Mock<HttpContext>();
+			var claimsPrincipalMock = new Mock<ClaimsPrincipal>();
+
+			// Create a list of claims for the authenticated user
+			var claims = new List<Claim>
+	        {
+		        new Claim(ClaimTypes.Name, "Test User"),
+		        new Claim(ClaimTypes.NameIdentifier, "1"),
+                // Add more claims as needed for testing
+            };
+
+			// Setup the ClaimsPrincipal to return the authenticated user
+			claimsPrincipalMock.Setup(m => m.Identity!.IsAuthenticated).Returns(true);
+			claimsPrincipalMock.Setup(m => m.Claims).Returns(claims);
+
+			contextMock.Setup(ctx => ctx.User).Returns(claimsPrincipalMock.Object);
+			var contextAccessorMock = new Mock<IHttpContextAccessor>();
+			contextAccessorMock.Setup(x => x.HttpContext).Returns(contextMock.Object);
+			return contextAccessorMock;
+		}
+	}
 }

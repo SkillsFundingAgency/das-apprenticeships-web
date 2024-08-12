@@ -1,0 +1,63 @@
+@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@model ProviderChangeOfStartDateModel
+@{
+    ViewData["Title"] = "Check your changes before sending to the employer - Manage apprenticeships";
+    var editPage = $"/provider/{Model.ProviderReferenceNumber}/ChangeOfStartDate/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">Check your changes before sending to the employer</h1>
+        <h2 class="govuk-heading-m">Changes you're requesting</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third" />
+                    <th scope="col" class="govuk-table__header app-custom-class">Current</th>
+                    <th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+                    <td class="govuk-table__cell"></td>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+            <component type="typeof(DetailsRowComponent)"
+                       param-Id='"ApprenticeshipActualStartDate"'
+                       param-Label='"Training start date"'
+                       param-OriginalValue='Model.OriginalApprenticeshipActualStartDate.GetValueOrDefault().ToString("d MMMM yyyy")'
+                       param-Value='Model.ApprenticeshipActualStartDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")'
+                       param-Url='$"{editPage}&view=startDate#{nameof(Model.ApprenticeshipActualStartDate)}"'
+                       render-mode="Static"/>
+            <component type="typeof(DetailsRowComponent)"
+                        param-Id='"PlannedEndDate"'
+                        param-Label='"Planned training end date"'
+                        param-OriginalValue='Model.OriginalPlannedEndDate.GetValueOrDefault().ToString("d MMMM yyyy")'
+                        param-Value='Model.PlannedEndDate?.Date.GetValueOrDefault().ToString("d MMMM yyyy")'
+                        param-Url='$"{editPage}&view=endDate#{nameof(Model.PlannedEndDate)}"'
+                        render-mode="Static" />
+            <component type="typeof(DetailsRowComponent)"
+                       param-Id='"ReasonForChangeOfStartDate"'
+                       param-Label='"Reason for change"'
+                       param-OriginalValue='Model.ReasonForChangeOfStartDate'
+                       param-Value='""'
+                       param-Url='$"{editPage}&view=startDate#{nameof(Model.ReasonForChangeOfStartDate)}"'
+                       render-mode="Static"/>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Now send to the employer for approval</h2>
+        <p class="govuk-body">This change will be sent to the employer to approve. The apprentice will then need to confirm their details in their apprenticeship account.</p>
+        <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId/submit">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CacheKey)
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfStartDate">
+                    Send
+                </button>
+                <a class="govuk-link" id="linkCancelAndReturn" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprentices" asp-external-action="@Model.ApprenticeshipHashedId">Cancel and return</a>
+            </div>
+        </form>
+    </div>
+</div>

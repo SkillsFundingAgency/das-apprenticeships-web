@@ -1,0 +1,67 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice
+@using SFA.DAS.Apprenticeships.Web.Controllers;
+@model EmployerChangeOfPriceModel
+@{
+	ViewData["Title"] = "Check your changes before sending to the training provider - Manage apprenticeships";
+	var editPage = $"/employer/{Model.EmployerAccountId}/ChangeOfPrice/{Model.ApprenticeshipHashedId}/edit?cacheKey={Model.CacheKey}";
+}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<h1 class="govuk-heading-l">Check your changes before sending to the training provider</h1>
+		<h2 class="govuk-heading-m" id="changesRequestedTableHeader">Changes you're requesting</h2>
+		<table aria-described-by="changesRequestedTableHeader" class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header app-custom-class" style="width:250px;"></th>
+					<th scope="col" class="govuk-table__header app-custom-class">Current</th>
+					<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+                    <th scope="col" class="govuk-table__header app-custom-class "></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+
+				<component type="typeof(DetailsRowComponent)" 
+					param-Id='"TotalPrice"'
+						   param-Label='"Total price"'
+						   param-OriginalValue='Model.OriginalApprenticeshipTotalPrice.FormatCurrency()'
+						   param-Value='Model.ApprenticeshipTotalPrice.FormatCurrency()'
+						   param-Url='$"{editPage}#{nameof(Model.ApprenticeshipTotalPrice)}"'
+						   render-mode="Static" />
+			</tbody>
+		</table>
+		<dl class="govuk-summary-list govuk-summary-list--no-border">
+			<component type="typeof(DetailsRowComponent)"
+					   param-Id='"EffectiveFromDate"'
+					   param-Label='"Effective from date"'
+					   param-Value='Model.EffectiveFromDate.ToString()'
+					   param-Url='$"{editPage}#{nameof(Model.EffectiveFromDate)}_{nameof(Model.EffectiveFromDate.Day)}"'
+					   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+					   render-mode="Static" />
+
+			<component type="typeof(DetailsRowComponent)"
+					   param-Id='"ReasonForChange"'
+					   param-Label='"Reason for change"'
+					   param-Value='Model.ReasonForChangeOfPrice'
+					   param-Url='$"{editPage}#{nameof(Model.ReasonForChangeOfPrice)}"'
+					   param-RowType='DetailsRowComponent.DetailsRowType.DescriptionList'
+					   render-mode="Static" />
+		</dl>
+	</div>
+</div>
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<h2 class="govuk-heading-m">Now send to the training provider for approval</h2>
+		<p class="govuk-body">Your payment schedule will not change until the training provider approves your request.</p>
+		<form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfPrice/@Model.ApprenticeshipHashedId/submit">
+			@Html.AntiForgeryToken()
+			@Html.HiddenFor(m=> m.CacheKey)
+			<div class="govuk-button-group">
+				<button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitChangeOfPrice">
+					Send
+				</button>
+				<a class="govuk-link" href="@editPage" id="linkGoBackToEdit">Go back to edit changes</a>
+			</div>
+		</form>
+	</div>
+</div>

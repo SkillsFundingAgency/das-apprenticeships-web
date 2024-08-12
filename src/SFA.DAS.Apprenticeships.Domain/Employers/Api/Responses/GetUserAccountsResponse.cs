@@ -1,22 +1,33 @@
 using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace SFA.DAS.Apprenticeships.Domain.Employers.Api.Responses
 {
     public class GetUserAccountsResponse
     {
-        [JsonProperty(nameof(IsSuspended))]  
+        [JsonPropertyName("isSuspended")]
         public bool IsSuspended { get; set; }
-        [JsonProperty(nameof(UserAccounts))]
+
+        [JsonPropertyName("lastName")]
+        public string LastName { get; set; }
+
+        [JsonPropertyName("firstName")]
+        public string FirstName { get; set; }
+        [JsonPropertyName("employerUserId")]
+        public string EmployerUserId { get; set; }
+
+        [JsonPropertyName("userAccounts")]
         public List<EmployerIdentifier> UserAccounts { get; set; }
     }
-    
+
     public class EmployerIdentifier
     {
-        [JsonProperty("EncodedAccountId")]
+        [JsonPropertyName("encodedAccountId")]
         public string AccountId { get; set; }
-        [JsonProperty("DasAccountName")]
+        [JsonPropertyName("dasAccountName")]
         public string EmployerName { get; set; }
-        [JsonProperty(nameof(Role))]
+        [JsonPropertyName("role")]
         public string Role { get; set; }
+
     }
 }

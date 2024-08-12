@@ -1,0 +1,57 @@
+﻿@using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate
+@model ProviderCancelStartDateModel
+@{
+    ViewData["Title"] = "View change request - Manage apprenticeships";
+}
+
+<div class="govuk-width-container ">
+
+    @*Renders href as href="https://approvals.{domain}/{ProviderReferenceNumber}/apprentices/{ApprenticeshipHashedId}" *@
+    <a class="govuk-back-link" asp-external-subdomain="approvals" asp-external-id="@Model.ProviderReferenceNumber" asp-external-controller="apprentices" asp-external-action="@Model.ApprenticeshipHashedId">
+        Back
+    </a>
+
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">View change of start date</h1>
+            <strong class="govuk-tag govuk-tag--yellow">Pending employer review</strong>
+            <br /><br />
+            <h2 class="govuk-heading-m">Changes you've requested</h2>
+
+			<table class="govuk-table">
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third"></th>
+						<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Current </th>
+						<th scope="col" class="govuk-table__header app-custom-class govuk-!-width-one-third">Requested</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"training-start-date"'
+							   param-Label='"Training start date"'
+							   param-OriginalValue='Model.OriginalStartDate.ToString("dd MMMM yyyy")'
+							   param-Value='Model.PendingStartDate.ToString("dd MMMM yyyy")'
+							   param-RowType='DetailsRowComponent.DetailsRowType.TableTwoColumns'
+							   render-mode="Static" />
+
+					<component type="typeof(DetailsRowComponent)"
+							   param-Id='"reason-for-change"'
+							   param-Label='"Reason for change"'
+							   param-Value='Model.ReasonForChangeOfStartDate'
+							   param-RowType='DetailsRowComponent.DetailsRowType.TableTwoColumns'
+							   render-mode="Static" />
+
+				</tbody>
+			</table>
+
+
+			<form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfStartDate/@Model.ApprenticeshipHashedId/cancel">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ApprenticeshipKey)
+                @await Html.PartialAsync("_CancelOrKeep")
+            </form>
+		</div>
+	</div>
+</div>
