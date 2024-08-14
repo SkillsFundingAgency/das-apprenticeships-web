@@ -1,9 +1,8 @@
 using SFA.DAS.Apprenticeships.Domain.Employers;
 
-namespace SFA.DAS.Apprenticeships.Domain.Interfaces
+namespace SFA.DAS.Apprenticeships.Domain.Interfaces;
+
+public interface IEmployerAccountService
 {
-    public interface IEmployerAccountService
-    {
-        Task<EmployerUserAccounts> GetUserAccounts(string userId, string email);
-    }
+    Task<EmployerUserAccounts> GetUserAccounts(string userId, string email);
 }

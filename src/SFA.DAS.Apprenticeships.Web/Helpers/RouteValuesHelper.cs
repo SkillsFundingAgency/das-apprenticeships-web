@@ -2,14 +2,13 @@
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 
-namespace SFA.DAS.Apprenticeships.Web.Helpers
+namespace SFA.DAS.Apprenticeships.Web.Helpers;
+
+public static class RouteValuesHelper
 {
-    public static class RouteValuesHelper
+    public static void PopulateProviderRouteValues(IRouteValuesProvider model, HttpContext context)
     {
-        public static void PopulateProviderRouteValues(IRouteValuesProvider model, HttpContext context)
-        {
-            model.ApprenticeshipHashedId = context.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
-            model.ProviderReferenceNumber = long.Parse(context.GetRouteValueString(RouteValues.Ukprn));
-        }
+        model.ApprenticeshipHashedId = context.GetRouteValueString(RouteValues.ApprenticeshipHashedId);
+        model.ProviderReferenceNumber = long.Parse(context.GetRouteValueString(RouteValues.Ukprn));
     }
 }

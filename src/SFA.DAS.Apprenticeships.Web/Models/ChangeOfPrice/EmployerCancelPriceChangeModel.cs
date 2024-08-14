@@ -1,11 +1,12 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
+using SFA.DAS.Apprenticeships.Web.Attributes;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
-public class EmployerCancelPriceChangeModel : IRouteValuesEmployer
+public class EmployerCancelPriceChangeModel : IRouteValuesEmployer, ICancelRequest, ICacheModel
 {
-	public string ApprenticeshipHashedId { get; set; } = string.Empty;
+	public string? ApprenticeshipHashedId { get; set; } = string.Empty;
 	public Guid ApprenticeshipKey { get; set; }
 	public string EmployerAccountId { get; set; } = string.Empty;
 	public string ProviderName { get; set; } = string.Empty;
@@ -16,6 +17,9 @@ public class EmployerCancelPriceChangeModel : IRouteValuesEmployer
 	public string? ReasonForChangeOfPrice { get; set; }
 	public string? FirstName { get; set; }
 	public string? LastName { get; set; }
+    [RadioOption]
+    public string? CancelRequest { get; set; }
+	public string? CacheKey { get; set; }
 }
 
 public class EmployerCancelPriceChangeModelMapper : IMapper<EmployerCancelPriceChangeModel>
@@ -39,7 +43,7 @@ public class EmployerCancelPriceChangeModelMapper : IMapper<EmployerCancelPriceC
 			ApprenticeshipTotalPrice = getPendingPriceChangeResponse.PendingPriceChange.PendingTotalPrice,
 			EffectiveFromDate = getPendingPriceChangeResponse.PendingPriceChange.EffectiveFrom,
 			ReasonForChangeOfPrice = HttpUtility.HtmlDecode(getPendingPriceChangeResponse.PendingPriceChange.Reason),
-			ProviderName = getPendingPriceChangeResponse.ProviderName,
+			ProviderName = getPendingPriceChangeResponse.ProviderName!,
 			FirstName = getPendingPriceChangeResponse.PendingPriceChange.FirstName,
 			LastName = getPendingPriceChangeResponse.PendingPriceChange.LastName
 		};

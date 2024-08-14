@@ -1,14 +1,19 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
+using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
-public class EmployerViewPendingPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesEmployer
+public class EmployerViewPendingPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesEmployer, ICacheModel
 {
-    public string EmployerAccountId { get; set; }
-    public string ProviderName { get; set; }
-    public string BackLinkUrl { get; set; }
+	public string? CacheKey { get; set; }
+	public string EmployerAccountId { get; set; } = null!;
+	public string ProviderName { get; set; } = null!;
+	public string BackLinkUrl { get; set; } = null!;
+	[RadioOption]
+	public string? ApproveChanges { get; set; }
+	public string? RejectReason { get; set; }
 }
 
 public class EmployerViewPendingPriceChangeModelMapper : IMapper<EmployerViewPendingPriceChangeModel>

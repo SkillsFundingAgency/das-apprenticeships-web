@@ -22,8 +22,8 @@
 
             <form method="post" action="/provider/@Model.ProviderReferenceNumber/ChangeOfPrice/@Model.ApprenticeshipHashedId/cancel">
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(m=> m.ApprenticeshipKey)
-                @await Html.PartialAsync("_CancelOrKeep")
+                @Html.HiddenFor(m=> m.CacheKey)
+                @await Html.PartialAsync("_CancelOrKeep", Model)
             </form>
 		</div>
 	</div>

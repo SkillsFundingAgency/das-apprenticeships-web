@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Employer.Shared.UI;
 using System.Web;
@@ -82,10 +85,12 @@ public class ChangeOfPriceEmployerController : Controller
     [Route("submit")]
     public async Task<IActionResult> EmployerInitiatedSubmitChange(EmployerChangeOfPriceModel model)
     {
-        await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId(), null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
+        await _apprenticeshipService.CreatePriceHistory(model.ApprenticeshipKey, "Employer", HttpContext.User.GetUserId()!, null, null, model.ApprenticeshipTotalPrice, HttpUtility.HtmlEncode(model.ReasonForChangeOfPrice), model.EffectiveFromDate.Date.GetValueOrDefault());
 
-        var employerCommitmentsReturnUrl = $"{_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())}?showChangeOfPriceRequestSent=true";
-        return Redirect(employerCommitmentsReturnUrl);
+        var redirectUrl = _externalEmployerUrlHelper
+            .CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId?.ToUpper())
+            .AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRequestSent);
+        return Redirect(redirectUrl);
     }
 
     [HttpGet]
@@ -99,7 +104,7 @@ public class ChangeOfPriceEmployerController : Controller
             return NotFound();
         }
 
-        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
+        var backLink = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, employerAccountId, apprenticeshipHashedId.ToUpper());
 
         switch (response.PendingPriceChange.Initiator.GetChangeInitiator())
         {
@@ -107,63 +112,68 @@ public class ChangeOfPriceEmployerController : Controller
                 var employerInitiateViewModel = _mapper.Map<EmployerCancelPriceChangeModel>(response);
                 HttpContext.PopulateEmployerInitiatedRouteValues(employerInitiateViewModel);
                 employerInitiateViewModel.BackLinkUrl = backLink;
-                return View(CancelPendingChangeViewName, employerInitiateViewModel);
+                await _cache.SetCacheModelAsync(employerInitiateViewModel);
+				return View(CancelPendingChangeViewName, employerInitiateViewModel);
 
             case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<EmployerViewPendingPriceChangeModel>(response);
                 HttpContext.PopulateEmployerInitiatedRouteValues(providerInitiateViewModel);
                 providerInitiateViewModel.BackLinkUrl = backLink;
+                await _cache.SetCacheModelAsync(providerInitiateViewModel);
                 return View(ApproveProviderChangeOfPriceViewName, providerInitiateViewModel);
 
         }
 
-        throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
+        throw new ServiceException("Unrecognised PriceChangeInitiator");
     }
 
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("cancel")]
-    public async Task<IActionResult> CancelPriceChange(string employerAccountId, string apprenticeshipHashedId, string cancelRequest)
+    public async Task<IActionResult> CancelPriceChange(EmployerCancelPriceChangeModel model)
     {
-        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper());
-        if (cancelRequest != "1")
+        if (!ModelState.IsValid)
+            return View(CancelPendingChangeViewName, model);
+
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId.ToUpper());
+        if (model.CancelRequest != "1")
         {
             return Redirect(redirectUrl);
         }
 
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return NotFound();
-        }
-
-        await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-        redirectUrl += "?showPriceChangeCancelled=true";
+        await _apprenticeshipService.CancelPendingPriceChange(model.ApprenticeshipKey);
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceCancelled);
         return Redirect(redirectUrl);
     }
 
     [HttpPost]
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("pending")]
-    public async Task<IActionResult> ApproveOrRejectPriceChangePage(string employerAccountId, string apprenticeshipHashedId, string ApproveChanges, string rejectReason)
+    public async Task<IActionResult> ApproveOrRejectPriceChangePage(EmployerViewPendingPriceChangeModel model)
     {
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
+        if (!ModelState.IsValid)
+            return View(ApproveProviderChangeOfPriceViewName, model);
+
+        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(model.ApprenticeshipHashedId);
+        if (apprenticeshipKey == Guid.Empty)
         {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
+            _logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {ApprenticeshipHashedId}", model.ApprenticeshipHashedId);
             return NotFound();
         }
 
-        if (ApproveChanges != "0")
+        var redirectUrl = _externalEmployerUrlHelper.CommitmentsV2Link(EmployerRoutes.ApprenticeDetails, model.EmployerAccountId, model.ApprenticeshipHashedId.ToUpper());
+
+        if (model.ApproveChanges != "0")
         {
             var userId = HttpContext.User.GetUserId();
-            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId);
-            return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeApproved=true");
+            await _apprenticeshipService.ApprovePendingPriceChange(apprenticeshipKey, userId!);
+            redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceApproved);
+            return Redirect(redirectUrl);
         }
 
-        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        return Redirect(_externalEmployerUrlHelper.CommitmentsV2Link("ApprenticeDetails", employerAccountId, apprenticeshipHashedId.ToUpper()) + "?showPriceChangeRejected=true");
+        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, model.RejectReason!.HtmlEncode());
+        redirectUrl = redirectUrl.AppendEmployerBannersToUrl(EmployerApprenticeDetailsBanners.ChangeOfPriceRejected);
+        return Redirect(redirectUrl);
     }
 
 }

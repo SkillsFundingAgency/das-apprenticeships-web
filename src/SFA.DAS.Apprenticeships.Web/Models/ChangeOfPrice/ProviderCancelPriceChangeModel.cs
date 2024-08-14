@@ -1,13 +1,17 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
+using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
 
-public class ProviderCancelPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesProvider
+public class ProviderCancelPriceChangeModel : BasePendingPriceChangeModel, IRouteValuesProvider, ICancelRequest, ICacheModel
 {
     public long? ProviderReferenceNumber { get; set; }
+    [RadioOption]
+    public string? CancelRequest { get; set; }
+    public string? CacheKey { get; set; }
 }
 
 public class ProviderCancelPriceChangeModelMapper : IMapper<ProviderCancelPriceChangeModel>

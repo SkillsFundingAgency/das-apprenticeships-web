@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Web.Infrastructure
+namespace SFA.DAS.Apprenticeships.Web.Infrastructure;
+
+[ExcludeFromCodeCoverage]
+public class ProviderAccountRequirement : IAuthorizationRequirement
 {
-    [ExcludeFromCodeCoverage]
-    public class ProviderAccountRequirement : IAuthorizationRequirement
-    {
         
-    }
-    
 }

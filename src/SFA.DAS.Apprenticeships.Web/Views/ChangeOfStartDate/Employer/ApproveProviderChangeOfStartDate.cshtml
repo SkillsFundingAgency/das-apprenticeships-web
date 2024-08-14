@@ -11,7 +11,7 @@
     </a>
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l" id="reviewChangesHeader">Review changes</h1>
             <h2 class="govuk-heading-m" id="providerRequestedChangesHeader">@Model.ProviderName has requested these changes</h2>
 
@@ -32,6 +32,13 @@
                                param-OriginalValue='Model.OriginalActualStartDate.ToString("dd MMMM yyyy")'
                                param-Value='Model.PendingActualStartDate.ToString("dd MMMM yyyy")'
                                render-mode="Static" />
+
+                    <component type="typeof(DetailsRowComponent)"
+                               param-Id='"PlannedEndDate"'
+                               param-Label='"Planned training end date"'
+                               param-OriginalValue='Model.OriginalPlannedEndDate.ToString("dd MMMM yyyy")'
+                               param-Value='Model.PendingPlannedEndDate.ToString("dd MMMM yyyy")'
+                               render-mode="Static" />
                 </tbody>
             </table>
 
@@ -46,8 +53,8 @@
 
             <form method="post" action="/employer/@Model.EmployerAccountId/ChangeOfStartDate/@Model.ApprenticeshipHashedId/pending">
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(m => m.ApprenticeshipKey)
-                @await Html.PartialAsync("_ApproveOrReject")
+                @Html.HiddenFor(m => m.CacheKey)
+                @await Html.PartialAsync("_ApproveOrReject", Model)
             </form>
         </div>
     </div>

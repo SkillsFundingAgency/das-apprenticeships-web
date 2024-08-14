@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
+using FluentAssertions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
-using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models.ChangeOfStartDate;
@@ -22,8 +21,12 @@ public class ProviderCancelStartDateModelMapperTests
 	{
 		var sourceObject = new object();
 		var mapper = new ProviderCancelStartDateModelMapper();
-		Assert.Throws<NotImplementedException>(() => mapper.Map(sourceObject));
-	}
+		
+        FluentActions
+            .Invoking(() => mapper.Map(sourceObject))
+            .Should()
+            .Throw<NotImplementedException>();
+    }
 
 	[Test]
 	public void Map_WhenSourceValid_ReturnsModel()
@@ -35,11 +38,14 @@ public class ProviderCancelStartDateModelMapperTests
 		// Act
 		var result = mapper.Map(sourceObject);
 
-		// Assert
-		Assert.IsInstanceOf<ProviderCancelStartDateModel>(result);
-		Assert.That(result.ApprenticeshipKey, Is.EqualTo(sourceObject.PendingStartDateChange!.ApprenticeshipKey));
-		Assert.That(result.ReasonForChangeOfStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.Reason));
-		Assert.That(result.OriginalStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.OriginalActualStartDate));
-		Assert.That(result.PendingStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.PendingActualStartDate));
+        // Assert
+        result.Should().BeOfType<ProviderCancelStartDateModel>();
+        result.ApprenticeshipKey.Should().Be(sourceObject.PendingStartDateChange!.ApprenticeshipKey);
+        result.ReasonForChangeOfStartDate.Should().Be(sourceObject.PendingStartDateChange.Reason);
+        result.OriginalStartDate.Should().Be(sourceObject.PendingStartDateChange.OriginalActualStartDate);
+        result.PendingStartDate.Should().Be(sourceObject.PendingStartDateChange.PendingActualStartDate);
+		result.OriginalPlannedEndDate.Should().Be(sourceObject.PendingStartDateChange.OriginalPlannedEndDate);
+		result.PendingPlannedEndDate.Should().Be(sourceObject.PendingStartDateChange.PendingPlannedEndDate);
+
 	}
 }

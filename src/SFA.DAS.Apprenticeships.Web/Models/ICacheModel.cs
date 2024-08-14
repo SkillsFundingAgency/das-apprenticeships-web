@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Models
+﻿namespace SFA.DAS.Apprenticeships.Web.Models;
+
+public interface ICacheModel
 {
-	public interface ICacheModel
-	{
-		public string? CacheKey { get; set; }
-	}
+    public string? CacheKey { get; set; }
 }
