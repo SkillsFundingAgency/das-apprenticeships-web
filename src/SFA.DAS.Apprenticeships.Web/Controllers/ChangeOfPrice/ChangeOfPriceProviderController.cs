@@ -17,6 +17,7 @@ using System.Web;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
 [Authorize]
+[Authorize(Policy = nameof(PolicyNames.HasProviderAccount))]
 [Route("provider/{ukprn}/ChangeOfPrice/{apprenticeshipHashedId}")]
 public class ChangeOfPriceProviderController : Controller
 {
