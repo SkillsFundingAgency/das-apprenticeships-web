@@ -18,6 +18,7 @@ using System.Reflection;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
 [Authorize]
+[Authorize(Policy = nameof(PolicyNames.HasProviderAccount))]
 [Route("provider/{ukprn}/ChangeOfStartDate/{apprenticeshipHashedId}")]
 public class ChangeOfStartDateProviderController : Controller
 {
