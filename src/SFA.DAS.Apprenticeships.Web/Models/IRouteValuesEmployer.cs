@@ -1,8 +1,7 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Models
+﻿namespace SFA.DAS.Apprenticeships.Web.Models;
+
+public interface IRouteValuesEmployer
 {
-	public interface IRouteValuesEmployer
-	{
-		public string? ApprenticeshipHashedId { get; set; }
-		public string EmployerAccountId { get; set; }
-	}
+    public string? ApprenticeshipHashedId { get; set; }
+    public string EmployerAccountId { get; set; }
 }

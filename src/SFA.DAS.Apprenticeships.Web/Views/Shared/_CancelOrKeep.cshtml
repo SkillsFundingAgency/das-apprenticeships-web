@@ -1,17 +1,24 @@
-﻿<div class="govuk-form-group">
+﻿@model ICancelRequest
+
+<div class="govuk-form-group">
     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
         Do you want to cancel this request?
     </legend>
 
-    <div class="govuk-radios">
-        <div class="govuk-radios__item" id="radio-item-yes">
-            <input class="govuk-radios__input" type="radio" id="option-yes" name="CancelRequest" value="1">
-            <label class="govuk-label govuk-radios__label" for="option-yes">Yes, cancel the request</label>
-        </div>
-        <div class="govuk-radios__item" id="radio-item-no">
-            <input class="govuk-radios__input" type="radio" id="option-no" name="CancelRequest" value="0">
-            <label class="govuk-label govuk-radios__label" for="option-no">No, keep the request</label>
-        </div>
+    <div class="govuk-radios @ViewContext.DisplayFormGroupError(nameof(Model.CancelRequest))">
+        <component type="typeof(RadioOptionComponent)" render-mode="Static"
+                   param-Id='"option-yes"'
+                   param-name='"CancelRequest"'
+                   param-Value='"1"'
+                   param-Label='"Yes, cancel the request"' />
+
+        <component type="typeof(RadioOptionComponent)" render-mode="Static"
+                   param-Id='"option-no"'
+                   param-name='"CancelRequest"'
+                   param-Value='"0"'
+                   param-Label='"No, keep the request"' />
+
+        @Html.ValidationMessageFor(m => m.CancelRequest, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.CancelRequest) })
     </div>
 </div>
 <button class="govuk-button" data-module="govuk-button" type="submit" id="buttonSubmitForm">

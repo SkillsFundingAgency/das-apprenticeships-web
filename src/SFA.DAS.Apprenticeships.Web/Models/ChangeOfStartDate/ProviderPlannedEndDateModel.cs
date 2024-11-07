@@ -1,9 +1,12 @@
-﻿namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
+﻿using SFA.DAS.Apprenticeships.Web.Attributes;
+
+namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
 public class ProviderPlannedEndDateModel : ProviderChangeOfStartDateModel
 {
     public DateTime? SuggestedEndDate => GetSuggestedEndDate();
     public DateTime? MiniumEndDate => ApprenticeshipActualStartDate?.Date?.AddDays(365);
+    [RadioOption]
     public bool? UseSuggestedDate { get; set; }
 
     private DateTime? GetSuggestedEndDate()

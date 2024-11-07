@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Application.Exceptions;
+using SFA.DAS.Apprenticeships.Domain.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Requests;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
@@ -75,46 +76,31 @@ public class ApprenticeshipService : IApprenticeshipService
     public async Task CancelPendingPriceChange(Guid apprenticeshipKey)
     {
         var response = await _apiClient.Delete<object>(new CancelPendingPriceChangeRequest(apprenticeshipKey));
-        if (!string.IsNullOrEmpty(response.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(CancelPendingPriceChange));
     }
 
     public async Task ApprovePendingStartDateChange(Guid apprenticeshipKey, string userId)
     {
         var response = await _apiClient.Patch<object>(new ApprovePendingStartDateChangeRequest(apprenticeshipKey, new ApprovePendingStartDateChangeData() { UserId = userId }));
-        if (!string.IsNullOrEmpty(response?.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(ApprovePendingStartDateChange));
     }
 
     public async Task RejectPendingPriceChange(Guid apprenticeshipKey, string reason)
     {
         var response = await _apiClient.Patch<object>(new RejectPendingPriceChangeRequest(apprenticeshipKey, new RejectPendingPriceChangeData { Reason = reason }));
-        if (!string.IsNullOrEmpty(response?.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(RejectPendingPriceChange));
     }
 
     public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId)
     {
         var response = await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId }));
-        if (!string.IsNullOrEmpty(response?.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(ApprovePendingPriceChange));
     }
 
     public async Task ApprovePendingPriceChange(Guid apprenticeshipKey, string userId, decimal trainingPrice, decimal endPointAssessmentPrice)
     {
         var response = await _apiClient.Patch<object>(new ApprovePendingPriceChangeRequest(apprenticeshipKey, new ApprovePendingPriceChangeData { UserId = userId, TrainingPrice = trainingPrice, AssessmentPrice = endPointAssessmentPrice }));
-        if (!string.IsNullOrEmpty(response?.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(ApprovePendingPriceChange));
     }
 
     public async Task<ApprenticeshipStartDate?> GetApprenticeshipStartDate(string apprenticeshipHashId)
@@ -157,10 +143,7 @@ public class ApprenticeshipService : IApprenticeshipService
             EffectiveFromDate = effectiveFromDate
             }));
 
-        if (!string.IsNullOrEmpty(response.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(CreatePriceHistory));
 
         return response.Body.PriceChangeStatus;
     }
@@ -177,10 +160,7 @@ public class ApprenticeshipService : IApprenticeshipService
             PlannedEndDate = newPlannedEndDate
             }));
 
-        if (!string.IsNullOrEmpty(response.ErrorContent))
-        {
-            throw new ServiceException(response.ErrorContent);
-        }
+        ValidateResponse(response, nameof(CreateStartDateChange));
     }
 
     public async Task<GetPendingStartDateChangeResponse?> GetPendingStartDateChange(string apprenticeshipHashId)
@@ -204,18 +184,37 @@ public class ApprenticeshipService : IApprenticeshipService
     public async Task RejectPendingStartDateChange(Guid apprenticeshipKey, string reason)
     {
 	    var response = await _apiClient.Patch<object>(new RejectPendingStartDateChangeRequest(apprenticeshipKey, new RejectPendingStartDateChangeData { Reason = reason }));
-	    if (!string.IsNullOrEmpty(response?.ErrorContent))
-	    {
-		    throw new ServiceException(response.ErrorContent);
-	    }
+        ValidateResponse(response, nameof(RejectPendingStartDateChange));
     }
 
     public async Task CancelPendingStartDateChange(Guid apprenticeshipKey)
     {
 		var response = await _apiClient.Delete<object>(new CancelPendingStartDateChangeRequest(apprenticeshipKey));
-		if (!string.IsNullOrEmpty(response.ErrorContent))
-		{
-			throw new ServiceException(response.ErrorContent);
-		}
-	}
+        ValidateResponse(response, nameof(CancelPendingStartDateChange));
+    }
+
+    public async Task FreezePayments(Guid apprenticeshipKey, string? reason)
+    {
+        var response = await _apiClient.Post<object>(new FreezePaymentsRequest(apprenticeshipKey, new FreezePaymentsData{ Reason = reason}));
+        ValidateResponse(response, nameof(FreezePayments));
+    }
+
+    public async Task UnfreezePayments(Guid apprenticeshipKey)
+    {
+        var response = await _apiClient.Post<object>(new UnfreezePaymentsRequest(apprenticeshipKey));
+        ValidateResponse(response, nameof(UnfreezePayments));
+    }
+
+    private void ValidateResponse<T>(ApiResponse<T> response, string methodName)
+    {
+        if (response == null)
+        {
+            throw new ServiceException("Response is null");
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ServiceException($"Failed to {methodName} Status:{response.StatusCode} Content: {response.ErrorContent}");
+        }
+    }
 }

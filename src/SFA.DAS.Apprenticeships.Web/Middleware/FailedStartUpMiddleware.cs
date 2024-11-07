@@ -1,27 +1,26 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Web.Middleware
+namespace SFA.DAS.Apprenticeships.Web.Middleware;
+
+/// <summary>
+/// This middleware returns a static error message when the application fails to start
+/// </summary>
+[ExcludeFromCodeCoverage]
+public class FailedStartUpMiddleware
 {
-	/// <summary>
-	/// This middleware returns a static error message when the application fails to start
-	/// </summary>
-	[ExcludeFromCodeCoverage]
-	public class FailedStartUpMiddleware
-	{
-		internal static string StartupStep = "Initialized";
-		internal static string ErrorMessage = "App Failed to start";
+    internal static string StartupStep = "Initialized";
+    internal static string ErrorMessage = "App Failed to start";
 
-		private readonly RequestDelegate _next;
+    private readonly RequestDelegate _next;
 
-		public FailedStartUpMiddleware(RequestDelegate next)
-		{
-			_next = next;
-		}
+    public FailedStartUpMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
 
-		public async Task InvokeAsync(HttpContext context)
-		{
-			await _next(context);
-			await context.Response.WriteAsync(ErrorMessage);
-		}
-	}
+    public async Task InvokeAsync(HttpContext context)
+    {
+        await _next(context);
+        await context.Response.WriteAsync(ErrorMessage);
+    }
 }

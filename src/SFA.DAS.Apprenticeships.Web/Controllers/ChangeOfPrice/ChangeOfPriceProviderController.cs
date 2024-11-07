@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Web.Extensions;
+using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfPrice;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Services;
-using SFA.DAS.Provider.Shared.UI.Attributes;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
-using SFA.DAS.Apprenticeships.Web.Helpers;
-using NavigationSection = SFA.DAS.Provider.Shared.UI.NavigationSection;
-using SFA.DAS.Apprenticeships.Web.Extensions;
-using SFA.DAS.Apprenticeships.Domain;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
@@ -92,13 +92,15 @@ public class ChangeOfPriceProviderController : Controller
 
         if (priceChangeStatus == "Approved")
         {
-            providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?showChangeOfPriceAutoApproved=true" });
+            providerCommitmentsReturnUrl = _externalProviderUrlHelper
+                .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}"})
+                .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceAutoApproved);
         }
         else
         {
-            providerCommitmentsReturnUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters
-                { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?showChangeOfPriceRequestSent=true" });
+            providerCommitmentsReturnUrl = _externalProviderUrlHelper
+                .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}" })
+                .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceRequestSent);
         }
 
         return Redirect(providerCommitmentsReturnUrl);
@@ -119,30 +121,38 @@ public class ChangeOfPriceProviderController : Controller
             case ChangeInitiator.Employer:
                 var employerInitiateViewModel = _mapper.Map<ProviderViewPendingPriceChangeModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(employerInitiateViewModel, HttpContext);
+                await _cache.SetCacheModelAsync(employerInitiateViewModel);
                 return View(ApproveEmployerChangeOfPriceViewName, employerInitiateViewModel);
 
             case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<ProviderCancelPriceChangeModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(providerInitiateViewModel, HttpContext);
+                await _cache.SetCacheModelAsync(providerInitiateViewModel);
                 return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
 
         }
 
-        throw new ArgumentOutOfRangeException("Unrecognised PriceChangeInitiator");
+        throw new ServiceException("Unrecognised PriceChangeInitiator");
     }
 
     [HttpPost]
     [Route("pending")]
-    public async Task<IActionResult> ApproveOrRejectPendingPriceChange(long ukprn, string apprenticeshipHashedId, string ApproveChanges, string rejectReason = "")
+    public async Task<IActionResult> ApproveOrRejectPendingPriceChange(ProviderViewPendingPriceChangeModel model)
     {
-        if (ApproveChanges == "1")
+        if (!ModelState.IsValid)
+            return View(ApproveEmployerChangeOfPriceViewName, model);
+
+        if (model.ApproveRequest == "1")
         {
-            return RedirectToAction("ConfirmPriceBreakdown", new { ukprn, apprenticeshipHashedId });
+            return RedirectToAction("ConfirmPriceBreakdown", new { ukprn = model.ProviderReferenceNumber, apprenticeshipHashedId = model.ApprenticeshipHashedId });
         }
 
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        await _apprenticeshipService.RejectPendingPriceChange(apprenticeshipKey, rejectReason.HtmlEncode());
-        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeRejected=true" }));
+        await _apprenticeshipService.RejectPendingPriceChange(model.ApprenticeshipKey, model.RejectReason!.HtmlEncode());
+
+        var redirectUrl = _externalProviderUrlHelper
+            .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId!.ToUpper()}" })
+            .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceRejected);
+        return Redirect(redirectUrl);
     }
 
     [HttpGet]
@@ -151,7 +161,7 @@ public class ChangeOfPriceProviderController : Controller
     {
         var response = await _apprenticeshipService.GetPendingPriceChange(apprenticeshipHashedId);
 
-        var confirmPriceBreakdownPriceChangeModel = _mapper.Map<ProviderConfirmPriceBreakdownPriceChangeModel>(response);
+        var confirmPriceBreakdownPriceChangeModel = _mapper.Map<ProviderConfirmPriceBreakdownPriceChangeModel>(response!);
 
         return View(ProviderConfirmPriceBreakdownViewName, confirmPriceBreakdownPriceChangeModel);
     }
@@ -167,27 +177,31 @@ public class ChangeOfPriceProviderController : Controller
 
         var userId = HttpContext.User.Identity?.Name!;
         await _apprenticeshipService.ApprovePendingPriceChange(model.ApprenticeshipKey, userId, model.ApprenticeshipTrainingPrice.GetValueOrDefault(), model.ApprenticeshipEndPointAssessmentPrice.GetValueOrDefault());
-        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeApproved=true" }));
+
+        var redirectUrl = _externalProviderUrlHelper
+            .GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}" })
+            .AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceApproved);
+        return Redirect(redirectUrl);
     }
 
 
     [HttpPost]
     [Route("cancel")]
-    public async Task<IActionResult> CancelPriceChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+    public async Task<IActionResult> CancelPriceChange(ProviderCancelPriceChangeModel model)
     {
-        if (CancelRequest != "1")
+        if (!ModelState.IsValid)
+            return View(ProviderCancelPendingChangeViewName, model);
+
+        var redirectUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}" });
+
+        if (model.CancelRequest != "1")
         {
-            return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
+            return Redirect(redirectUrl);
         }
 
-        var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-        if (apprenticeshipKey == default)
-        {
-            _logger.LogWarning($"Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}");
-            return NotFound();
-        }
+        await _apprenticeshipService.CancelPendingPriceChange(model.ApprenticeshipKey);
 
-        await _apprenticeshipService.CancelPendingPriceChange(apprenticeshipKey);
-        return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?showPriceChangeCancelled=true" }));
+        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfPriceCancelled);
+        return Redirect(redirectUrl);
     }
 }

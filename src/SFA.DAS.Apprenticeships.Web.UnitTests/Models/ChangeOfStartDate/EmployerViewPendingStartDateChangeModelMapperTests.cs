@@ -1,13 +1,8 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AutoFixture;
+using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Web.UnitTests.Models.ChangeOfStartDate;
 
@@ -31,7 +26,10 @@ public class EmployerViewPendingStartDateChangeModelMapperTests
         var sourceObject = new object();
 
         // Act & Assert
-        Assert.Throws<NotImplementedException>(() => _mapper.Map(sourceObject));
+        FluentActions
+            .Invoking(() => _mapper.Map(sourceObject))
+            .Should()
+            .Throw<NotImplementedException>();
     }
 
     [Test]
@@ -41,7 +39,10 @@ public class EmployerViewPendingStartDateChangeModelMapperTests
         var sourceObject = new GetPendingStartDateChangeResponse();
 
         // Act & Assert
-        Assert.Throws<MapperException>(() => _mapper.Map(sourceObject));
+        FluentActions
+            .Invoking(() => _mapper.Map(sourceObject))
+            .Should()
+            .Throw<MapperException>();
     }
 
     [Test]
@@ -54,10 +55,12 @@ public class EmployerViewPendingStartDateChangeModelMapperTests
         var result = _mapper.Map(sourceObject);
 
         // Assert
-        Assert.That(result.ApprenticeshipKey, Is.EqualTo(sourceObject.PendingStartDateChange!.ApprenticeshipKey));
-        Assert.That(result.ReasonForChangeOfStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.Reason));
-        Assert.That(result.ProviderName, Is.EqualTo(sourceObject.ProviderName));
-        Assert.That(result.OriginalActualStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.OriginalActualStartDate));
-        Assert.That(result.PendingActualStartDate, Is.EqualTo(sourceObject.PendingStartDateChange.PendingActualStartDate));
+        result.ApprenticeshipKey.Should().Be(sourceObject.PendingStartDateChange!.ApprenticeshipKey);
+        result.ReasonForChangeOfStartDate.Should().Be(sourceObject.PendingStartDateChange.Reason);
+        result.ProviderName.Should().Be(sourceObject.ProviderName);
+        result.OriginalActualStartDate.Should().Be(sourceObject.PendingStartDateChange.OriginalActualStartDate);
+        result.PendingActualStartDate.Should().Be(sourceObject.PendingStartDateChange.PendingActualStartDate);
+        result.OriginalPlannedEndDate.Should().Be(sourceObject.PendingStartDateChange.OriginalPlannedEndDate);
+        result.PendingPlannedEndDate.Should().Be(sourceObject.PendingStartDateChange.PendingPlannedEndDate);
     }
 }

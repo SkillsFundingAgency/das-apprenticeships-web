@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using FluentAssertions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
@@ -39,17 +40,17 @@ public class ProviderChangeOfStartDateModelMapperTests
         var result = _mapper.Map(apprenticeshipStartDate);
 
         // Assert
-        Assert.That(result.ApprenticeshipActualStartDate?.Date, Is.EqualTo(apprenticeshipStartDate.ActualStartDate.Value.Date));
-        Assert.That(result.ApprenticeshipKey, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipKey));
-        Assert.That(result.EarliestStartDate, Is.EqualTo(apprenticeshipStartDate.EarliestStartDate));
-        Assert.That(result.LatestStartDate, Is.EqualTo(apprenticeshipStartDate.LatestStartDate));
-        Assert.That(result.LastFridayOfSchool, Is.EqualTo(apprenticeshipStartDate.LastFridayOfSchool));
-        Assert.That(result.ApprovingPartyName, Is.EqualTo(apprenticeshipStartDate.EmployerName));
-        Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.ActualStartDate.Value));
-        Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate!.Value));
-        Assert.That(result.PreviousAcademicYearEndDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.EndDate));
-        Assert.That(result.PreviousAcademicYearHardCloseDate, Is.EqualTo(apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate));
-        Assert.That(result.CurrentAcademicYearStartDate, Is.EqualTo(apprenticeshipStartDate.CurrentAcademicYear.StartDate));
+        result.ApprenticeshipActualStartDate?.Date.Should().Be(apprenticeshipStartDate.ActualStartDate!.Value.Date);
+        result.ApprenticeshipKey.Should().Be(apprenticeshipStartDate.ApprenticeshipKey);
+        result.EarliestStartDate.Should().Be(apprenticeshipStartDate.EarliestStartDate);
+        result.LatestStartDate.Should().Be(apprenticeshipStartDate.LatestStartDate);
+        result.LastFridayOfSchool.Should().Be(apprenticeshipStartDate.LastFridayOfSchool);
+        result.ApprovingPartyName.Should().Be(apprenticeshipStartDate.EmployerName);
+        result.OriginalApprenticeshipActualStartDate.Should().Be(apprenticeshipStartDate.ActualStartDate!.Value);
+        result.OriginalPlannedEndDate.Should().Be(apprenticeshipStartDate.PlannedEndDate!.Value);
+        result.PreviousAcademicYearEndDate.Should().Be(apprenticeshipStartDate.PreviousAcademicYear.EndDate);
+        result.PreviousAcademicYearHardCloseDate.Should().Be(apprenticeshipStartDate.PreviousAcademicYear.HardCloseDate);
+        result.CurrentAcademicYearStartDate.Should().Be(apprenticeshipStartDate.CurrentAcademicYear.StartDate);
     }
 
     [Test]
@@ -59,6 +60,9 @@ public class ProviderChangeOfStartDateModelMapperTests
         var sourceObject = new object();
 
         // Act & Assert
-        Assert.Throws<NotImplementedException>(() => _mapper.Map(sourceObject));
+        FluentActions
+            .Invoking(() => _mapper.Map(sourceObject))
+            .Should()
+            .Throw<NotImplementedException>();
     }
 }

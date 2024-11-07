@@ -6,10 +6,14 @@ using SFA.DAS.Apprenticeships.Web.Helpers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
+using SFA.DAS.Apprenticeships.Web.Models.Enums;
 using SFA.DAS.Apprenticeships.Web.Services;
 using SFA.DAS.Provider.Shared.UI.Extensions;
 using SFA.DAS.Provider.Shared.UI.Models;
 using System.Web;
+using SFA.DAS.Apprenticeships.Application.Exceptions;
+using SFA.DAS.Apprenticeships.Web.Extensions;
+using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
@@ -132,8 +136,8 @@ public class ChangeOfStartDateProviderController : Controller
         { 
             Controller = "", 
             SubDomain = Subdomains.Approvals, 
-            RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}?banners=ChangeOfStartDateSent" 
-        });
+            RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId?.ToUpper()}"
+        }).AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfStartDateSent);
 
         return Redirect(providerCommitmentsReturnUrl);
     }
@@ -156,31 +160,32 @@ public class ChangeOfStartDateProviderController : Controller
             case ChangeInitiator.Provider:
                 var providerInitiateViewModel = _mapper.Map<ProviderCancelStartDateModel>(response);
                 RouteValuesHelper.PopulateProviderRouteValues(providerInitiateViewModel, HttpContext);
+                await _cache.SetCacheModelAsync(providerInitiateViewModel);
                 return View(ProviderCancelPendingChangeViewName, providerInitiateViewModel);
 
         }
 
-        throw new ArgumentOutOfRangeException("ChangeInitiator");
+        throw new ServiceException("Unrecognised ChangeInitiator");
     }
 
 	[HttpPost]
 	[Route("cancel")]
-	public async Task<IActionResult> CancelStartDateChange(long ukprn, string apprenticeshipHashedId, string CancelRequest)
+	public async Task<IActionResult> CancelStartDateChange(ProviderCancelStartDateModel model)
 	{
-		if (CancelRequest != "1")
+        if (!ModelState.IsValid)
+            return View(ProviderCancelPendingChangeViewName, model);
+
+        var redirectUrl = _externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{model.ProviderReferenceNumber}/apprentices/{model.ApprenticeshipHashedId}" });
+
+        if (model.CancelRequest != "1")
 		{
-			return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId}" }));
+			return Redirect(redirectUrl);
 		}
 
-		var apprenticeshipKey = await _apprenticeshipService.GetApprenticeshipKey(apprenticeshipHashedId);
-		if (apprenticeshipKey == default)
-		{
-			_logger.LogWarning("Apprenticeship key not found for apprenticeship with hashed id {apprenticeshipHashedId}", apprenticeshipHashedId);
-			return NotFound();
-		}
+		await _apprenticeshipService.CancelPendingStartDateChange(model.ApprenticeshipKey);
 
-		await _apprenticeshipService.CancelPendingStartDateChange(apprenticeshipKey);
-		return Redirect(_externalProviderUrlHelper.GenerateUrl(new UrlParameters { Controller = "", SubDomain = Subdomains.Approvals, RelativeRoute = $"{ukprn}/apprentices/{apprenticeshipHashedId.ToUpper()}?banners=ChangeOfStartDateCancelled" }));
-	}
+        redirectUrl = redirectUrl.AppendProviderBannersToUrl(ProviderApprenticeDetailsBanners.ChangeOfStartDateCancelled);
+        return Redirect(redirectUrl);
+    }
 
 }

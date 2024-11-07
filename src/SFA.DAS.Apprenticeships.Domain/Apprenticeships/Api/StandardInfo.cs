@@ -2,8 +2,8 @@
 
 public class StandardInfo
 {
-    public string? CourseCode { get; set; } = null!;
+    public string? CourseCode { get; set; }
     public DateTime? EffectiveFrom { get; set; }
     public DateTime? EffectiveTo { get; set; }
-    public StandardVersionInfo? StandardVersion { get; set; } = null!;
+    public StandardVersionInfo? StandardVersion { get; set; }
 }

@@ -1,4 +1,6 @@
 ﻿using AutoFixture;
+using FluentAssertions.Execution;
+using FluentAssertions;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
@@ -28,17 +30,17 @@ public class ProviderPlannedEndDateModelMapperTests
         var result = _mapper.Map(apprenticeshipStartDate);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(result.ApprenticeshipKey, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipKey));
-            Assert.That(result.ProviderReferenceNumber, Is.EqualTo(apprenticeshipStartDate.ProviderReferenceNumber));
-            Assert.That(result.CacheKey, Is.EqualTo(apprenticeshipStartDate.CacheKey));
-            Assert.That(result.ApprenticeshipHashedId, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipHashedId));
-            Assert.That(result.ApprenticeshipActualStartDate?.Date, Is.EqualTo(apprenticeshipStartDate.ApprenticeshipActualStartDate!.Date));
-            Assert.That(result.PlannedEndDate, Is.EqualTo(apprenticeshipStartDate.PlannedEndDate));
-            Assert.That(result.OriginalApprenticeshipActualStartDate, Is.EqualTo(apprenticeshipStartDate.OriginalApprenticeshipActualStartDate));
-            Assert.That(result.OriginalPlannedEndDate, Is.EqualTo(apprenticeshipStartDate.OriginalPlannedEndDate));
-        });
+            result.ApprenticeshipKey.Should().Be(apprenticeshipStartDate.ApprenticeshipKey);
+            result.ProviderReferenceNumber.Should().Be(apprenticeshipStartDate.ProviderReferenceNumber);
+            result.CacheKey.Should().Be(apprenticeshipStartDate.CacheKey);
+            result.ApprenticeshipHashedId.Should().Be(apprenticeshipStartDate.ApprenticeshipHashedId);
+            result.ApprenticeshipActualStartDate?.Date.Should().Be(apprenticeshipStartDate.ApprenticeshipActualStartDate?.Date);
+            result.PlannedEndDate.Should().Be(apprenticeshipStartDate.PlannedEndDate);
+            result.OriginalApprenticeshipActualStartDate.Should().Be(apprenticeshipStartDate.OriginalApprenticeshipActualStartDate);
+            result.OriginalPlannedEndDate.Should().Be(apprenticeshipStartDate.OriginalPlannedEndDate);
+        }
     }
 
     [Test]
@@ -48,6 +50,6 @@ public class ProviderPlannedEndDateModelMapperTests
         var sourceObject = new object();
 
         // Act & Assert
-        Assert.Throws<NotImplementedException>(() => _mapper.Map(sourceObject));
+        _mapper.Invoking(m => m.Map(sourceObject)).Should().Throw<NotImplementedException>();
     }
 }

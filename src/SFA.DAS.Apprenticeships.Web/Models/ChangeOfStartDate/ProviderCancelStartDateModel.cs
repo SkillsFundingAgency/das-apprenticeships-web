@@ -1,15 +1,20 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeships.Api.Responses;
+using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using System.Web;
 
 namespace SFA.DAS.Apprenticeships.Web.Models.ChangeOfStartDate;
 
-public class ProviderCancelStartDateModel : BaseProviderChangeOfStartDateModel, IRouteValuesProvider
+public class ProviderCancelStartDateModel : BaseProviderChangeOfStartDateModel, IRouteValuesProvider, ICacheModel, ICancelRequest
 {
 	public DateTime OriginalStartDate { get; set; }
 	public DateTime PendingStartDate { get; set; }
+	public DateTime OriginalPlannedEndDate { get; set; }
+	public DateTime PendingPlannedEndDate { get; set; }
+    [RadioOption]
+    public string? CancelRequest { get; set; }
 }
 
 public class ProviderCancelStartDateModelMapper : IMapper<ProviderCancelStartDateModel>
@@ -38,8 +43,10 @@ public class ProviderCancelStartDateModelMapper : IMapper<ProviderCancelStartDat
             ApprenticeshipKey = pendingStartDateChange.ApprenticeshipKey,
             ReasonForChangeOfStartDate = HttpUtility.HtmlDecode(pendingStartDateChange.Reason),
             OriginalStartDate = pendingStartDateChange.OriginalActualStartDate.ValueOrThrow(nameof(PendingStartDateChange.OriginalActualStartDate)),
-            PendingStartDate = pendingStartDateChange.PendingActualStartDate.ValueOrThrow(nameof(PendingStartDateChange.PendingActualStartDate))
-        };
+            PendingStartDate = pendingStartDateChange.PendingActualStartDate.ValueOrThrow(nameof(PendingStartDateChange.PendingActualStartDate)),
+			OriginalPlannedEndDate = pendingStartDateChange.OriginalPlannedEndDate.ValueOrThrow(nameof(PendingStartDateChange.OriginalPlannedEndDate)),
+			PendingPlannedEndDate = pendingStartDateChange.PendingPlannedEndDate.ValueOrThrow(nameof(PendingStartDateChange.PendingPlannedEndDate))
+		};
 
         return model;
     }
