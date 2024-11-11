@@ -52,7 +52,6 @@ public static class AuthorizationExtension
                     policy.RequireClaim(ProviderClaims.ProviderUkprn);
                     policy.RequireClaim(ProviderClaims.Service, ProviderDaa, ProviderDab, ProviderDac, ProviderDav);
                     policy.Requirements.Add(new ProviderAccountRequirement());
-                    policy.Requirements.Add(new TrainingProviderAllRolesRequirement());
                     policy.RequireAuthenticatedUser();
                 });
         });

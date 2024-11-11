@@ -26,14 +26,28 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
 
-                    <h1 class="govuk-heading-l">Change the training price and/or the end-point assessment price</h1>
+                    <h1 class="govuk-heading-l">Change the negotiated prices</h1>
 
                     <div id="apprenticeship-price-hint" class="govuk-hint">
-                        The funding band maximum for this apprenticeship is @Model.FundingBandMaximum.FormatCurrency(). This is the highest amount the apprenticeship service
-                        will pay towards the training and end-point assessment.
-                        <br><br>
-                        If you raise the total price above the funding band maximum, this will need to be paid by the employer.
+                        <strong>The maximum funding for this apprenticeship is @Model.FundingBandMaximum.FormatCurrency().</strong> This is the most the apprenticeship service will pay. If the total price is over this limit, the employer must pay the difference.
                     </div>
+
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                What to do if you don't know the end-point assessment price
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            If you haven't selected an end-point assessment organisation (EPAO) or finalised the contract, you can enter a nominal value of £1 for the end-point assessment.
+                            <br /><br />
+                            Adjust the training price to reflect this. For example, if training costs £9,000, enter £8,999 for training and £1 for the end-point assessment.
+                            <br /><br />
+                            You can update both prices during the apprenticeship once the end-point assessment price is confirmed.
+                            <br /><br />
+                            Any increase in the total price will need employer approval.
+                        </div>
+                    </details>
 
                     <div class="govuk-form-group govuk-!-margin-top-7 @ViewContext.DisplayFormGroupError(nameof(Model.ApprenticeshipTrainingPrice))">
                         <fieldset class="govuk-fieldset">
@@ -57,7 +71,7 @@
                                 End-point assessment price
                             </legend>
                             <div id="apprenticeship-assessmentprice-hint" class="govuk-hint">
-                                Do not include VAT. Enter price in whole pounds. For example, for £2,500 enter 2500. If the exact amount is unknown leave this field blank.
+                                Do not include VAT. Enter price in whole pounds. For example, for £2,500 enter 2500.
                             </div>
                             @Html.ValidationMessageFor(m => m.ApprenticeshipEndPointAssessmentPrice, null, new { @class = "govuk-error-message", id = "error-message-" + Html.IdFor(m => m.ApprenticeshipEndPointAssessmentPrice) })
                             <div class="govuk-input__wrapper">
