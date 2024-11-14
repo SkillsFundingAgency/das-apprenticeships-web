@@ -15,6 +15,7 @@ using SFA.DAS.Apprenticeships.Web.Services;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfStartDate;
 
 [Authorize]
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("employer/{employerAccountId}/ChangeOfStartDate/{apprenticeshipHashedId}")]
 public class ChangeOfStartDateEmployerController : Controller
 {

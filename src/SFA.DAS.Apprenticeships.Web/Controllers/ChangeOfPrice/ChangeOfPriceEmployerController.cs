@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Application.Exceptions;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Constants.Employer;
 using SFA.DAS.Apprenticeships.Web.Extensions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
@@ -16,6 +17,7 @@ using System.Web;
 namespace SFA.DAS.Apprenticeships.Web.Controllers.ChangeOfPrice;
 
 [Authorize]
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("employer/{employerAccountId}/ChangeOfPrice/{apprenticeshipHashedId}")]
 public class ChangeOfPriceEmployerController : Controller
 {
