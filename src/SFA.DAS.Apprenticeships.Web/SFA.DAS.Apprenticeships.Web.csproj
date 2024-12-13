@@ -19,7 +19,7 @@
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.84" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.76" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
-    <PackageReference Include="SFA.DAS.Provider.Shared.UI" Version="2.0.30" />
+    <PackageReference Include="SFA.DAS.Provider.Shared.UI" Version="2.0.39" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
