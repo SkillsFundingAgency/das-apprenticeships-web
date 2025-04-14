@@ -362,31 +362,6 @@
             }
         },
         {
-            "condition": "[parameters('deployPrivateLinkedScopedResource')]",
-            "apiVersion": "2021-04-01",
-            "name": "[concat(variables('employersAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "privateLinkScopeName": {
-                        "value": "[variables('privateLinkScopeName')]"
-                    },
-                    "scopedResourceName": {
-                        "value": "[variables('employersAppServiceName')]"
-                    },
-                    "scopedResourceId": {
-                        "value": "[reference(concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
-                    }
-                }
-            }
-        },
-        {
             "apiVersion": "2021-04-01",
             "name": "[concat(variables('providersAppServiceName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
