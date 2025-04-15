@@ -23,6 +23,9 @@
         "loggingRedisKey": {
             "type": "string"
         },
+        "deployPrivateLinkedScopedResource": {
+            "type": "bool"
+        },
         "tags": {
             "type": "object"
         },
@@ -85,7 +88,8 @@
         "employerAuthType": "Employer",
         "providersAppServiceName": "[concat(variables('resourceNamePrefix'), '-prv-as')]",
         "providerAuthType": "Provider",
-        "configNames": "SFA.DAS.Apprenticeships.Web,SFA.DAS.Provider.DfeSignIn,SFA.DAS.Employer.GovSignIn"
+        "configNames": "SFA.DAS.Apprenticeships.Web,SFA.DAS.Provider.DfeSignIn,SFA.DAS.Employer.GovSignIn",
+        "privateLinkScopeName": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-shared-ampls'))]"
     },
     "resources": [
         {
@@ -146,6 +150,31 @@
             "dependsOn": [
                 "[variables('resourceGroupName')]"
             ]
+        },
+        {
+            "condition": "[parameters('deployPrivateLinkedScopedResource')]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('employersAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "privateLinkScopeName": {
+                        "value": "[variables('privateLinkScopeName')]"
+                    },
+                    "scopedResourceName": {
+                        "value": "[variables('employersAppServiceName')]"
+                    },
+                    "scopedResourceId": {
+                        "value": "[reference(concat(variables('employersAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
+                    }
+                }
+            }
         },
         {
             "apiVersion": "2021-04-01",
@@ -306,6 +335,31 @@
             "dependsOn": [
                 "[variables('resourceGroupName')]"
             ]
+        },
+        {
+            "condition": "[parameters('deployPrivateLinkedScopedResource')]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('providersAppServiceName'), '-private-link-scoped-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "privateLinkScopeName": {
+                        "value": "[variables('privateLinkScopeName')]"
+                    },
+                    "scopedResourceName": {
+                        "value": "[variables('providersAppServiceName')]"
+                    },
+                    "scopedResourceId": {
+                        "value": "[reference(concat(variables('providersAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
+                    }
+                }
+            }
         },
         {
             "apiVersion": "2021-04-01",
