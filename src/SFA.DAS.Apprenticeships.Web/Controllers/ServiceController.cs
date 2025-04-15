@@ -8,8 +8,10 @@ using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Models;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.GovUK.Auth.Models;
 using SFA.DAS.GovUK.Auth.Services;
+using EmployerClaims = SFA.DAS.Apprenticeships.Web.Infrastructure.EmployerClaims;
 
 namespace SFA.DAS.Apprenticeships.Web.Controllers;
 

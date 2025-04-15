@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
 using SFA.DAS.Apprenticeships.Domain.Interfaces;
+using SFA.DAS.GovUK.Auth.Employer;
 
 namespace SFA.DAS.Apprenticeships.Web.Infrastructure;
 
@@ -15,10 +16,10 @@ namespace SFA.DAS.Apprenticeships.Web.Infrastructure;
 public class EmployerAccountAuthorizationHandler: AuthorizationHandler<EmployerAccountRequirement>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IEmployerAccountService _accountsService;
+    private readonly IGovAuthEmployerAccountService _accountsService;
     private readonly ILogger<EmployerAccountAuthorizationHandler> _logger;
 
-    public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger)
+    public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IGovAuthEmployerAccountService accountsService, ILogger<EmployerAccountAuthorizationHandler> logger)
     {
         _httpContextAccessor = httpContextAccessor;
         _accountsService = accountsService;

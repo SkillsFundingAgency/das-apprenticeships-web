@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using SFA.DAS.GovUK.Auth.Employer;
 
 namespace SFA.DAS.Apprenticeships.Domain.Employers.Api.Responses;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -28,5 +30,7 @@ public class EmployerIdentifier
     public string EmployerName { get; set; }
     [JsonPropertyName("role")]
     public string Role { get; set; }
+    [JsonPropertyName("apprenticeshipEmployerType")]
+    public ApprenticeshipEmployerType ApprenticeshipEmployerType { get; set; }
 
 }
