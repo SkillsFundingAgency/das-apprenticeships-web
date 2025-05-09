@@ -10,19 +10,11 @@
 [![Confluence Project](https://img.shields.io/badge/Confluence-Project-blue)](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/3480354918/Flexible+Payments+Models)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)
 
-The Apprenticeships web provides the front end capability for managing change of circumstances (CoC) requests for providers and employers. Not all CoC journeys will be accommodated here immediately, so if you wish to see the development status of the journeys that are or will be contained in this repo, then please go to [Status of features](## Status of features)
+This is a .NET MVC web application designed to assist with managing apprenticeships. It provides a streamlined interface for handling common administrative tasks through a request-and-approval workflow. Key features include:
 
-This functionality was originally intertwined with the initial approval functionality in commitments but has been split to simplify the solution and also to allow the two data models to diverge.
-
-## Long-term goal
-The intention is to eventually move all user behaviour related to managing the lifecycle of an apprenticeship once it has been initially approved by the employer and provider to this repository, however the priority is to first start with the CoC journeys.
-
-## Status of features
-- [x] Change of price
-- [x] Change of start date
-- [ ] Change of payment status
-- [ ] Withdrawal
-- [ ] Break in learning
+* Updating apprenticeship price and start date
+* Freezing and unfreezing apprenticeship payments
+* Managing changes via a request and approval process, ensuring changes are reviewed before being applied
 
 ## How It Works
 
@@ -35,7 +27,7 @@ The same website is used for both the Employer and Provider.  Correct authentica
 ### Pre-Requisites
 
 * A clone of this repository
-* A code editor that supports .Net6
+* A code editor that supports .Net8
 * Azure Storage Emulator (Azurite)
 
 ### Config
@@ -53,9 +45,21 @@ Most of the application configuration is taken from the [das-employer-config rep
 | ResourceEnvironmentName            | LOCAL                                    |
 | ApprenticeshipsOuterApi:BaseUrl    | https://localhost:7101/                  |
 
+As well as azurite, some settings are also required in appsettings.development.json.
+{
+  "ResourceEnvironmentName": "LOCAL",
+  "EnvironmentName": "LOCAL",
+  "StubAuth": true,
+  "StubProviderUserClaims": {
+    "Name": "Steve",
+    "DisplayName": "Steve",
+    "ProviderUkprn": "12341234"
+  }
+}
+
 ## 🔗 External Dependencies
 
-The UI should only be dependant on the Apprenticeships Outer API.  If you want to run the application locally you will need to make sure the Outer API is running locally (along with it's dependencies, including the Apprenticeships Inner) or the configuration is pointing to a deployed instance.
+The UI should only be dependant on the Apprenticeships Outer API.  If you want to run the application locally you will need to make sure the Outer API is running locally (along with it's dependencies, including the Apprenticeships Inner and commitments for some endpoints) or the configuration is pointing to a deployed instance.
 
 ## Running Locally
 
