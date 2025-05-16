@@ -1,19 +1,14 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.AppStart;
-using SFA.DAS.Apprenticeships.Web.Attributes;
 using SFA.DAS.Apprenticeships.Web.Exceptions;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.Apprenticeships.Web.Middleware;
-using SFA.DAS.Apprenticeships.Web.Validators.ChangeOfPrice;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Provider.Shared.UI.Models;
 using SFA.DAS.Provider.Shared.UI.Startup;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace SFA.DAS.Apprenticeships.Web;
 
@@ -103,9 +98,9 @@ public static class Program
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             })
-            .Configure<IISServerOptions>(options => 
-            { 
-                options.AutomaticAuthentication = false; 
+            .Configure<IISServerOptions>(options =>
+            {
+                options.AutomaticAuthentication = false;
             })
             .Configure<RouteOptions>(options => { options.LowercaseUrls = true; })
             .AddSession(options =>
@@ -125,7 +120,6 @@ public static class Program
             .RegisterValidators()
             .ConfigureNavigationSection(serviceParameters)
             .EnableGoogleAnalytics()
-            .SetDfESignInConfiguration(config.UseDfeSignIn())
             .SetZenDeskConfiguration(config.GetSection("ProviderZenDeskSettings").Get<ZenDeskConfiguration>());
 
         FailedStartUpMiddleware.StartupStep = "Adding Health Checks";
@@ -197,7 +191,7 @@ public static class Program
         {
             action.Invoke();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             if (ex is StartUpException)
             {
