@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 using SFA.DAS.Apprenticeships.Web.Infrastructure;
 using SFA.DAS.DfESignIn.Auth.AppStart;
 using SFA.DAS.DfESignIn.Auth.Enums;
 using SFA.DAS.GovUK.Auth.AppStart;
 using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Apprenticeships.Application.Services;
+using SFA.DAS.GovUK.Auth.Models;
 
 namespace SFA.DAS.Apprenticeships.Web.AppStart;
 
@@ -35,7 +35,15 @@ public static class AuthenticationExtension
 
     public static void SetUpEmployerAuthentication(this IServiceCollection services, ConfigurationManager config, ServiceParameters serviceParameters)
     {
-        services.AddAndConfigureGovUkAuthentication(config, typeof(EmployerAccountPostAuthenticationClaimsHandler), "", "/service/SignIn-Stub");
+        services.AddAndConfigureGovUkAuthentication(config,
+            new AuthRedirects
+            {
+                LocalStubLoginPath = "/service/SignIn-Stub",
+                SignedOutRedirectUrl = ""
+            },
+            null, 
+            typeof(EmployerAccountService)
+            );
     }
 
     private static void AddProviderStubAuthentication(this IServiceCollection services, ConfigurationManager config)

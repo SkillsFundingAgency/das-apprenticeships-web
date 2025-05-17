@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Domain.Employers;
-using SFA.DAS.Apprenticeships.Web.Infrastructure;
+using SFA.DAS.GovUK.Auth.Employer;
+using EmployerClaims = SFA.DAS.Apprenticeships.Web.Infrastructure.EmployerClaims;
 
 namespace SFA.DAS.Apprenticeships.Web.Identity.Authentication;
 
@@ -24,7 +25,8 @@ public class EmployerStubAuthHandler : AuthenticationHandler<AuthenticationSchem
         {
             Role = "Owner",
             AccountId = "ABC123",
-            EmployerName = "Stub Employer"
+            EmployerName = "Stub Employer",
+            ApprenticeshipEmployerType = ApprenticeshipEmployerType.Levy
         });
 
         var claims = new[]
